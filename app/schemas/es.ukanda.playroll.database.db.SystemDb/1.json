@@ -1,0 +1,114 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "48b5ad3b3e5e8f5959f8335aa6cc723b",
+    "entities": [
+      {
+        "tableName": "Rasgos",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`nombreIdentify` TEXT NOT NULL, `nombre` TEXT NOT NULL, `descripcion` TEXT NOT NULL, `modifyer` TEXT NOT NULL, `type` TEXT NOT NULL, `typeModifyer` TEXT NOT NULL, PRIMARY KEY(`nombreIdentify`))",
+        "fields": [
+          {
+            "fieldPath": "nombreIdentify",
+            "columnName": "nombreIdentify",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nombre",
+            "columnName": "nombre",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "descripcion",
+            "columnName": "descripcion",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "modifyer",
+            "columnName": "modifyer",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "typeModifyer",
+            "columnName": "typeModifyer",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "nombreIdentify"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "Race",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`raceNameID` TEXT NOT NULL, `raceName` TEXT NOT NULL, `subRaza` TEXT NOT NULL, `description` TEXT NOT NULL, `rasgosList` TEXT NOT NULL, `caracteristicas` TEXT NOT NULL, PRIMARY KEY(`raceNameID`))",
+        "fields": [
+          {
+            "fieldPath": "raceNameID",
+            "columnName": "raceNameID",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "raceName",
+            "columnName": "raceName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "subRaza",
+            "columnName": "subRaza",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rasgosList",
+            "columnName": "rasgosList",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "caracteristicas",
+            "columnName": "caracteristicas",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "raceNameID"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '48b5ad3b3e5e8f5959f8335aa6cc723b')"
+    ]
+  }
+}

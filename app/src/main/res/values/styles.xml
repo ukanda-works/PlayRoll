@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="TextButton">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="LogButton">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">italic</item>
+        <item name="borderWidth">1dp</item>
+    </style>
+
+    <style name="SplashTheme">
+        <item name="android:windowBackground">@drawable/splashscreen</item>
+    </style>
+</resources>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="es.ukanda.playroll.ui.home.HomeFragment"
+        android:label="@string/menu_home"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_nav_home_to_nav_login"
+            app:destination="@id/nav_login" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_sign_off"
+            app:destination="@id/nav_sign_off" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_login"
+        android:name="es.ukanda.playroll.ui.fragment.LoginFragment"
+        android:label="@string/menu_slideshow"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_nav_login_to_nav_register"
+            app:destination="@id/nav_register" />
+        <action
+            android:id="@+id/action_nav_login_to_nav_home"
+            app:destination="@id/nav_home" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_register"
+        android:name="es.ukanda.playroll.ui.fragment.RegisterFragment"
+        android:label="@string/menu_slideshow"
+        tools:layout="@layout/fragment_register" >
+        <action
+            android:id="@+id/action_nav_register_to_nav_home"
+            app:destination="@id/nav_home" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_sign_off"
+        android:name="es.ukanda.playroll.ui.fragment.SignOffFragment"
+        android:label="@string/menu_slideshow"
+        tools:layout="@layout/fragment_sign_off" >
+        <action
+            android:id="@+id/action_nav_sign_off_to_nav_login"
+            app:destination="@id/nav_login" />
+    </fragment>
+</navigation>

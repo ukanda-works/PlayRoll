@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "599615593212",
+    "project_id": "playroll-30a0e",
+    "storage_bucket": "playroll-30a0e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:599615593212:android:04bbacd0b19c581c29d579",
+        "android_client_info": {
+          "package_name": "es.ukanda.playroll"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "599615593212-fsu8li7o67nscegdt8im61f00rojhmp6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGXTTxto85dowGTiN42CbwDb3rmp0BBjk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "599615593212-fsu8li7o67nscegdt8im61f00rojhmp6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
