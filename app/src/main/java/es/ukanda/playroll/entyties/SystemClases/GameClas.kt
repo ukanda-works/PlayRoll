@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import es.ukanda.playroll.database.db.HashMapConverter
+import es.ukanda.playroll.database.db.IntHashMapConverter
 
 @Entity
 data class GameClas(
@@ -20,7 +21,7 @@ data class GameClas(
     var salvaciones: List<String>, //donde se guardara el nombre de las salvaciones
     var habliidades: List<String>, //donde se guardara el nombre de las habilidades
     var numHabliidades: Int,// si es 0 se usan todas las habilidades si no se usan las que se indiquen
-    @TypeConverters(HashMapConverter::class)
+    @TypeConverters(IntHashMapConverter::class)
     var rasgosClase: HashMap<String, Int>, //donde se guardara el nombre de las habilidades y el nivel de bonificador
 
 

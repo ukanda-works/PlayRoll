@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "48b5ad3b3e5e8f5959f8335aa6cc723b",
+    "identityHash": "d5312e168d38988e186c3c8ee6f4b4cd",
     "entities": [
       {
         "tableName": "Rasgos",
@@ -103,12 +103,104 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "GameClas",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`clasNameId` TEXT NOT NULL, `clasName` TEXT NOT NULL, `description` TEXT NOT NULL, `hitDice` TEXT NOT NULL, `competenciaArmas` TEXT NOT NULL, `competenciaArmaduras` TEXT NOT NULL, `competenciaHeramientas` TEXT NOT NULL, `caracteristicasPrimarias` TEXT NOT NULL, `numCaracteristicasPrimarias` INTEGER NOT NULL, `salvaciones` TEXT NOT NULL, `habliidades` TEXT NOT NULL, `numHabliidades` INTEGER NOT NULL, `rasgosClase` TEXT NOT NULL, PRIMARY KEY(`clasNameId`))",
+        "fields": [
+          {
+            "fieldPath": "clasNameId",
+            "columnName": "clasNameId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "clasName",
+            "columnName": "clasName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hitDice",
+            "columnName": "hitDice",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "competenciaArmas",
+            "columnName": "competenciaArmas",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "competenciaArmaduras",
+            "columnName": "competenciaArmaduras",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "competenciaHeramientas",
+            "columnName": "competenciaHeramientas",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "caracteristicasPrimarias",
+            "columnName": "caracteristicasPrimarias",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "numCaracteristicasPrimarias",
+            "columnName": "numCaracteristicasPrimarias",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "salvaciones",
+            "columnName": "salvaciones",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "habliidades",
+            "columnName": "habliidades",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "numHabliidades",
+            "columnName": "numHabliidades",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rasgosClase",
+            "columnName": "rasgosClase",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "clasNameId"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '48b5ad3b3e5e8f5959f8335aa6cc723b')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd5312e168d38988e186c3c8ee6f4b4cd')"
     ]
   }
 }

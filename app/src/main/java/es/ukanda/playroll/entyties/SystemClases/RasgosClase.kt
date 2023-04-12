@@ -12,7 +12,7 @@ data class RasgosClase(
     val condicion : String,
     val condicionValor : String,
     val duration: Int,
-    val rasgos : List<RasgosClase>,
+    val rasgos : List<String>,
 ) {
 
 

@@ -2,17 +2,17 @@ package es.ukanda.playroll.database.db
 
 import androidx.room.TypeConverter
 
-class HashMapConverter {
+class IntHashMapConverter {
     @TypeConverter
-    fun fromString(value: String?): HashMap<String, String> {
-        val map = HashMap<String, String>()
+    fun fromString(value: String?): HashMap<String, Int> {
+        val map = HashMap<String, Int>()
         value?.let {
             val pairs = it.split(",").map { pair ->
                 pair.split("=")
             }
             pairs.forEach { pair ->
                 if (pair.size == 2) {
-                    map[pair[0]] = pair[1]
+                    map[pair[0]] = pair[1].toInt()
                 }
             }
         }
@@ -20,10 +20,8 @@ class HashMapConverter {
     }
 
     @TypeConverter
-    fun toString(map: HashMap<String, String>): String {
+    fun toString(map: HashMap<String, Int>): String {
         val pairs = map.map { "${it.key}=${it.value}" }
         return pairs.joinToString(",")
     }
 }
-
-

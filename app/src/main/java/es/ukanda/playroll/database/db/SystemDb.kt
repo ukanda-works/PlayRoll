@@ -14,7 +14,7 @@ import es.ukanda.playroll.entyties.SystemClases.Rasgos
     entities = [Rasgos::class, Race ::class, GameClas::class],
     version = 2
 )
-@TypeConverters(Converters::class,HashMapConverter::class)
+@TypeConverters(Converters::class,HashMapConverter::class,IntHashMapConverter::class)
 abstract class SystemDb: RoomDatabase() {
     abstract fun rasgoDao(): RasgoDao
     abstract fun raceDao(): RaceDao
