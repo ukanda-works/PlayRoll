@@ -16,6 +16,21 @@
         <action
             android:id="@+id/action_nav_home_to_nav_sign_off"
             app:destination="@id/nav_sign_off" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_PartyCreator"
+            app:destination="@id/nav_PartyCreator" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_JoinParty"
+            app:destination="@id/nav_JoinParty" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_PartyManager"
+            app:destination="@id/nav_PartyManager" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_CharacterCreator"
+            app:destination="@id/nav_CharacterCreator" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_CharacterInfo"
+            app:destination="@id/nav_CharacterInfo" />
     </fragment>
 
     <fragment
@@ -49,5 +64,36 @@
         <action
             android:id="@+id/action_nav_sign_off_to_nav_login"
             app:destination="@id/nav_login" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_PartyManager"
+        android:name="es.ukanda.playroll.ui.fragment.PartyManagerFragment"
+        android:label="Party Manager"
+        tools:layout="@layout/fragment_sign_off" >
+    </fragment>
+    <fragment
+        android:id="@+id/nav_PartyCreator"
+        android:name="es.ukanda.playroll.ui.fragment.CreatePartyFragment"
+        android:label="Create Party"
+        tools:layout="@layout/fragment_sign_off" >
+    </fragment>
+    <fragment
+        android:id="@+id/nav_JoinParty"
+        android:name="es.ukanda.playroll.ui.fragment.JoinPartyFragment"
+        android:label="Join Party"
+        tools:layout="@layout/fragment_sign_off" >
+    </fragment>
+    <fragment
+        android:id="@+id/nav_CharacterInfo"
+        android:name="es.ukanda.playroll.ui.fragment.CharacterInfoFragment"
+        android:label="Character"
+        tools:layout="@layout/fragment_sign_off" >
+    </fragment>
+    <fragment
+        android:id="@+id/nav_CharacterCreator"
+        android:name="es.ukanda.playroll.ui.fragment.CharacterCreatorFragment"
+        android:label="Character Creator"
+        tools:layout="@layout/fragment_sign_off" >
     </fragment>
 </navigation>

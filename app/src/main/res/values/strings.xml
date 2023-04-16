@@ -20,4 +20,7 @@
     <string name="SignOut">Cerrar sesion</string>
     <string name="SignIn_google">Iniciar sesion con google</string>
     <string name="prefs_file">es.ukanda.playroll.PREFERENCE_FILE_KEY</string>
+    <string name="crate_party">Crear partida</string>
+    <string name="join_party">Unirse a una partida</string>
+    <string name="add_character">Crear personaje</string>
 </resources>

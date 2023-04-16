@@ -34,7 +34,7 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.testButton.setOnClickListener{
+        /*binding.testButton.setOnClickListener{
             val test_uno = Test_uno(context!!)
             CoroutineScope(Dispatchers.IO).launch {
                 test_uno.createRace()
@@ -44,7 +44,10 @@ class HomeFragment : Fragment() {
 
             }
 
-        }
+        }*/
+
+
+
     }
 
     override fun onResume() {
