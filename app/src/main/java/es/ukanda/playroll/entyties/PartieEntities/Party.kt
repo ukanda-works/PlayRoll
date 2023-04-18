@@ -6,14 +6,9 @@ import androidx.room.Relation
 
 @Entity(tableName = "parties")
 data class Party(
-    @PrimaryKey val partyID: Int,
+    @PrimaryKey(autoGenerate = true) val partyID: Int=0,
     val partyName: String,
-    val partyDescription: String,
-    @Relation(
-        parentColumn = "partyID",
-        entityColumn = "partyID"
-    )
-    val characterList: List<CharacterEntity>,
+    val partyDescription: String? = null,
 ) {
 
 }

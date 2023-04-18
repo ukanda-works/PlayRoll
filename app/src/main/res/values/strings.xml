@@ -23,4 +23,8 @@
     <string name="crate_party">Crear partida</string>
     <string name="join_party">Unirse a una partida</string>
     <string name="add_character">Crear personaje</string>
+    <string name="Nombre">nombre</string>
+    <string name="Descripcion">Descripcion</string>
+    <string name="Crear">Crear</string>
+    <string name="añadir_personaje">Añadir personaje</string>
 </resources>

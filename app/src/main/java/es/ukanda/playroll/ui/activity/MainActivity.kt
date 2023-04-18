@@ -16,6 +16,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.analytics.FirebaseAnalytics
 import es.ukanda.playroll.R
+import es.ukanda.playroll.database.db.PartyDb
 import es.ukanda.playroll.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -30,11 +31,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         slidebar()
-
-
-
     }
 
     override fun onStart() {

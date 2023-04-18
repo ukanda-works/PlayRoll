@@ -71,12 +71,18 @@
         android:name="es.ukanda.playroll.ui.fragment.PartyManagerFragment"
         android:label="Party Manager"
         tools:layout="@layout/fragment_sign_off" >
+        <action
+            android:id="@+id/action_nav_PartyManager_to_nav_PartyCreator"
+            app:destination="@id/nav_PartyCreator" />
     </fragment>
     <fragment
         android:id="@+id/nav_PartyCreator"
         android:name="es.ukanda.playroll.ui.fragment.CreatePartyFragment"
         android:label="Create Party"
         tools:layout="@layout/fragment_sign_off" >
+        <action
+            android:id="@+id/action_nav_PartyCreator_to_nav_home"
+            app:destination="@id/nav_home" />
     </fragment>
     <fragment
         android:id="@+id/nav_JoinParty"
@@ -89,11 +95,17 @@
         android:name="es.ukanda.playroll.ui.fragment.CharacterInfoFragment"
         android:label="Character"
         tools:layout="@layout/fragment_sign_off" >
+        <action
+            android:id="@+id/action_nav_CharacterInfo_to_nav_CharacterCreator"
+            app:destination="@id/nav_CharacterCreator" />
     </fragment>
     <fragment
         android:id="@+id/nav_CharacterCreator"
         android:name="es.ukanda.playroll.ui.fragment.CharacterCreatorFragment"
         android:label="Character Creator"
         tools:layout="@layout/fragment_sign_off" >
+        <action
+            android:id="@+id/action_nav_CharacterCreator_to_nav_home"
+            app:destination="@id/nav_home" />
     </fragment>
 </navigation>

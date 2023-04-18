@@ -93,7 +93,6 @@ class LoginFragment : Fragment() {
             ActivityResultContracts.StartActivityForResult()
         ) { result: ActivityResult ->
             if (result.resultCode == Activity.RESULT_OK) {
-                Toast.makeText(context, "siiiii", Toast.LENGTH_SHORT).show()
                 try {
                 val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
                 val account = task.getResult(ApiException::class.java)
