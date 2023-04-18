@@ -50,11 +50,6 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val analictics = FirebaseAnalytics.getInstance(view.context)
-        val bundle = Bundle()
-        bundle.putString("message", "Se ha entrado en el fragmento de login")
-        analictics.logEvent("Login", bundle)
-
         buttons()
     }
 
@@ -97,8 +92,7 @@ class LoginFragment : Fragment() {
         var launcher = registerForActivityResult<Intent, ActivityResult>(
             ActivityResultContracts.StartActivityForResult()
         ) { result: ActivityResult ->
-            println("result code: "+result.resultCode)
-            if (result.resultCode == 100 || result.resultCode == Activity.RESULT_OK) {
+            if (result.resultCode == Activity.RESULT_OK) {
                 Toast.makeText(context, "siiiii", Toast.LENGTH_SHORT).show()
                 try {
                 val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
@@ -106,6 +100,7 @@ class LoginFragment : Fragment() {
                 if (account != null) {
                     val credential = GoogleAuthProvider.getCredential(account.idToken, null)
                     FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener {
+                        println(it.result.toString())
                         if (it.isSuccessful){
                             val prefs = activity?.getSharedPreferences(getString(R.string.prefs_file), 0)?.edit()
                             prefs?.putString("email", account.email)
@@ -136,21 +131,5 @@ class LoginFragment : Fragment() {
             launcher.launch(googleClient.signInIntent)
         }
     }
-
-    fun session(){
-        val prefs = this.activity?.getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE)
-        val email = prefs?.getString("email", null)
-        val provider = prefs?.getString("provider", null)
-
-        if(email != null && provider != null) {
-
-        }
-    }
-
-
-
-
-
-
 }
 
