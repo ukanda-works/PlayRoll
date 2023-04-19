@@ -10,6 +10,10 @@ interface PartyDao {
     @Query("SELECT * FROM parties")
     fun getAllParties(): MutableList<Party>
 
+    @Transaction
+    @Query("SELECT * FROM parties WHERE partyID = :id")
+    fun getParty(id: Int): Party
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertParty(party: Party)
 

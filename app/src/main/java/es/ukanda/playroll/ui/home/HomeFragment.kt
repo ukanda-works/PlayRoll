@@ -46,12 +46,12 @@ class HomeFragment : Fragment() {
         binding.btCrearPartida.setOnClickListener {
             findNavController().navigate(R.id.action_nav_home_to_nav_PartyCreator)
         }
-        binding.btJoinParty.setOnClickListener {
-            //TODO("unir a una partida")
-            Toast.makeText(context, "unir a una partida", Toast.LENGTH_SHORT).show()
-        }
+
         binding.btAddCharacter.setOnClickListener {
             findNavController().navigate(R.id.action_nav_home_to_nav_CharacterCreator)
+        }
+        binding.btJoinParty.setOnClickListener{
+            findNavController().navigate(R.id.action_nav_home_to_nav_JoinParty)
         }
     }
 
@@ -62,10 +62,9 @@ class HomeFragment : Fragment() {
             var partyList = database.partyDao().getAllParties()
             var characterList =
                 database.characterDao().getAllCharacters()
-            if(partyList.isEmpty()){
+
                 val party = Party(0, "No hay partidas","")
-                partyList += party
-            }
+                partyList.add(0, party)
             if(characterList.isEmpty()){
                 val character = CharacterEntity(0, "No hay personajes", "",0)
                 characterList += character
@@ -82,27 +81,28 @@ class HomeFragment : Fragment() {
             //se asignan los adaptadores a los spinners
             binding.spParties.adapter = adapterParty
             binding.spCharacters.adapter = adapterCharacter
+            binding.spParties.setSelection(0)
+            binding.spCharacters.setSelection(0)
 
             //seteamos el listener de los spinners
             //navegamos a la pantalla de la partida o personaje seleccionado enviando id
-            /*binding.spParties.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>?,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    val party = partyList[position]
+
+
+            binding.spParties.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+
+                override fun onItemSelected(adapterView: AdapterView<*>, view: View?, position: Int, id: Long) {
+                val party = partyList[position]
                     val bundle = Bundle()
                     bundle.putInt("id", party.partyID)
+                    Toast.makeText(context, "Seleccionado: ${position}, party id: ${party.partyID}", Toast.LENGTH_SHORT).show()
                     if(party.partyID != 0){
                         findNavController().navigate(R.id.action_nav_home_to_nav_PartyManager, bundle)
-                    }else{
-                        Toast.makeText(context, "No hay partidas", Toast.LENGTH_SHORT).show()
                     }
                 }
-                override fun onNothingSelected(parent: AdapterView<*>?) {}
-            }*/
+                override fun onNothingSelected(adapterView: AdapterView<*>) {
+                    // Nothing to do here
+                }
+            }
 
             /*binding.spCharacters.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
@@ -122,6 +122,7 @@ class HomeFragment : Fragment() {
                 }
                 override fun onNothingSelected(parent: AdapterView<*>?) {}
             }*/
+
 
         }
 

@@ -74,6 +74,9 @@
         <action
             android:id="@+id/action_nav_PartyManager_to_nav_PartyCreator"
             app:destination="@id/nav_PartyCreator" />
+        <action
+            android:id="@+id/action_nav_PartyManager_to_nav_playPartyMaster"
+            app:destination="@id/nav_playPartyMaster" />
     </fragment>
     <fragment
         android:id="@+id/nav_PartyCreator"
@@ -89,6 +92,9 @@
         android:name="es.ukanda.playroll.ui.fragment.JoinPartyFragment"
         android:label="Join Party"
         tools:layout="@layout/fragment_sign_off" >
+        <action
+            android:id="@+id/action_nav_JoinParty_to_nav_playParty"
+            app:destination="@id/nav_playParty" />
     </fragment>
     <fragment
         android:id="@+id/nav_CharacterInfo"
@@ -107,5 +113,19 @@
         <action
             android:id="@+id/action_nav_CharacterCreator_to_nav_home"
             app:destination="@id/nav_home" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_playParty"
+        android:name="es.ukanda.playroll.ui.fragment.PlayPartyFragment"
+        android:label="Play party"
+        tools:layout="@layout/fragment_play_party" >
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_playPartyMaster"
+        android:name="es.ukanda.playroll.ui.fragment.PlayPartyMasterFragment"
+        android:label="Play party MASTER"
+        tools:layout="@layout/fragment_play_party" >
     </fragment>
 </navigation>
