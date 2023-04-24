@@ -8,8 +8,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.gson.Gson
 import es.ukanda.playroll.databinding.FragmentJoinPartyBinding
+import es.ukanda.playroll.entyties.PartieEntities.Party
+import es.ukanda.playroll.ui.ViewModel.ConexionViewModel
 import es.ukanda.playroll.ui.adapter.PartyAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +29,8 @@ class JoinPartyFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var adapter: PartyAdapter
-    private val partyList = mutableListOf<String>()
+    private val partyList = mutableMapOf<InetAddress, Party>()
+    private val viewModel : ConexionViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,6 +46,24 @@ class JoinPartyFragment : Fragment() {
         recicleViewInit()
         rgInit()
         getIp()
+
+        viewModel.estadoConexion.observe(viewLifecycleOwner) {
+            if (it == ConexionViewModel.enunEstadoConexion.aceptado){
+                Toast.makeText(context, "Aceptado", Toast.LENGTH_SHORT).show()
+            }else if (it == ConexionViewModel.enunEstadoConexion.conectando){
+                Toast.makeText(context, "Conectando", Toast.LENGTH_SHORT).show()
+            }else if(it == ConexionViewModel.enunEstadoConexion.rechazado){
+                Toast.makeText(context, "Rechazado", Toast.LENGTH_SHORT).show()
+            }else if(it == ConexionViewModel.enunEstadoConexion.error){
+                Toast.makeText(context, "Ocurrio un problema", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        viewModel.mensajeList.observe(viewLifecycleOwner) {
+            if (it != null){
+                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun rgInit() {
@@ -66,7 +89,8 @@ class JoinPartyFragment : Fragment() {
             CoroutineScope(Dispatchers.IO).launch {
                 try{
                 val broadCastAddress = InetAddress.getByName("255.255.255.255")
-                val packet = DatagramPacket("".toByteArray(), 0, broadCastAddress, 5689)
+                val data = "hola, jaime".toByteArray()
+                val packet = DatagramPacket(data, data.size, broadCastAddress, 5689)
                 val socket = DatagramSocket()
                 socket.send(packet)
                 socket.close()
@@ -81,17 +105,35 @@ class JoinPartyFragment : Fragment() {
                     val buffer = ByteArray(1024)
                     val packet = DatagramPacket(buffer, buffer.size)
                     socket.receive(packet)
-                    val message = String(packet.data, 0, packet.length)
-                    partyList.add(message)
-                    activity?.runOnUiThread {
-                        adapter.notifyDataSetChanged()
-                    }
+                    procesarMensaje(packet)
                     socket.close()
                 }
 
             }
         }
 
+    }
+
+    private fun procesarMensaje(packet: DatagramPacket){
+        try{
+        val json = String(packet.data, 0, packet.length)
+        val gson = Gson()
+        val party = gson.fromJson(json, Party::class.java)
+        if (party != null) {
+            val ip = packet.address
+            partyList.put(ip, party)
+            activity?.runOnUiThread {
+                adapter.notifyDataSetChanged()
+                Toast.makeText(context, "mensaje procesado", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            // Manejar la cadena JSON no válida
+        }
+        }catch (e: Exception){
+            activity?.runOnUiThread {
+                Toast.makeText(context, "Error al procesar el mensaje", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun getIp(){

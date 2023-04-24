@@ -15,9 +15,13 @@ import es.ukanda.playroll.entyties.PartieEntities.Party
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.OutputStream
+import java.lang.Thread.sleep
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
+import java.net.ServerSocket
+import java.net.Socket
 
 
 class PlayPartyMasterFragment : Fragment() {
@@ -26,6 +30,7 @@ class PlayPartyMasterFragment : Fragment() {
     private val binding get() = _binding!!
 
     lateinit var party: Party
+    private var listaJugadores = mutableListOf<String>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,21 +62,54 @@ class PlayPartyMasterFragment : Fragment() {
 
     private fun starServer(){
         CoroutineScope(Dispatchers.IO).launch {
-            val socket = DatagramSocket(5689)
-            val buffer = ByteArray(1024)
-            while (true) {
-                val packet = DatagramPacket(buffer, buffer.size)
 
-                socket.receive(packet)
+            try {
+                val socket = DatagramSocket(5689)
+                val buffer = ByteArray(1024)
+                while (true) {
+                    val packet = DatagramPacket(buffer, buffer.size)
+                    activity?.runOnUiThread {
+                    Toast.makeText(requireContext(), "Esperando", Toast.LENGTH_SHORT).show()
+                    }
+                    socket.receive(packet)
+                    //muestro el mensaje recibido
+                    val message = String(packet.data, 0, packet.length)
+                    activity?.runOnUiThread {
+                        Toast.makeText(requireContext(), "Mensaje recibido: $message", Toast.LENGTH_SHORT).show()
+                    }
+                    sleep(1000)
+                    val address = packet.address
+                    val data = party.toJson().toByteArray()
+                    val packet2 = DatagramPacket(data, data.size, address, 5689)
+                    socket.send(packet2)
+                    activity?.runOnUiThread {
+                        Toast.makeText(requireContext(), "Respondiendo", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }catch (e: Exception) {
+                e.printStackTrace()
+                activity?.runOnUiThread {
+                    Toast.makeText(requireContext(), "Error:${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
 
-                Toast.makeText(requireContext(), "Recibido", Toast.LENGTH_SHORT).show()
-                val address = packet.address
-                val port = packet.port
+        }
+        starServerTcp()
+    }
 
-                val response = "HOLA".toByteArray()
-                val responsePacket = DatagramPacket(response, response.size, address, port)
-                Thread.sleep(1000)
-                socket.send(responsePacket)
+    private fun starServerTcp() {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val serverSocket = ServerSocket(5690)
+                while (true) {
+                    val socket = serverSocket.accept()
+
+                }
+            }catch (e: Exception) {
+                e.printStackTrace()
+                activity?.runOnUiThread {
+                    Toast.makeText(requireContext(), "Error:${e.message}", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -94,4 +132,37 @@ class PlayPartyMasterFragment : Fragment() {
 
     }
 
+}
+private class ServerThread(val socket: Socket) : Thread() {
+    override fun run() {
+        try {
+            val input = socket.getInputStream()
+            val output = socket.getOutputStream()
+
+            val buffer = ByteArray(1024)
+            var bytes = input.read(buffer)
+            val message = String(buffer, 0, bytes)
+
+            processMessage(message, output)
+
+            socket.close()
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun processMessage(message: String, output: OutputStream) {
+        when (message) {
+            "hola" -> {
+                output.write("hola".toByteArray())
+            }
+            "adios" -> {
+                output.write("adios".toByteArray())
+            }
+            else -> {
+                output.write("no entiendo".toByteArray())
+            }
+        }
+    }
 }

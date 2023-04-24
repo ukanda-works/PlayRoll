@@ -4,11 +4,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import es.ukanda.playroll.databinding.ItemPartidaRvBinding
+import es.ukanda.playroll.entyties.PartieEntities.Party
 import es.ukanda.playroll.ui.ViewHolder.PartyViewHolder
+import java.net.InetAddress
 
-class PartyAdapter(val parties: List<String>): RecyclerView.Adapter<PartyViewHolder>() {
+class PartyAdapter(val parties: Map<InetAddress, Party>): RecyclerView.Adapter<PartyViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PartyViewHolder {
-    val binding = ItemPartidaRvBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemPartidaRvBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return PartyViewHolder(binding)
     }
 
@@ -18,8 +20,10 @@ class PartyAdapter(val parties: List<String>): RecyclerView.Adapter<PartyViewHol
 
     override fun onBindViewHolder(holder: PartyViewHolder, position: Int) {
         with(holder){
-            val item = parties[position]
-            binding.tvNombrePartida.text = item
+            val ip = parties.keys.elementAt(position)
+            val party = parties[ip]
+            binding.tvNombrePartida.text = party?.partyName
+            binding.tvNombreCreador.text = ip.toString()
         }
     }
 }

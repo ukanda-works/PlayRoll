@@ -39,6 +39,10 @@ class CharacterCreatorFragment : Fragment() {
             addCharacter()
             findNavController().navigate(R.id.action_nav_CharacterCreator_to_nav_home)
         }
+
+        binding.btnCamera.setOnClickListener {
+            findNavController().navigate(R.id.action_nav_CharacterCreator_to_nav_camera)
+        }
     }
 
     private fun addCharacter() {

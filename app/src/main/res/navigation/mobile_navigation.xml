@@ -113,6 +113,9 @@
         <action
             android:id="@+id/action_nav_CharacterCreator_to_nav_home"
             app:destination="@id/nav_home" />
+        <action
+            android:id="@+id/action_nav_CharacterCreator_to_nav_camera"
+            app:destination="@id/nav_camera" />
     </fragment>
 
     <fragment
@@ -127,5 +130,25 @@
         android:name="es.ukanda.playroll.ui.fragment.PlayPartyMasterFragment"
         android:label="Play party MASTER"
         tools:layout="@layout/fragment_play_party" >
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_camera"
+        android:name="es.ukanda.playroll.ui.fragment.CameraFragment"
+        android:label="Create Character"
+        tools:layout="@layout/fragment_camera" >
+        <action
+            android:id="@+id/action_nav_camera_to_nav_camera_result"
+            app:destination="@id/nav_camera_result" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_camera_result"
+        android:name="es.ukanda.playroll.ui.fragment.ResultCameraFragment"
+        android:label="Datos recogidos"
+        tools:layout="@layout/fragment_result_camera" >
+        <action
+            android:id="@+id/action_nav_camera_result_to_nav_CharacterCreator"
+            app:destination="@id/nav_CharacterCreator" />
     </fragment>
 </navigation>
