@@ -1,11 +1,11 @@
 package es.ukanda.playroll.ui.activity
 
+import android.app.ProgressDialog
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Handler
 import android.view.Menu
-import android.view.ViewGroup
-import android.widget.Button
 import android.widget.Toast
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -14,9 +14,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.analytics.FirebaseAnalytics
 import es.ukanda.playroll.R
-import es.ukanda.playroll.database.db.PartyDb
 import es.ukanda.playroll.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -24,21 +22,49 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
 
+    companion object{
+        val permisionList = arrayOf(
+            android.Manifest.permission.ACCESS_WIFI_STATE,
+            android.Manifest.permission.INTERNET,
+            android.Manifest.permission.CAMERA
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Thread.sleep(2000)
-        setTheme(R.style.Theme_PlayRoll_NoActionBar)
         super.onCreate(savedInstanceState)
+        // inflar el layout de la actividad
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val progressDialog = ProgressDialog(this)
+        progressDialog.setMessage("Cargando...")
+        progressDialog.setCancelable(false)
+        progressDialog.show()
+
+        Handler().postDelayed({
+            checkPermissions()
+            //se chequea si el usuario esta logeado
+            //se chequean los permisos
+
+            progressDialog.dismiss()
+        }, 1000)
         slidebar()
     }
 
-    override fun onStart() {
-        super.onStart()
+    private fun checkPermissions() {
+        val requestCode = 1
+        val permissionsToRequest = mutableListOf<String>()
 
+        for (permission in permisionList) {
+            if (checkSelfPermission(permission) == PackageManager.PERMISSION_DENIED) {
+                permissionsToRequest.add(permission)
+            }
+        }
+
+        if (permissionsToRequest.isNotEmpty()) {
+            val permissionsArray = permissionsToRequest.toTypedArray()
+            requestPermissions(permissionsArray, requestCode)
+        }
     }
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main, menu)
         return true

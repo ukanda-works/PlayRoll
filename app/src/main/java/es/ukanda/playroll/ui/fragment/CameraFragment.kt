@@ -2,19 +2,23 @@ package es.ukanda.playroll.ui.fragment
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
 import android.hardware.Camera
+import android.net.Uri
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.google.mlkit.vision.common.InputImage
 import es.ukanda.playroll.R
 import es.ukanda.playroll.databinding.FragmentCameraBinding
 import es.ukanda.playroll.ui.ViewModel.CameraViewModel
+import java.io.File
 import java.io.IOException
 
 
@@ -36,9 +40,11 @@ class CameraFragment : Fragment(), SurfaceHolder.Callback, Camera.PictureCallbac
             val bundle = Bundle()
             bundle.putByteArray("image", cameraViewModel.getByteArray())
             bundle.putSerializable("personaje", cameraViewModel.foundText.value as java.io.Serializable)
-            bundle.putString("texto", cameraViewModel.textoPrueva.value?: "No se ha encontrado texto")
             findNavController().navigate(R.id.action_nav_camera_to_nav_camera_result, bundle)
         }
+    }
+    val infoObserver = Observer<String> { info ->
+        Toast.makeText(context, info, Toast.LENGTH_SHORT).show()
     }
 
     override fun onCreateView(
@@ -73,6 +79,7 @@ class CameraFragment : Fragment(), SurfaceHolder.Callback, Camera.PictureCallbac
     public override fun onResume() {
         super.onResume()
         cameraViewModel.procesed.observe(viewLifecycleOwner, procesedObserver)
+        cameraViewModel.info.observe(viewLifecycleOwner, infoObserver)
     }
 
     override fun onDestroy() {
@@ -112,18 +119,18 @@ class CameraFragment : Fragment(), SurfaceHolder.Callback, Camera.PictureCallbac
         if (checkPermissions()) {
             camera = Camera.open()
 
-        try {
-            val parameters = camera!!.parameters
-            val sizes = parameters.supportedPictureSizes
-            val maxSize = sizes[sizes.size - 1]
-            parameters.setPictureSize(maxSize.width, maxSize.height)
-            camera!!.parameters = parameters
-            camera!!.setPreviewDisplay(holder)
-            camera!!.setDisplayOrientation(90)
+            try {
+                val parameters = camera!!.parameters
+                val sizes = parameters.supportedPictureSizes
+                val maxSize = sizes[0]
+                parameters.setPictureSize(maxSize.width, maxSize.height)
+                camera!!.parameters = parameters
+                camera!!.setPreviewDisplay(holder)
+                camera!!.setDisplayOrientation(90)
 
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
         } else {
             requestPermissions(CAMERA_PERMISSIONS, 10)
         }
@@ -141,9 +148,14 @@ class CameraFragment : Fragment(), SurfaceHolder.Callback, Camera.PictureCallbac
     }
 
     override fun onPictureTaken(data: ByteArray?, camera: Camera?) {
-        val bipMap = BitmapFactory.decodeByteArray(data, 0, data!!.size)
-        cameraViewModel.setPicture(bipMap)
-        Toast.makeText(context, "Foto tomada", Toast.LENGTH_SHORT).show()
+        try {
+            val bipMap = BitmapFactory.decodeByteArray(data, 0, data!!.size)
+            cameraViewModel.setPicture(bipMap)
+            Toast.makeText(context, "Foto tomada calidad: ${bipMap.height} x ${bipMap.width}", Toast.LENGTH_SHORT).show()
+
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
     }
 
 
