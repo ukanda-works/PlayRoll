@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -20,9 +21,13 @@ class ConexionViewModel(): ViewModel() {
     private val _mensajeList = MutableLiveData<String>()
     val mensajeList: LiveData<String> get() = _mensajeList
 
+    private val _targetIp = MutableLiveData<InetAddress>()
+    val targetIp: LiveData<InetAddress> get() = _targetIp
+
     lateinit var socket: Socket
 
     init {
+
 
     }
 
@@ -34,7 +39,8 @@ class ConexionViewModel(): ViewModel() {
                 val outputStream = socket.getOutputStream()
                 val user = FirebaseAuth.getInstance().currentUser
                 val userName = user?.displayName ?: "Anonimo"
-                outputStream.write(userName.toByteArray())
+                val sendmensaje = listOf("peticion" to "join","nombre" to userName )
+                outputStream.write(Gson().toJson(sendmensaje).toByteArray())
 
                 val inputStream = socket.getInputStream()
                 val buffer = ByteArray(1024)
@@ -54,6 +60,10 @@ class ConexionViewModel(): ViewModel() {
                 e.printStackTrace()
             }
         }
+    }
+
+    fun setTargetIp(ip: InetAddress){
+        _targetIp.postValue(ip)
     }
 
     enum class enunEstadoConexion{

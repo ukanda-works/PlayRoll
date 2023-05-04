@@ -1,5 +1,6 @@
 package es.ukanda.playroll.ui.fragment
 
+import android.app.AlertDialog
 import android.content.Context
 import android.net.wifi.WifiManager
 import android.os.Bundle
@@ -8,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import com.google.gson.Gson
 import es.ukanda.playroll.database.db.PartyDb
 import es.ukanda.playroll.databinding.FragmentCharacterCreatorBinding
 import es.ukanda.playroll.databinding.FragmentPlayPartyMasterBinding
@@ -46,6 +48,7 @@ class PlayPartyMasterFragment : Fragment() {
         val partyId = arguments?.getInt("id") ?: 0
         setParty(partyId)
         getIp()
+
     }
 
     private fun setParty(partyId: Int) {
@@ -54,33 +57,36 @@ class PlayPartyMasterFragment : Fragment() {
                 party = Party(0,"")
             }else{
                 party = PartyDb.getDatabase(requireContext()).partyDao().getParty(partyId)
-                starServer()
+                starServerUdp()
+                starServerTcp()
             }
 
         }
     }
 
-    private fun starServer(){
+    private fun starServerUdp(){
         CoroutineScope(Dispatchers.IO).launch {
-
             try {
                 val socket = DatagramSocket(5689)
                 val buffer = ByteArray(1024)
                 while (true) {
                     val packet = DatagramPacket(buffer, buffer.size)
-                    activity?.runOnUiThread {
-                    Toast.makeText(requireContext(), "Esperando", Toast.LENGTH_SHORT).show()
+                    CoroutineScope(Dispatchers.Main).launch {
+                        Toast.makeText(requireContext(), "Esperando", Toast.LENGTH_SHORT).show()
                     }
                     socket.receive(packet)
+                    CoroutineScope(Dispatchers.Main).launch {
+                        Toast.makeText(requireContext(), "Recibido", Toast.LENGTH_SHORT).show()
+                    }
                     //muestro el mensaje recibido
                     val message = String(packet.data, 0, packet.length)
-                    activity?.runOnUiThread {
-                        Toast.makeText(requireContext(), "Mensaje recibido: $message", Toast.LENGTH_SHORT).show()
+                    CoroutineScope(Dispatchers.Main).launch {
+                        Toast.makeText(requireContext(), "Mensaje: $message", Toast.LENGTH_SHORT).show()
                     }
                     sleep(1000)
                     val address = packet.address
                     val data = party.toJson().toByteArray()
-                    val packet2 = DatagramPacket(data, data.size, address, 5689)
+                    val packet2 = DatagramPacket(data, data.size, address, 5688)
                     socket.send(packet2)
                     activity?.runOnUiThread {
                         Toast.makeText(requireContext(), "Respondiendo", Toast.LENGTH_SHORT).show()
@@ -88,28 +94,33 @@ class PlayPartyMasterFragment : Fragment() {
                 }
             }catch (e: Exception) {
                 e.printStackTrace()
-                activity?.runOnUiThread {
+                CoroutineScope(Dispatchers.Main).launch {
                     Toast.makeText(requireContext(), "Error:${e.message}", Toast.LENGTH_SHORT).show()
                 }
             }
 
         }
-        starServerTcp()
+
     }
 
     private fun starServerTcp() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val serverSocket = ServerSocket(5690)
+                CoroutineScope(Dispatchers.Main).launch {
+                    Toast.makeText(requireContext(), "Esperando jugadores", Toast.LENGTH_SHORT).show()
+                }
                 while (true) {
                     val socket = serverSocket.accept()
+                    val serverThread = ServerThread(socket, this@PlayPartyMasterFragment)
+                    serverThread.start()
 
                 }
             }catch (e: Exception) {
                 e.printStackTrace()
-                activity?.runOnUiThread {
-                    Toast.makeText(requireContext(), "Error:${e.message}", Toast.LENGTH_SHORT).show()
-                }
+               CoroutineScope(Dispatchers.Main).launch {
+                   Toast.makeText(requireContext(), "Error:${e.message}", Toast.LENGTH_SHORT).show()
+               }
             }
         }
     }
@@ -132,8 +143,24 @@ class PlayPartyMasterFragment : Fragment() {
 
     }
 
+    fun showPetition(message: String, title:String): Boolean{
+        var result= false
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle(title)
+        builder.setMessage(message)
+        builder.setPositiveButton("Aceptar") { _, _ ->
+            result = true
+        }
+        builder.setNegativeButton("Rechazar") { _, _ ->
+            result = false
+        }
+        val dialog = builder.create()
+        dialog.show()
+        return result
+    }
+
 }
-private class ServerThread(val socket: Socket) : Thread() {
+private class ServerThread(val socket: Socket, val fragment: PlayPartyMasterFragment) : Thread() {
     override fun run() {
         try {
             val input = socket.getInputStream()
@@ -153,9 +180,17 @@ private class ServerThread(val socket: Socket) : Thread() {
     }
 
     private fun processMessage(message: String, output: OutputStream) {
-        when (message) {
-            "hola" -> {
-                output.write("hola".toByteArray())
+        val decodedMensaje = Gson().fromJson(message, List::class.java) as List<Map<String, String>>
+        val peticion = decodedMensaje[0]["peticion"]
+
+        when (peticion) {
+            "join" -> {
+                val nombre = decodedMensaje[1]["nombre"]
+                if(fragment.showPetition("El usuario $nombre quiere unirse a la partida", "Petición de unión")){
+                    output.write("ok".toByteArray())
+                }else{
+                    output.write("no".toByteArray())
+                }
             }
             "adios" -> {
                 output.write("adios".toByteArray())
