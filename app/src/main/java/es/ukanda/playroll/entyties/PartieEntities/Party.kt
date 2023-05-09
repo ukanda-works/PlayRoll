@@ -3,17 +3,16 @@ package es.ukanda.playroll.entyties.PartieEntities
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.Relation
+import com.google.gson.Gson
 
 @Entity(tableName = "parties")
 data class Party(
-    @PrimaryKey val partyID: Int,
+    @PrimaryKey(autoGenerate = true) val partyID: Int=0,
     val partyName: String,
-    val partyDescription: String,
-    @Relation(
-        parentColumn = "partyID",
-        entityColumn = "partyID"
-    )
-    val characterList: List<CharacterEntity>,
+    val partyDescription: String? = null,
 ) {
-
+    fun toJson(): String {
+        val gson = Gson()
+        return gson.toJson(this)
+    }
 }

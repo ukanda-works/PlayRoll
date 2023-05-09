@@ -8,13 +8,14 @@ import es.ukanda.playroll.entyties.PartieEntities.CharacterEntity
 interface PartyDao {
     @Transaction
     @Query("SELECT * FROM parties")
-    fun getAllParties(): List<Party>
+    fun getAllParties(): MutableList<Party>
+
+    @Transaction
+    @Query("SELECT * FROM parties WHERE partyID = :id")
+    fun getParty(id: Int): Party
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertParty(party: Party)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertCharacter(character: CharacterEntity)
 
     @Query("SELECT * FROM characters WHERE partyID = :partyId")
     fun getCharactersForParty(partyId: Int): List<CharacterEntity>

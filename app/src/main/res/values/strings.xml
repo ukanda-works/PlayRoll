@@ -10,7 +10,6 @@
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="Email">Email</string>
     <string name="Password">Contraseña</string>
@@ -23,4 +22,26 @@
     <string name="crate_party">Crear partida</string>
     <string name="join_party">Unirse a una partida</string>
     <string name="add_character">Crear personaje</string>
+    <string name="Nombre">nombre</string>
+    <string name="Descripcion">Descripcion</string>
+    <string name="Crear">Crear</string>
+    <string name="añadir_personaje">Añadir personaje</string>
+    <string name="local">local</string>
+    <string name="online">online</string>
+    <string name="nombre_partida">Nombre partida</string>
+    <string name="creador">creador</string>
+    <string name="Partida">Partida</string>
+    <string name="descripcion">Descripcion</string>
+    <string name="compartir_local">compartir local</string>
+    <string name="compartir_online">compartir online</string>
+    <string name="editar">Editar</string>
+    <string name="title_activity_load">LoadActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 </resources>

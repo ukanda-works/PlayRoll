@@ -18,7 +18,7 @@
         <item name="borderWidth">1dp</item>
     </style>
 
-    <style name="SplashTheme">
+    <!-- <style name="SplashTheme">
         <item name="android:windowBackground">@drawable/splashscreen</item>
-    </style>
+    </style> -->
 </resources>
