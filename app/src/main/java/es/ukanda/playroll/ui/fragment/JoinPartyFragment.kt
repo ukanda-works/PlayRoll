@@ -74,10 +74,7 @@ class JoinPartyFragment : Fragment() {
                 Toast.makeText(context, "Error al buscar partidas", Toast.LENGTH_SHORT).show()
             }
         }
-        binding.rbOnline.setOnClickListener {
-            binding.rbLocal.isChecked = false
-            //pufff ya vere como hago para esto dios mio una api lo mas seguro
-        }
+
     }
 
     private fun recicleViewInit() {

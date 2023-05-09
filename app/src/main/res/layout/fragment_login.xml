@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:theme="@style/AppTheme.NoActionBar"
+    style="@style/mainBackground"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.fragment.LoginFragment">
 
@@ -52,16 +54,16 @@
 
 
     <Button
-        style="@style/LogButton"
         android:id="@+id/btGoogleLog"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/LogButton"
+        android:layout_width="228dp"
+        android:layout_height="80dp"
+        android:drawableLeft="@drawable/googleg_standard_color_18"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:text="@string/SignIn_google"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btRegistrarseLog"
-        android:text="@string/SignIn_google"
-        android:drawableLeft="@drawable/googleg_standard_color_18"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp" />
+        app:layout_constraintTop_toBottomOf="@+id/btRegistrarseLog" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

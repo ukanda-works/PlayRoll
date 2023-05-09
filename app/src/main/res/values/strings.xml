@@ -44,4 +44,9 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="buscar_partida">Buscar partida</string>
+    <string name="list_characters">Lista de personajes</string>
+    <string name="party_list">Lista de partidas</string>
+    <string name="action_about">Acerca de</string>
+    <string name="action_help">ayuda</string>
 </resources>

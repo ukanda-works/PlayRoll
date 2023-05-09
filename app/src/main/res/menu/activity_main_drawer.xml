@@ -6,8 +6,15 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:icon="@drawable/ic_menu_camera"
             android:title="@string/menu_home" />
+        <item
+            android:id="@+id/nav_characterList"
+            android:title="@string/list_characters" />
+        <item
+            android:id="@+id/nav_partyList"
+            android:title="@string/party_list" />
+
+        <!--TODO hacer que esto sea uno y se vaya alternando-->
         <item
             android:id="@+id/miSignOut"
             android:title="@string/SignOut" />

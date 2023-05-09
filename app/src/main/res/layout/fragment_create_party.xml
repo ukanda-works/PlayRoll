@@ -5,6 +5,8 @@
     android:id="@+id/frameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:theme="@style/AppTheme.NoActionBar"
+    style="@style/mainBackground"
     tools:context=".ui.fragment.CreatePartyFragment" >
 
     <TextView
