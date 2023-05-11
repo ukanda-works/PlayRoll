@@ -15,9 +15,9 @@ interface CharacterDao {
     @Query("SELECT * FROM characters")
     fun getAllCharacters(): List<CharacterEntity>
 
-    @Query("SELECT * FROM characters WHERE partyID = :partyId")
+    /*@Query("SELECT * FROM characters WHERE partyID = :partyId")
     fun getCharactersForParty(partyId: Int): MutableList<CharacterEntity>
 
     @Query("SELECT * FROM parties WHERE partyID = (SELECT partyID FROM characters WHERE characterID = :characterId)")
-    fun getPartyForCharacter(characterId: Int): Party?
+    fun getPartyForCharacter(characterId: Int): Party?*/
 }

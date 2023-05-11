@@ -1,6 +1,7 @@
 package es.ukanda.playroll.database.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import es.ukanda.playroll.entyties.SystemClases.Race
@@ -8,7 +9,6 @@ import es.ukanda.playroll.entyties.SystemClases.Race
 @Dao
 interface RaceDao {
 
-    //getAll
     @Query("SELECT * FROM Race")
     fun getAllRaces(): List<Race>
 
@@ -17,5 +17,8 @@ interface RaceDao {
 
     @Insert
     fun insertAllRaces(races : List<Race>)
+
+    @Delete
+    fun deleteRace(race: Race)
 
 }

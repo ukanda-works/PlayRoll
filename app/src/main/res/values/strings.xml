@@ -49,4 +49,9 @@
     <string name="party_list">Lista de partidas</string>
     <string name="action_about">Acerca de</string>
     <string name="action_help">ayuda</string>
+    <string name="siguiente">Siguiente</string>
+    <string name="experiencia">Experiencia</string>
+    <string name="salvacion">Salvacion</string>
+    <string name="skills">Habilidades</string>
+    <string name="acountInfo">Cuenta</string>
 </resources>

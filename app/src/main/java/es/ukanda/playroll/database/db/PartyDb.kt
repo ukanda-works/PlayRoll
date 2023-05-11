@@ -15,7 +15,7 @@ import es.ukanda.playroll.entyties.PartieEntities.Party
 
 @Database(
     entities = [CharacterEntity ::class, Party::class],
-    version = 3,
+    version = 4,
 )
 @TypeConverters(Converters::class,HashMapConverter::class,IntHashMapConverter::class)
 abstract class PartyDb: RoomDatabase() {

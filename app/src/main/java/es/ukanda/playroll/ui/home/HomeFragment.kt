@@ -89,7 +89,7 @@ class HomeFragment : Fragment() {
                 val party = Party(0, "No hay partidas","")
                 partyList.add(0, party)
             if(characterList.isEmpty()){
-                val character = CharacterEntity(0, "No hay personajes", "",0)
+                val character = CharacterEntity()
                 characterList += character
             }
             //se crean los adaptadores

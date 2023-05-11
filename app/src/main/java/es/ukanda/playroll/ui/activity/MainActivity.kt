@@ -1,6 +1,8 @@
 package es.ukanda.playroll.ui.activity
 
+import android.app.AlertDialog
 import android.app.ProgressDialog
+import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
@@ -14,8 +16,11 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavController
+import com.google.firebase.auth.FirebaseAuth
 import es.ukanda.playroll.R
 import es.ukanda.playroll.databinding.ActivityMainBinding
+import es.ukanda.playroll.pruebas.LoadData
 
 class MainActivity : AppCompatActivity() {
 
@@ -48,6 +53,12 @@ class MainActivity : AppCompatActivity() {
             progressDialog.dismiss()
         }, 1000)
         slidebar()
+        loadBaseData()
+    }
+
+    private fun loadBaseData() {
+        val loadData = LoadData(this)
+        loadData.load()
     }
 
     private fun checkPermissions() {
@@ -82,15 +93,42 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         val menu = navView.menu
         menu.findItem(R.id.miSignOut).setOnMenuItemClickListener {
-            Toast.makeText(this, "cerrar sesion", Toast.LENGTH_SHORT).show()
-            navController.navigate(R.id.action_nav_home_to_nav_sign_off)
+            showSignOutConfirmationDialog(navController)
             true
         }
-        menu.findItem(R.id.miSignIn).setOnMenuItemClickListener {
-            Toast.makeText(this, "iniciar sesion", Toast.LENGTH_SHORT).show()
-            navController.navigate(R.id.action_nav_home_to_nav_login)
+
+        menu.findItem(R.id.nav_acountInfo).setOnMenuItemClickListener {
+            navController.navigate(R.id.action_nav_home_to_nav_acountInfo)
             true
         }
+
+        binding.appBarMain.toolbar.setOnMenuItemClickListener{menuItem ->
+            when (menuItem.itemId) {
+                R.id.action_settings -> {
+                    // Navegar al fragment de configuración
+                    navController.navigate(R.id.action_nav_home_to_nav_settings)
+                    drawerLayout.closeDrawers()
+                    true
+                }
+                R.id.action_about -> {
+                    // Navegar al fragment de acerca de
+                    navController.navigate(R.id.action_nav_home_to_nav_about)
+                    drawerLayout.closeDrawers()
+                    true
+                }
+                R.id.action_help -> {
+                    // Navegar al fragment de ayuda
+                    navController.navigate(R.id.action_nav_home_to_nav_help)
+                    drawerLayout.closeDrawers()
+                    true
+                }
+                else -> false
+            }
+        }
+
+
+
+
 
         appBarConfiguration = AppBarConfiguration(
             setOf(
@@ -100,5 +138,34 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
     }
+    private fun showSignOutConfirmationDialog(navController: NavController) {
+        AlertDialog.Builder(this)
+            .setTitle("Cerrar sesión")
+            .setMessage("¿Estás seguro de que quieres cerrar la sesión?")
+            .setPositiveButton("Sí") { dialog: DialogInterface, _: Int ->
+                signOutAndNavigateToLogin(navController)
+                dialog.dismiss()
+            }
+            .setNegativeButton("No") { dialog: DialogInterface, _: Int ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun signOutAndNavigateToLogin(navController: NavController) {
+        val firebaseAuth = FirebaseAuth.getInstance()
+        val currentUser = firebaseAuth.currentUser
+
+        if (currentUser != null) {
+            firebaseAuth.signOut()
+            val prefs = getSharedPreferences(getString(R.string.prefs_file), 0).edit()
+            prefs.clear()
+            prefs.apply()
+            Toast.makeText(this, "Sesión cerrada", Toast.LENGTH_SHORT).show()
+        }
+
+        navController.navigate(R.id.action_nav_home_to_nav_login)
+    }
+
 
 }

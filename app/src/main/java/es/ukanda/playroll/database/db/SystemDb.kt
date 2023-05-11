@@ -12,7 +12,7 @@ import es.ukanda.playroll.entyties.SystemClases.Rasgos
 
 @Database(
     entities = [Rasgos::class, Race ::class, GameClas::class],
-    version = 2
+    version = 3
 )
 @TypeConverters(Converters::class,HashMapConverter::class,IntHashMapConverter::class)
 abstract class SystemDb: RoomDatabase() {
@@ -33,7 +33,7 @@ abstract class SystemDb: RoomDatabase() {
                     context.applicationContext,
                     SystemDb::class.java,
                     "my_database"
-                ).fallbackToDestructiveMigrationOnDowngrade().build()
+                ).fallbackToDestructiveMigration().build()
                 INSTANCE = instance
                 return instance
             }

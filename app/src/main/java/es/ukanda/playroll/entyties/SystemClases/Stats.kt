@@ -9,7 +9,6 @@ data class Stats(
     var hitPoints :Int,
     var hitPointsMax :Int,
     //estadisticas relacionadas a atributos y demas
-    var skills :HashMap<String, Int>,
     var savingThrows :HashMap<String, Int>,
     var characteristics :HashMap<String, Int>,
 
@@ -18,4 +17,6 @@ data class Stats(
 ) {
     //Todo: metodo para comprobar skills, savingThrows y characteristics al crear el objeto
     //Todo: hacer las estadisticas
+    //metodo para calcular las skills
+
 }
