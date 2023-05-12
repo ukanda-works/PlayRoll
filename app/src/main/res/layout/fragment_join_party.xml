@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/frameLayout2"
     android:layout_width="match_parent"
+    android:theme="@style/AppTheme.NoActionBar"
+    style="@style/mainBackground"
     android:layout_height="match_parent"
     tools:context=".ui.fragment.JoinPartyFragment" >
 
@@ -14,30 +16,6 @@
         android:text="Ip"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <RadioGroup
-        android:id="@+id/rbTipoConexion"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:baselineAligned="false"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <RadioButton
-            android:id="@+id/rbLocal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/local" />
-
-        <RadioButton
-            android:id="@+id/rbOnline"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/online"
-            tools:ignore="TextSizeCheck" />
-    </RadioGroup>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvPartidasAbiertas"
@@ -55,8 +33,9 @@
         android:id="@+id/btBuscarLocal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/local"
-        app:layout_constraintEnd_toStartOf="@+id/rbTipoConexion"
+        android:layout_marginTop="36dp"
+        android:text="@string/buscar_partida"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvIp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

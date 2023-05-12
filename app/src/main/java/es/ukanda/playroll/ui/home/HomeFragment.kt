@@ -1,5 +1,6 @@
 package es.ukanda.playroll.ui.home
 
+import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.auth.FirebaseAuth
 import es.ukanda.playroll.R
 import es.ukanda.playroll.database.db.PartyDb
 import es.ukanda.playroll.databinding.FragmentHomeBinding
@@ -38,8 +40,29 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        animatedBackground()
         spiners()
         buttons()
+    }
+
+    private fun animatedBackground() {
+        val displayMetrics = resources.displayMetrics
+        val screenWidth = displayMetrics.widthPixels.toFloat()
+        val animator1y = ObjectAnimator.ofFloat(binding.homeAnimatedCloud2, "translationY", 0f, 100f)
+        val animator1 = ObjectAnimator.ofFloat(binding.homeAnimatedCloud2, "translationX", 0f, screenWidth*2)
+        animator1y.duration = 40000
+        animator1.duration = 40000
+        animator1y.repeatCount = ObjectAnimator.INFINITE
+        animator1.repeatCount = ObjectAnimator.INFINITE
+        animator1y.repeatMode = ObjectAnimator.REVERSE
+        animator1.repeatMode = ObjectAnimator.REVERSE
+        animator1y.start()
+        animator1.start()
+        val animator2 = ObjectAnimator.ofFloat(binding.homeAnimatedCloud1, "translationX", 0f, -(screenWidth*2))
+        animator2.duration = 25000
+        animator2.repeatCount = ObjectAnimator.INFINITE
+        animator2.repeatMode = ObjectAnimator.REVERSE
+        animator2.start()
     }
 
     private fun buttons() {
@@ -66,7 +89,7 @@ class HomeFragment : Fragment() {
                 val party = Party(0, "No hay partidas","")
                 partyList.add(0, party)
             if(characterList.isEmpty()){
-                val character = CharacterEntity(0, "No hay personajes", "",0)
+                val character = CharacterEntity()
                 characterList += character
             }
             //se crean los adaptadores
@@ -94,7 +117,6 @@ class HomeFragment : Fragment() {
                 val party = partyList[position]
                     val bundle = Bundle()
                     bundle.putInt("id", party.partyID)
-                    Toast.makeText(context, "Seleccionado: ${position}, party id: ${party.partyID}", Toast.LENGTH_SHORT).show()
                     if(party.partyID != 0){
                         findNavController().navigate(R.id.action_nav_home_to_nav_PartyManager, bundle)
                     }
@@ -125,34 +147,26 @@ class HomeFragment : Fragment() {
 
 
         }
-
-
     }
 
     override fun onResume() {
         super.onResume()
-        session()
-
-    }
-
-    fun session(){
-        val pref = activity?.getSharedPreferences(getString(R.string.prefs_file), 0)
-        val email = pref?.getString("email", null)
-        val provider = pref?.getString("provider", null)
-
-        if (email != null && provider != null) {
-            Toast.makeText(context, "Sesion identificada, bienvenido ${email}", Toast.LENGTH_SHORT).show()
-        }else{
+        if (!isFirebaseUserLoggedIn()) {
             Toast.makeText(context, "Necesitas iniciar sesion", Toast.LENGTH_SHORT).show()
             findNavController().navigate(R.id.action_nav_home_to_nav_login)
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 
+    fun isFirebaseUserLoggedIn(): Boolean {
+        val user = FirebaseAuth.getInstance().currentUser
+        return user != null
+    }
 
 
 }

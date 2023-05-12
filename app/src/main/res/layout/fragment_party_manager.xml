@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/frameLayout3"
     android:layout_width="match_parent"
+    android:theme="@style/AppTheme.NoActionBar"
+    style="@style/mainBackground"
     android:layout_height="match_parent"
     tools:context=".ui.fragment.PartyManagerFragment" >
 
@@ -42,18 +44,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="70dp"
-        android:layout_marginEnd="32dp"
         android:text="@string/compartir_local"
-        app:layout_constraintEnd_toStartOf="@+id/btCompartiOnline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvDescripcionManager" />
 
     <Button
         android:id="@+id/btCompartiOnline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
+        android:layout_marginTop="24dp"
         android:text="@string/compartir_online"
-        app:layout_constraintBaseline_toBaselineOf="@+id/btCompartirLocal"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btCompartirLocal" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

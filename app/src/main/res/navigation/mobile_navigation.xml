@@ -14,9 +14,6 @@
             android:id="@+id/action_nav_home_to_nav_login"
             app:destination="@id/nav_login" />
         <action
-            android:id="@+id/action_nav_home_to_nav_sign_off"
-            app:destination="@id/nav_sign_off" />
-        <action
             android:id="@+id/action_nav_home_to_nav_PartyCreator"
             app:destination="@id/nav_PartyCreator" />
         <action
@@ -31,6 +28,18 @@
         <action
             android:id="@+id/action_nav_home_to_nav_CharacterInfo"
             app:destination="@id/nav_CharacterInfo" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_acountInfo"
+            app:destination="@id/nav_acountInfo" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_settings"
+            app:destination="@id/nav_settings" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_help"
+            app:destination="@id/nav_help" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_about"
+            app:destination="@id/nav_about" />
     </fragment>
 
     <fragment
@@ -54,16 +63,6 @@
         <action
             android:id="@+id/action_nav_register_to_nav_home"
             app:destination="@id/nav_home" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/nav_sign_off"
-        android:name="es.ukanda.playroll.ui.fragment.SignOffFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_sign_off" >
-        <action
-            android:id="@+id/action_nav_sign_off_to_nav_login"
-            app:destination="@id/nav_login" />
     </fragment>
 
     <fragment
@@ -150,5 +149,33 @@
         <action
             android:id="@+id/action_nav_camera_result_to_nav_CharacterCreator"
             app:destination="@id/nav_CharacterCreator" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_acountInfo"
+        android:name="es.ukanda.playroll.ui.fragment.AcountFragment"
+        android:label="acount"
+        tools:layout="@layout/fragment_acount" >
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_about"
+        android:name="es.ukanda.playroll.ui.fragment.AboutFragment"
+        android:label="Acerca de"
+        tools:layout="@layout/fragment_about" >
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="es.ukanda.playroll.ui.fragment.SetingsFragment"
+        android:label="Settings"
+        tools:layout="@layout/fragment_setings" >
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_help"
+        android:name="es.ukanda.playroll.ui.fragment.HelpFragment"
+        android:label="Ayuda"
+        tools:layout="@layout/fragment_help" >
     </fragment>
 </navigation>

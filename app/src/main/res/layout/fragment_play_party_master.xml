@@ -5,9 +5,10 @@
     android:id="@+id/frameLayout4"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:theme="@style/AppTheme.NoActionBar"
+    style="@style/mainBackground"
     tools:context=".ui.fragment.PlayPartyMasterFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
         android:id="@+id/tvIpMaster"
         android:layout_width="0dp"

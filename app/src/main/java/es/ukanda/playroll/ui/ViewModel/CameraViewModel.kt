@@ -76,15 +76,17 @@ class CameraViewModel: ViewModel() {
         }
     }
 
+    /**
+     * Esta se utilizara para reconocer la clase, el nivel, transfondp, raza y alineamiento
+     */
     private suspend fun  procesarCabeceraDer() {
         try {
             var clase = ""
             var level = ""
             var transfondo = ""
-            var playerName = ""
             var race = ""
             var alineamiento = ""
-            var exp = ""
+
             var textoTotal = ""
 
             val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
@@ -99,11 +101,34 @@ class CameraViewModel: ViewModel() {
             }
             valores.add("Descripcion" to textoTotal)
 
+            //una vez reconocido se compara con los valores de la base de datos
+            //TODO: hacer la comparacion con la base de datos
+            clase = findMostSimilarElement(listOf("Barbaro","Bardo","Clerigo","Druida","Guerrero","Mago","Monje","Paladin","Picaro","Hechicero","Brujo"),clase)!!
+            valores.add("clase" to clase)
+            transfondo = findMostSimilarElement(listOf("Acolito","Criminal","Artista","Erudito","Heroe del Pueblo","Marinero","Soldado","Urbano"),transfondo)!!
+            valores.add("transfondo" to transfondo)
+            //race = findMostSimilarElement(listOf())
+            valores.add("race" to race)
+            alineamiento = findMostSimilarElement(listOf("Legal bueno","Neutral bueno","Caotico bueno","Legal neutral","Neutral","Caotico neutral","Legal malo","Neutral malo","Caotico malo"),alineamiento)!!
+            valores.add("alineamiento" to alineamiento)
+            valores.add("level" to level)
+            //y se asigna el valor correspondiente
+
         }catch (e : Exception){
             e.printStackTrace()
         }
     }
 
+    /**
+     * Esta se utilizara para reconocer fuerza, destreza, constitucion, inteligencia, sabiduria y carisma
+     */
+    private suspend fun procesarEstadisticas(){
+
+    }
+
+    /**
+     * Esta se utilizara para reconocer el nombre del personaje
+     */
     private suspend fun procesarCabeceraIzq(){
             try {
                 val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
@@ -149,4 +174,48 @@ class CameraViewModel: ViewModel() {
         matrix.postRotate(angle)
         return Bitmap.createBitmap(source, 0, 0, source.width, source.height, matrix, true)
     }
+
+    fun findMostSimilarElement(list: List<String>, text: String): String? {
+        var mostSimilarElement: String? = null
+        var minDistance = Int.MAX_VALUE
+
+        for (element in list) {
+            val distance = LevenshteinDistance(element, text)
+            if (distance < minDistance) {
+                minDistance = distance
+                mostSimilarElement = element
+            }
+        }
+
+        return mostSimilarElement
+    }
+
+    fun LevenshteinDistance(s1: String, s2: String): Int {
+        val m = s1.length
+        val n = s2.length
+        val dp = Array(m + 1) { IntArray(n + 1) }
+
+        for (i in 0..m) {
+            dp[i][0] = i
+        }
+
+        for (j in 0..n) {
+            dp[0][j] = j
+        }
+
+        for (i in 1..m) {
+            for (j in 1..n) {
+                val cost = if (s1[i - 1] == s2[j - 1]) 0 else 1
+                dp[i][j] = minOf(
+                    dp[i - 1][j] + 1,
+                    dp[i][j - 1] + 1,
+                    dp[i - 1][j - 1] + cost
+                )
+            }
+        }
+
+        return dp[m][n]
+    }
+
+
 }

@@ -36,7 +36,10 @@ class SignOffFragment : Fragment() {
 
     private fun setup() {
         val pref = activity?.getSharedPreferences(getString(R.string.prefs_file), 0)
+        println("pref:")
+        println(pref?.getString("email", "no hay email"))
         val email = pref?.getString("email", null)
+
         val provider = pref?.getString("provider", null)
         binding.btSignOut.setOnClickListener {
             if (email != null && provider != null) {
@@ -49,7 +52,6 @@ class SignOffFragment : Fragment() {
                 Toast.makeText(context, "Necesitas iniciar sesion", Toast.LENGTH_SHORT).show()
 
             }
-            findNavController().navigate(R.id.action_nav_sign_off_to_nav_login)
         }
     }
 

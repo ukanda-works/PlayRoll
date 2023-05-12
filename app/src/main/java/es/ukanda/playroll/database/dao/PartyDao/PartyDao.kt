@@ -17,6 +17,7 @@ interface PartyDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertParty(party: Party)
 
-    @Query("SELECT * FROM characters WHERE partyID = :partyId")
-    fun getCharactersForParty(partyId: Int): List<CharacterEntity>
+   /* @Query("SELECT * FROM characters WHERE partyID = :partyId")
+    fun getCharactersForParty(partyId: Int): List<CharacterEntity>*/
+
 }
