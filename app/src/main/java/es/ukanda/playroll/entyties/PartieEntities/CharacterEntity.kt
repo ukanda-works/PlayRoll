@@ -18,6 +18,7 @@ data class CharacterEntity(
     var alignment: Int,
     var level: Int,
     var experience: Int,
+    var background: String,
     @TypeConverters(IntHashMapConverter::class)
     var statistics : HashMap<String,Int>,//hacer un controller para esto
     @TypeConverters(Converters::class)
@@ -28,7 +29,7 @@ data class CharacterEntity(
     //constructor vacio
     constructor() : this(0,
                     "",
-                "", "", "", "", 0, 0, 0, HashMap(), listOf(), listOf())
+                "", "", "", "", 0, 0, 0,"", HashMap(), listOf(), listOf())
 
     companion object{
         val typeAlignment = mapOf<Int,String>(
@@ -42,6 +43,14 @@ data class CharacterEntity(
             7 to "neutral_evil",
             8 to "chaotic_evil"
         )
+
+        fun getAlignment(alignment: Int): String {
+            return typeAlignment[alignment]!!
+        }
+
+        fun getAlignment(alignment: String): Int {
+            return typeAlignment.filterValues { it == alignment }.keys.first()
+        }
     }
 
 }
