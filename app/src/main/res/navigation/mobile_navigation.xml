@@ -108,7 +108,7 @@
         android:id="@+id/nav_CharacterCreator"
         android:name="es.ukanda.playroll.ui.fragment.CharacterCreatorFragment"
         android:label="Character Creator"
-        tools:layout="@layout/fragment_sign_off" >
+        tools:layout="@layout/fragment_character_creator" >
         <action
             android:id="@+id/action_nav_CharacterCreator_to_nav_home"
             app:destination="@id/nav_home" />
@@ -139,6 +139,9 @@
         <action
             android:id="@+id/action_nav_camera_to_nav_camera_result"
             app:destination="@id/nav_camera_result" />
+        <action
+            android:id="@+id/action_nav_camera_to_nav_CharacterCreator"
+            app:destination="@id/nav_CharacterCreator" />
     </fragment>
 
     <fragment

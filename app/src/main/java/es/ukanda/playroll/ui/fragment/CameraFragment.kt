@@ -1,6 +1,7 @@
 package es.ukanda.playroll.ui.fragment
 
 import android.Manifest
+import android.app.AlertDialog
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -33,14 +34,17 @@ class CameraFragment : Fragment(), SurfaceHolder.Callback, Camera.PictureCallbac
     private var camera: Camera? = null
     private lateinit var surfaceHolder: SurfaceHolder
 
+
     val cameraViewModel = CameraViewModel() //ViewModelProvider(this).get(CameraViewModel::class.java)
     val procesedObserver = Observer<Boolean> { isProcesed ->
         if (isProcesed) {
             Toast.makeText(context, "Foto procesada", Toast.LENGTH_SHORT).show()
             val bundle = Bundle()
-            bundle.putByteArray("image", cameraViewModel.getByteArray())
-            bundle.putSerializable("personaje", cameraViewModel.foundText.value as java.io.Serializable)
-            findNavController().navigate(R.id.action_nav_camera_to_nav_camera_result, bundle)
+            //bundle.putByteArray("image", cameraViewModel.getByteArray())
+            bundle.putSerializable("personaje", cameraViewModel.getFoundText() as java.io.Serializable)
+            bundle.putSerializable("from", "camera")
+            //findNavController().navigate(R.id.action_nav_camera_to_nav_camera_result, bundle)
+            findNavController().navigate(R.id.action_nav_camera_to_nav_CharacterCreator, bundle)
         }
     }
     val infoObserver = Observer<String> { info ->
@@ -66,7 +70,16 @@ class CameraFragment : Fragment(), SurfaceHolder.Callback, Camera.PictureCallbac
         if (!checkPermissions()) {
             requestPermissions(CAMERA_PERMISSIONS, 10)
         } else {
-            Toast.makeText(context, "Permisos concedidos", Toast.LENGTH_SHORT).show()
+            val alertDialogBuilder = AlertDialog.Builder(context)
+            alertDialogBuilder.setTitle("Advertencia")
+            alertDialogBuilder.setMessage("Esta opcion funciona, pero aun esta en desarrollo. Puede que no funcione correctamente. " +
+                    "Para mejorar la lectura de datos intente centrar la ficha de personaje en la parte superior de la pantalla.")
+            alertDialogBuilder.setPositiveButton("Aceptar") { dialog, _ ->
+                dialog.dismiss()
+            }
+
+            val alertDialog = alertDialogBuilder.create()
+            alertDialog.show()
         }
         return binding.root
 
@@ -128,6 +141,12 @@ class CameraFragment : Fragment(), SurfaceHolder.Callback, Camera.PictureCallbac
                 camera!!.setPreviewDisplay(holder)
                 camera!!.setDisplayOrientation(90)
 
+                //se adapta el view a la camara
+                val height = maxSize.height
+                val width = maxSize.width
+                val ratio = height.toFloat() / width.toFloat()
+                binding.surfaceView.layoutParams.height = (binding.surfaceView.width * ratio).toInt()
+
             } catch (e: IOException) {
                 e.printStackTrace()
             }
@@ -150,8 +169,25 @@ class CameraFragment : Fragment(), SurfaceHolder.Callback, Camera.PictureCallbac
     override fun onPictureTaken(data: ByteArray?, camera: Camera?) {
         try {
             val bipMap = BitmapFactory.decodeByteArray(data, 0, data!!.size)
+
+            // Calcular el margen a recortar
+            val marginPercentage = 0.1f
+            val marginWidth = (bipMap.width * marginPercentage).toInt()
+
+            // Calcular las dimensiones del nuevo bitmap recortado
+            val croppedWidth = bipMap.width - (2 * marginWidth)
+            val croppedHeight = bipMap.height
+            // Recortar el bitmap original
+            val croppedBitmap = Bitmap.createBitmap(
+                bipMap,
+                marginWidth,
+                0,
+                croppedWidth,
+                croppedHeight
+            )
+
             cameraViewModel.setPicture(bipMap)
-            Toast.makeText(context, "Foto tomada calidad: ${bipMap.height} x ${bipMap.width}", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(context, "Foto tomada calidad: ${bipMap.height} x ${bipMap.width}", Toast.LENGTH_SHORT).show()
 
         } catch (e: IOException) {
             e.printStackTrace()

@@ -1,10 +1,8 @@
-package es.ukanda.playroll.controllers
+package es.ukanda.playroll.controllers.sysmtem
 
 import android.content.Context
-import es.ukanda.playroll.database.dao.RaceDao
 import es.ukanda.playroll.database.db.SystemDb
 import es.ukanda.playroll.entyties.SystemClases.Race
-import kotlinx.coroutines.CoroutineScope
 
 class RaceController(context: Context) {
     //Dao
