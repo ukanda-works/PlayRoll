@@ -12,6 +12,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
+import es.ukanda.playroll.controllers.helpers.ComunicationHelpers.Companion.openUdpSocket
 import es.ukanda.playroll.databinding.FragmentJoinPartyBinding
 import es.ukanda.playroll.entyties.PartieEntities.Party
 import es.ukanda.playroll.singleton.ControllSocket
@@ -131,7 +132,7 @@ class JoinPartyFragment : Fragment() {
         try {
             while (true){
                 sleep(300)
-                val socket = DatagramSocket(5688)
+                val socket = openUdpSocket(5688)
                 val buffer = ByteArray(1024)
                 val packet = DatagramPacket(buffer, buffer.size)
                 socket.receive(packet)

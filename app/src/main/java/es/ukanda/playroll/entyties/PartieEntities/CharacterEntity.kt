@@ -2,14 +2,23 @@ package es.ukanda.playroll.entyties.PartieEntities
 
 import android.text.Layout.Alignment
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import es.ukanda.playroll.database.db.Converters
 import es.ukanda.playroll.database.db.IntHashMapConverter
 
-@Entity(tableName = "characters")
+@Entity(tableName = "characters",
+    foreignKeys = [ForeignKey(
+        entity = Player::class,
+        parentColumns = ["playerID"],
+        childColumns = ["playerID"],
+        onDelete = ForeignKey.CASCADE
+    )]
+)
 data class CharacterEntity(
     @PrimaryKey(autoGenerate = true) val characterID: Int=0,
+    val playerID: Int,
     var name: String,
     var playerName: String,
     var description: String,
@@ -27,7 +36,7 @@ data class CharacterEntity(
     var skills : List<String>,//hacer un controller para esto
     ) {
     //constructor vacio
-    constructor() : this(0,
+    constructor() : this(0,0,
                     "",
                 "", "", "", "", 0, 0, 0,"", HashMap(), listOf(), listOf())
 

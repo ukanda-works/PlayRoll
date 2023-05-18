@@ -1,11 +1,15 @@
 package es.ukanda.playroll.singleton
 
-import android.graphics.Paint.Join
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
 import es.ukanda.playroll.ui.fragment.JoinPartyFragment
 import kotlinx.coroutines.*
+import java.io.BufferedReader
+import java.io.BufferedWriter
+import java.io.InputStreamReader
+import java.io.OutputStreamWriter
 import java.net.InetAddress
+import java.net.Socket
 
 class ControllSocket {
 
@@ -24,44 +28,49 @@ class ControllSocket {
         suspend fun conectar(ip: InetAddress, timeout: Int = 5000) {
             job = CoroutineScope(Dispatchers.IO).launch {
                 try {
-                    SocketSingleton.connect(ip)
+                    var clientSocket = Socket(ip.hostAddress, 5690)
+                    var writer = BufferedWriter(OutputStreamWriter(clientSocket.getOutputStream()))
+                    var reader = BufferedReader(InputStreamReader(clientSocket.getInputStream()))
                     JoinPartyFragment.setConexionEstate(ConnectionState.CONNECTING)
-                    joinPartyRequest()
-                   /*val mensaje = SocketSingleton.getInstance().recive().toBoolean()
-                    if (mensaje) {
-                        JoinPartyFragment.setConexionEstate(ConnectionState.ACCEPTED)
+                    val user = FirebaseAuth.getInstance().currentUser
+                    val userName = user?.displayName ?: "Anonimo"
+                    val sendmensaje = listOf("peticion" to "join","nombre" to userName )
+                    writer.write(Gson().toJson(sendmensaje))
+                    writer.newLine()
+                    writer.flush()
+                    println("esperando respuesta..."    )
+                    val mensaje = reader.readLine()
+                    if (!mensaje.isEmpty()) {
+                        println("Mensaje recibido $mensaje")
+                        if (mensaje == "ok"){
+                            println("aceptada")
+                            JoinPartyFragment.setConexionEstate(ConnectionState.ACCEPTED)
+                            var listaPersonajes = reader.readLine()
+                            if (!listaPersonajes.isEmpty()){
+                                println("lista recibida $listaPersonajes")
+                                //se hace lo necesario para mostrar la lista de personajes
+                            }
+                        }else{
+                            println("rechazada")
+                            JoinPartyFragment.setConexionEstate(ConnectionState.REJECTED)
+
+                        }
                         //se espera a la lista de personajes
                     } else {
                         JoinPartyFragment.setConexionEstate(ConnectionState.REJECTED)
                         throw Exception("Connection rejected")
-                    }*/
+                    }
                 } catch (e: Exception) {
                     JoinPartyFragment.setConexionEstate(ConnectionState.ERROR)
                     JoinPartyFragment.setErrorMensaje(e.message ?: "Error")
                     JoinPartyFragment.setErrorMensaje(e.stackTraceToString())
-                    throw e
-                } finally {
-                    //SocketSingleton.getInstance().close()
-                }
-            }
-            job?.invokeOnCompletion {
-                if (it is CancellationException) {
-                    SocketSingleton.getInstance().close()
+                    e.printStackTrace()
                 }
             }
             delay(timeout.toLong())
             job?.cancel()
         }
+       
 
-        private suspend fun joinPartyRequest(){
-                try {
-                    val user = FirebaseAuth.getInstance().currentUser
-                    val userName = user?.displayName ?: "Anonimo"
-                    val sendmensaje = listOf("peticion" to "join","nombre" to userName )
-                    SocketSingleton.getInstance().send(Gson().toJson(sendmensaje))
-                }catch (e: Exception){
-                    throw e
-                }
-        }
     }
 }

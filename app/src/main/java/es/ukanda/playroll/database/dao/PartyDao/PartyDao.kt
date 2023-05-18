@@ -10,6 +10,9 @@ interface PartyDao {
     @Query("SELECT * FROM parties")
     fun getAllParties(): MutableList<Party>
 
+    @Query("SELECT * FROM parties WHERE partyID = :partyId")
+    suspend fun getPartyById(partyId: Int): Party
+
     @Transaction
     @Query("SELECT * FROM parties WHERE partyID = :id")
     fun getParty(id: Int): Party

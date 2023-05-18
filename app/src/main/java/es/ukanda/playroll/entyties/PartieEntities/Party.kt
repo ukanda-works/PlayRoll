@@ -9,7 +9,10 @@ import com.google.gson.Gson
 data class Party(
     @PrimaryKey(autoGenerate = true) val partyID: Int=0,
     val partyName: String,
+    val partyCreator: String,
     val partyDescription: String? = null,
+
+    //añadir campo para configuracion
 ) {
     fun toJson(): String {
         val gson = Gson()
