@@ -48,7 +48,7 @@ class ControllSocket {
                             var listaPersonajes = reader.readLine()
                             if (!listaPersonajes.isEmpty()){
                                 println("lista recibida $listaPersonajes")
-                                //se hace lo necesario para mostrar la lista de personajes
+
                             }
                         }else{
                             println("rechazada")
@@ -70,7 +70,6 @@ class ControllSocket {
             delay(timeout.toLong())
             job?.cancel()
         }
-       
 
     }
 }

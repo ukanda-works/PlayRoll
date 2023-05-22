@@ -54,4 +54,12 @@
     <string name="salvacion">Salvacion</string>
     <string name="skills">Habilidades</string>
     <string name="acountInfo">Cuenta</string>
+    <string name="password">password</string>
+    <string name="personajes_propios">Permitir unicamente personajes propios</string>
+    <string name="ingrese_alias">Ingresa un alias</string>
+    <string name="character_name">Nombre de personaje</string>
+    <string name="level">Nivel</string>
+    <string name="race">Raza</string>
+    <string name="clas">Clase</string>
+    <string name="add_characters">Añade los personajes</string>
 </resources>

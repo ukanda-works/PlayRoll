@@ -18,8 +18,6 @@ interface CharacterDao {
     fun getAllCharacters(): List<CharacterEntity>
 
 
-    @Query("SELECT * FROM characters WHERE playerID = :playerId")
-    suspend fun getCharactersByPlayerId(playerId: Int): List<CharacterEntity>
 
 
 }

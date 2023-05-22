@@ -13,7 +13,6 @@
         android:id="@+id/tvIp"
         android:layout_width="38dp"
         android:layout_height="20dp"
-        android:text="Ip"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

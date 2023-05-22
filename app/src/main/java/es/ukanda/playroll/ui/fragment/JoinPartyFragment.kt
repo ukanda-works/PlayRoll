@@ -1,21 +1,31 @@
 package es.ukanda.playroll.ui.fragment
 
 import android.content.Context
+import android.content.DialogInterface
 import android.net.wifi.WifiManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.textfield.TextInputLayout
 import com.google.gson.Gson
+import es.ukanda.playroll.R
 import es.ukanda.playroll.controllers.helpers.ComunicationHelpers.Companion.openUdpSocket
+import es.ukanda.playroll.database.db.PartyDb
 import es.ukanda.playroll.databinding.FragmentJoinPartyBinding
+import es.ukanda.playroll.entyties.PartieEntities.CharacterEntity
 import es.ukanda.playroll.entyties.PartieEntities.Party
 import es.ukanda.playroll.singleton.ControllSocket
+import es.ukanda.playroll.ui.adapter.CharacterAdapter
 import es.ukanda.playroll.ui.adapter.PartyAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +44,10 @@ class JoinPartyFragment : Fragment() {
 
     private lateinit var adapter: PartyAdapter
     private val partyList = mutableMapOf<InetAddress, Party>()
-    //val viewModel : ConexionViewModel by viewModels()
+
+    private lateinit var characterEntityList: List<CharacterEntity>
+
+    private lateinit var characterAdapter: CharacterAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,7 +61,7 @@ class JoinPartyFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        recicleViewInit()
+        getDatabaseData()
         rgInit()
         getIp()
 
@@ -59,14 +72,16 @@ class JoinPartyFragment : Fragment() {
         errorMensaje.observe(viewLifecycleOwner) { newValue ->
             onErrorMensajeChanged(newValue)
         }
+
+    }
+
+    fun getDatabaseData(){
+        CoroutineScope(Dispatchers.IO).launch {
+            characterEntityList = PartyDb.getDatabase(context!!).characterDao().getAllCharacters()
+        }
     }
 
     private fun rgInit() {
-        /*binding.rbLocal.setOnClickListener {
-            binding.rbOnline.isChecked = false
-            buscarPartida()
-            Toast.makeText(context, "Buscando partidas", Toast.LENGTH_SHORT).show()
-        }*/
         binding.btBuscarLocal.setOnClickListener {
             try {
                 buscarPartida()
@@ -76,42 +91,6 @@ class JoinPartyFragment : Fragment() {
             }
         }
 
-    }
-
-    private fun recicleViewInit() {
-        adapter = PartyAdapter(partyList)
-        binding.rvPartidasAbiertas.layoutManager = LinearLayoutManager(context)
-        binding.rvPartidasAbiertas.adapter = adapter
-    }
-
-    private fun buscarPartidae(){
-            CoroutineScope(Dispatchers.IO).launch {
-                val broadCastAddress = InetAddress.getByName("255.255.255.255")
-                val data = "hola, jaime".toByteArray()
-                val packet = DatagramPacket(data, data.size, broadCastAddress, 5689)
-                try{
-                    val socket = DatagramSocket()
-                    socket.send(packet)
-                    CoroutineScope(Dispatchers.Main).launch {
-                        Toast.makeText(context, "mensaje enviado", Toast.LENGTH_LONG).show()
-                    }
-                   /* while (true){
-                        sleep(300)
-                        val socket = DatagramSocket(5688)
-                        val buffer = ByteArray(1024)
-                        val packet = DatagramPacket(buffer, buffer.size)
-                        socket.receive(packet)
-                        procesarMensaje(packet)
-                        socket.close()
-                    }*/
-                }catch (e: Exception){
-                    CoroutineScope(Dispatchers.Main).launch {
-                        Toast.makeText(context, "Error al enviar el mensaje ${e.message}", Toast.LENGTH_LONG).show()
-                    }
-                    e.printStackTrace()
-                }
-
-            }
     }
 
     private fun buscarPartida() {
@@ -205,7 +184,51 @@ class JoinPartyFragment : Fragment() {
 
     }
 
+    fun mostrarDialogoConTextField(party: Party, characterList : List<CharacterEntity>) {
+        val builder = AlertDialog.Builder(this.context!!)
+        val listCharacter = mutableListOf<CharacterEntity>()
+        builder.setTitle("Entablar conexion")
+        val view = layoutInflater.inflate(R.layout.dialog_join_alias, null)
+        builder.setView(view)
+        if (party.getPartyConfig(Party.Companion.configType.Pass.toString()).equals("")) {
+            val passWd = view.findViewById<EditText>(R.id.etPassJoin)
+            val passTv = view.findViewById<TextView>(R.id.tvPassJoin)
+            passWd.visibility = View.GONE
+            passTv.visibility = View.GONE
+        }else {
+            val passWd = view.findViewById<EditText>(R.id.etPassJoin)
+            val passTv = view.findViewById<TextView>(R.id.tvPassJoin)
+            passWd.visibility = View.VISIBLE
+            passTv.visibility = View.VISIBLE
+        }
+
+        if (!party.getPartyConfig(Party.Companion.configType.Pass.toString()).equals("true")) {
+            listCharacter.addAll(characterList)
+            listCharacter.addAll(characterEntityList)
+        }
+
+        val recyclerView = view.findViewById<RecyclerView>(R.id.rvCharactersJoin)
+        initRecycler(listCharacter,recyclerView)
+
+        builder.setPositiveButton("Aceptar", DialogInterface.OnClickListener { dialog, which ->
+            val alias = view.findViewById<EditText>(R.id.etAliasJoin).text.toString()
+            var pass = ""
+            if (!party.getPartyConfig(Party.Companion.configType.Pass.toString()).equals("")) {
+                pass = view.findViewById<EditText>(R.id.etPassJoin).text.toString()
+            }
+            val character = getSelectedCharacter().get(0)
+            dialog.dismiss()
+        })
+
+        builder.setNegativeButton("Cancelar", DialogInterface.OnClickListener { dialog, which ->
+            dialog.dismiss()
+        })
+
+        builder.create().show()
+    }
+
     companion object {
+        var targetIp = ""
         lateinit var instance: JoinPartyFragment
         var _conexionEstate = MutableLiveData(ControllSocket.Companion.ConnectionState.NONE)
         val conexionEstate: LiveData<ControllSocket.Companion.ConnectionState>
@@ -218,6 +241,10 @@ class JoinPartyFragment : Fragment() {
             val message = "Nuevo valor de conexión: $newValue"
             instance.activity?.runOnUiThread {
                 Toast.makeText(instance.context, message, Toast.LENGTH_SHORT).show()
+            }
+            if (newValue == ControllSocket.Companion.ConnectionState.ACCEPTED) {
+                instance.activity?.runOnUiThread {
+                }
             }
         }
 
@@ -238,6 +265,17 @@ class JoinPartyFragment : Fragment() {
         }
     }
 
+    fun initRecycler(characterList: List<CharacterEntity>, recyclerView: RecyclerView ){
 
+            characterAdapter = CharacterAdapter(characterList, 1) { character, isSelected ->
+
+            }
+            recyclerView.layoutManager  = LinearLayoutManager(context)
+            recyclerView.adapter = characterAdapter
+        }
+
+    fun getSelectedCharacter(): List<CharacterEntity> {
+        return characterAdapter.getSelectedCharacters()
+    }
 
 }

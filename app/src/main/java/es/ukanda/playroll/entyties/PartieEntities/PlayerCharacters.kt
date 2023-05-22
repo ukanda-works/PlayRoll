@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 
 @Entity(tableName = "party_player_character",
-    primaryKeys = ["partyID", "playerID", "characterID"],
+    primaryKeys = ["partyID", "characterID"],
     foreignKeys = [
         ForeignKey(entity = Party::class,
             parentColumns = ["partyID"],
@@ -22,6 +22,6 @@ import androidx.room.ForeignKey
 )
 data class PlayerCharacters(
     val partyID: Int,
-    val playerID: Int,
+    val playerID: Int? = null,
     val characterID: Int
 )

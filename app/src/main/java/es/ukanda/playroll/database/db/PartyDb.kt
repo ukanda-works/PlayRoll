@@ -7,19 +7,13 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import es.ukanda.playroll.database.dao.PartyDao.CharacterDao
-import es.ukanda.playroll.database.dao.PartyDao.InventarioDao
-import es.ukanda.playroll.database.dao.PartyDao.PartyDao
-import es.ukanda.playroll.database.dao.PartyDao.PlayerDao
-import es.ukanda.playroll.entyties.PartieEntities.CharacterEntity
-import es.ukanda.playroll.entyties.PartieEntities.Inventario
-import es.ukanda.playroll.entyties.PartieEntities.Party
-import es.ukanda.playroll.entyties.PartieEntities.Player
+import es.ukanda.playroll.database.dao.PartyDao.*
+import es.ukanda.playroll.entyties.PartieEntities.*
 
 
 @Database(
-    entities = [CharacterEntity ::class, Party::class, Player::class, Inventario::class],
-    version = 6,
+    entities = [CharacterEntity ::class, Party::class, Player::class, Inventario::class, PlayerCharacters::class],
+    version = 10,
 )
 @TypeConverters(Converters::class,HashMapConverter::class,IntHashMapConverter::class)
 abstract class PartyDb: RoomDatabase() {
@@ -27,6 +21,7 @@ abstract class PartyDb: RoomDatabase() {
     abstract fun characterDao(): CharacterDao
     abstract fun inventarioDao(): InventarioDao
     abstract fun playerDao(): PlayerDao
+    abstract fun playerCharacterDao(): PlayerCharacterDao
 
 companion object {
         @Volatile

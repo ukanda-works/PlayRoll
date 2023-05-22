@@ -40,7 +40,7 @@ class PartyManagerFragment : Fragment() {
     private fun setParty(partyId: Int) {
         CoroutineScope(Dispatchers.IO).launch {
             if (partyId == 0){
-                party = Party(0,"")
+                //party = Party(0,"")
             }else{
                 party = PartyDb.getDatabase(requireContext()).partyDao().getParty(partyId)
             }
