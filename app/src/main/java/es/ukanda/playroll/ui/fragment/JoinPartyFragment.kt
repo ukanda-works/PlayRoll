@@ -64,12 +64,12 @@ class JoinPartyFragment : Fragment() {
         getDatabaseData()
         rgInit()
         getIp()
-        CoroutineScope(Dispatchers.IO).launch {
+        /*CoroutineScope(Dispatchers.IO).launch {
             var party = PartyDb.getDatabase(context!!).partyDao().getParty(3)
             CoroutineScope(Dispatchers.Main).launch {
                 mostrarDialogoConTextField(party, characterEntityList)
             }
-        }
+        }*/
 
         conexionEstate.observe(viewLifecycleOwner) { newValue ->
             onConexionEstateChanged(newValue)
@@ -105,7 +105,7 @@ class JoinPartyFragment : Fragment() {
             val socket = DatagramSocket()
             socket.broadcast = true
             val broadcastAddress = getBroadcastAddress()
-            val data = "hola, jaime".toByteArray()
+            val data = "hi".toByteArray()
             val packet = DatagramPacket(data, data.size, broadcastAddress, 5689)
             withContext(Dispatchers.IO) {
                 socket.send(packet)
@@ -157,11 +157,6 @@ class JoinPartyFragment : Fragment() {
             partyList.put(ip, party)
             activity?.runOnUiThread {
                 adapter.notifyDataSetChanged()
-                Toast.makeText(context, "mensaje procesado", Toast.LENGTH_SHORT).show()
-            }
-        } else {
-            activity?.runOnUiThread {
-                Toast.makeText(context, "Json no valido", Toast.LENGTH_SHORT).show()
             }
         }
         }catch (e: Exception){

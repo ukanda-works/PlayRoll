@@ -71,8 +71,8 @@ class ControllSocket {
                "join" -> {
                   if (decodedMensaje["peticion"] == "ok"){
                       println("aceptada")
-                      val partyRecived = decodedMensaje["party"]
-                        if (partyRecived != null){
+                        if (decodedMensaje["party"] != null){
+                            val partyRecived = decodedMensaje["party"].toString()
                             println("party recibida $partyRecived")
                             JoinPartyFragment.setParty(Party.fromJson(partyRecived))
                         }
