@@ -15,7 +15,9 @@ import es.ukanda.playroll.controllers.comunication.PetitionResponseListerner
 import es.ukanda.playroll.controllers.helpers.ComunicationHelpers
 import es.ukanda.playroll.database.db.PartyDb
 import es.ukanda.playroll.databinding.FragmentPlayPartyMasterBinding
+import es.ukanda.playroll.entyties.PartieEntities.CharacterEntity
 import es.ukanda.playroll.entyties.PartieEntities.Party
+import es.ukanda.playroll.entyties.PartieEntities.Player
 import kotlinx.coroutines.*
 import java.io.*
 import java.lang.Thread.sleep
@@ -28,13 +30,15 @@ class PlayPartyMasterFragment : Fragment(){
     private val binding get() = _binding!!
 
     lateinit var party: Party
-    private var listaJugadores = mutableListOf<String>()
+    var listaJugadores = mutableMapOf<Player, String>()
+    lateinit var characterList : List<CharacterEntity>
 
     companion object{
         lateinit var instance: PlayPartyMasterFragment
         var conexionEstate = MutableLiveData<Boolean>()
         var errorMensaje = MutableLiveData<String>()
         var lastResponse = MutableLiveData<Boolean>()
+
     }
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -58,12 +62,29 @@ class PlayPartyMasterFragment : Fragment(){
             if (partyId == 0){
                 //lanzar error de que no se ha encontrado la party
             }else{
-                party = PartyDb.getDatabase(requireContext()).partyDao().getParty(partyId)
+                initDb(partyId)
                 starServerUdp()
                 starServerTcp()
             }
 
         }
+    }
+
+    fun updatePlayerList(){
+       listaJugadores.forEach {
+           binding.tvPlayerList.append("${it.key.name} - ${it.value}\n")
+       }
+    }
+
+     suspend fun initDb(partyId: Int) {
+         val db = PartyDb.getDatabase(requireContext())
+         party =db.partyDao().getParty(partyId)
+         val playerCharacters = db.playerCharacterDao().getPlayersAndCharactersByPartyId(partyId)
+         val characters = mutableListOf<CharacterEntity>()
+            playerCharacters.forEach {
+                characters.add(db.characterDao().getCharacterById(it.characterID))
+            }
+         characterList = characters
     }
 
     private fun starServerUdp(){
@@ -147,7 +168,7 @@ class PlayPartyMasterFragment : Fragment(){
                 (ipAddress shr 16 and 0xff).toByte(),
                 (ipAddress shr 24 and 0xff).toByte()
             )
-            ip = InetAddress.getByAddress(addressBytes).hostAddress
+            ip = InetAddress.getByAddress(addressBytes).hostAddress ?: ""
             binding.tvIpMaster.text = "Tu ip es: $ip"
         }
 
@@ -174,7 +195,6 @@ class PlayPartyMasterFragment : Fragment(){
 private class ServerThread(val clientSocket: Socket, val fragment: PlayPartyMasterFragment) : Thread() {
     override fun run() {
         try {
-            println("metodo run")
             val input = BufferedReader(InputStreamReader(clientSocket.getInputStream()))
             val output = BufferedWriter(OutputStreamWriter(clientSocket.getOutputStream()))
 
@@ -206,16 +226,33 @@ private class ServerThread(val clientSocket: Socket, val fragment: PlayPartyMast
                     }
                 if (PlayPartyMasterFragment.lastResponse.value!!) {
                     println("aceptado")
-                    output.write("ok")
+                    val jsonCharacterEntity = mutableListOf<String>()
+                    fragment.characterList.forEach {
+                        jsonCharacterEntity.add(it.toJson())
+                    }
+                    val sendResponse = listOf("reponse" to "ok",
+                                        "party" to fragment.party.toJson(),
+                                        "characters" to jsonCharacterEntity)
+                    println("sendResponse: $sendResponse -----------------------------------------------------")
+                    output.write(Gson().toJson(sendResponse))
                     output.newLine()
                     output.flush()
-                    println("enviado ok")
                 } else {
-                    println("rechazado")
-                    output.write("no")
+                    val sendResponse = listOf("reponse" to "no")
+                    output.write(Gson().toJson(sendResponse))
+                    output.newLine()
+                    output.flush()
                 }
-
-
+            }
+            "start" -> {
+                val alias = decodedMensaje["alias"]
+                val characterOwn = decodedMensaje["characterOwn"]
+                val selectedCharacter = decodedMensaje["selectedCharacter"]
+                addPlayer(alias!!, clientSocket.inetAddress.hostAddress)
+                val sendResponse = listOf("reponse" to "ok")
+                output.write(Gson().toJson(sendResponse))
+                output.newLine()
+                output.flush()
             }
             "adios" -> {
                 output.write("adios")
@@ -225,6 +262,15 @@ private class ServerThread(val clientSocket: Socket, val fragment: PlayPartyMast
             }
         }
     }
+
+    private fun addPlayer(alias: String, ip:String) {
+        val player = Player(name = alias, partyID = fragment.party.partyID)
+        fragment.listaJugadores.put(player,ip)
+        fragment.activity?.runOnUiThread {
+            fragment.updatePlayerList()
+        }
+    }
+
     override fun interrupt() {
         super.interrupt()
         clientSocket.close()

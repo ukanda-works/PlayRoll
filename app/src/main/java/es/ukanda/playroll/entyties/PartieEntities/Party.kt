@@ -24,6 +24,8 @@ data class Party(
         return gson.toJson(this)
     }
 
+
+
     fun getPartyConfig(tipe:String){
         partyConfig?.get(tipe)
     }
@@ -33,6 +35,12 @@ data class Party(
             OnlyOwn, //Solo se puden usar personajes del master true/false
             Pass, //Indica si la partida tiene contraseña true/false
         }
+
+        fun fromJson(json: String): Party {
+            val gson = Gson()
+            return gson.fromJson(json, Party::class.java)
+        }
+
     }
 
 }

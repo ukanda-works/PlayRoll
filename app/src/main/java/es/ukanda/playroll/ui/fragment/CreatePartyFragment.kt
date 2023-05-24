@@ -59,7 +59,7 @@ class CreatePartyFragment : Fragment() {
         val firebaseAuth = FirebaseAuth.getInstance()
         val selectedCharacters = characterAdapter.getSelectedCharacters()
         //se añaden los personajes a la partida
-        val passwd = binding.etPassword.text.toString() ?: ""
+        val passwd = binding.etPassword.text.toString()
         val partyConfig = HashMap<String, String>()
         partyConfig["OnlyOwn"] = binding.cbOnlyOwn.isChecked.toString()
         partyConfig["Pass"] = passwd

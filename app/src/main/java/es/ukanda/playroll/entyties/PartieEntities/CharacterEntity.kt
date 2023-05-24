@@ -33,6 +33,10 @@ data class CharacterEntity(
                     "",
                 "", "", "", "", 0, 0, 0,"", HashMap(), listOf(), listOf())
 
+    fun toJson(): String {
+        val gson = com.google.gson.Gson()
+        return gson.toJson(this)
+    }
     companion object{
         val typeAlignment = mapOf<Int,String>(
             0 to "lawful_good",
@@ -52,6 +56,11 @@ data class CharacterEntity(
 
         fun getAlignment(alignment: String): Int {
             return typeAlignment.filterValues { it == alignment }.keys.first()
+        }
+
+        fun fromJson(json: String): CharacterEntity {
+            val gson = com.google.gson.Gson()
+            return gson.fromJson(json, CharacterEntity::class.java)
         }
     }
 
