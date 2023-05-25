@@ -10,7 +10,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
+import androidx.navigation.fragment.findNavController
 import com.google.gson.Gson
+import es.ukanda.playroll.R
 import es.ukanda.playroll.controllers.comunication.PetitionResponseListerner
 import es.ukanda.playroll.controllers.helpers.ComunicationHelpers
 import es.ukanda.playroll.database.db.PartyDb
@@ -54,6 +56,72 @@ class PlayPartyMasterFragment : Fragment(){
         val partyId = arguments?.getInt("id") ?: 0
         setParty(partyId)
         getIp()
+        setBtn()
+
+    }
+
+    private fun setBtn() {
+        binding.btStartGame.setOnClickListener {
+            val builder = AlertDialog.Builder(requireContext())
+            builder.setTitle("Comenzar partida")
+            builder.setMessage("¿Estas seguro de que quieres comenzar la partida?")
+            builder.setPositiveButton("Si"){dialog, which ->
+                startGame()
+            }
+            builder.setNegativeButton("No"){dialog, which ->
+            }
+        }
+    }
+
+    private fun startGame() {
+
+        CoroutineScope(Dispatchers.IO).launch {
+            //antes de enviarse las cosas se almacenan
+            val db = PartyDb.getDatabase(requireContext())
+
+            val partyId = db.partyDao().insertParty(party)
+            val savedParty = db.partyDao().getParty(partyId.toInt())
+
+            val savedPlayers = mutableListOf<Player>()
+            val jsonPlayerList = mutableListOf<String>()
+            listaJugadores.forEach {
+                val playerId = db.playerDao().insertPlayer(it.key)
+                val saved = db.playerDao().getPlayerById(playerId.toInt())
+                savedPlayers.add(saved)
+                jsonPlayerList.add(saved.toJson())
+            }
+
+            //TODO implementar inventarios
+
+
+            //luego se leen y se envian
+            val gson = Gson()
+            val jsonCharaterList = mutableListOf<String>()
+            characterList.forEach {
+                jsonCharaterList.add(it.toJson())
+            }
+            val mensaje = listOf("peticion" to "started",
+                                "response" to "ok",
+                                "party" to savedParty.toJson(),
+                                "characters" to jsonCharaterList,
+                                "players" to jsonPlayerList,
+                                "player_character" to "")//hay que pasar la relacion entre jugadores y personajes
+            val mensajeJson = gson.toJson(mensaje)
+            listaJugadores.values.forEach{ ip ->
+                var socket = Socket(ip, 5691)
+                var writer = BufferedWriter(OutputStreamWriter(socket.getOutputStream()))
+                writer.write(mensajeJson)
+                writer.flush()
+                writer.close()
+                socket.close()
+            }
+            val bundle = Bundle()
+            bundle.putInt("id", savedParty.partyID)
+            //el bundle de master incluira un map con un hash de jugadores y su ip
+            bundle.putBoolean("isMaster", true)
+            //esto tal vez haya que hacerlo en el hilo principal
+            findNavController().navigate(R.id.action_nav_playPartyMaster_to_nav_playParty)
+        }
 
     }
 
@@ -246,9 +314,11 @@ private class ServerThread(val clientSocket: Socket, val fragment: PlayPartyMast
             }
             "start" -> {
                 val alias = decodedMensaje["alias"]
+                val hash = decodedMensaje["hash"]
                 val characterOwn = decodedMensaje["characterOwn"]
                 val selectedCharacter = decodedMensaje["selectedCharacter"]
-                addPlayer(alias!!, clientSocket.inetAddress.hostAddress)
+                //almacenar en la base de datos
+                addPlayer(alias!!, clientSocket.inetAddress.hostAddress, hash!!)
                 val sendResponse = listOf("reponse" to "ok")
                 output.write(Gson().toJson(sendResponse))
                 output.newLine()
@@ -263,8 +333,8 @@ private class ServerThread(val clientSocket: Socket, val fragment: PlayPartyMast
         }
     }
 
-    private fun addPlayer(alias: String, ip:String) {
-        val player = Player(name = alias, partyID = fragment.party.partyID)
+    private fun addPlayer(alias: String, ip:String, hash:String) {
+        val player = Player(name = alias, partyID = fragment.party.partyID, identifier = hash)
         fragment.listaJugadores.put(player,ip)
         fragment.activity?.runOnUiThread {
             fragment.updatePlayerList()

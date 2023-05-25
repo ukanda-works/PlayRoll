@@ -2,6 +2,7 @@ package es.ukanda.playroll.entyties.PartieEntities
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import com.google.gson.Gson
 
 @Entity(tableName = "party_player_character",
     primaryKeys = ["partyID", "characterID"],
@@ -21,7 +22,18 @@ import androidx.room.ForeignKey
     ]
 )
 data class PlayerCharacters(
-    val partyID: Int,
-    val playerID: Int? = null,
-    val characterID: Int
-)
+    var partyID: Int,
+    var playerID: Int? = null,
+    var characterID: Int
+){
+    fun toJson(): String {
+        val gson = Gson()
+        return gson.toJson(this)
+    }
+    companion object{
+        fun fromJson(json: String): PlayerCharacters {
+            val gson =  Gson()
+            return gson.fromJson(json, PlayerCharacters::class.java)
+        }
+    }
+}

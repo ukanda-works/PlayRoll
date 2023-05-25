@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.android.gms.common.internal.safeparcel.SafeParcelReader.createBundle
 import com.google.firebase.auth.FirebaseAuth
 import es.ukanda.playroll.R
 import es.ukanda.playroll.database.db.PartyDb
@@ -69,13 +70,30 @@ class HomeFragment : Fragment() {
         binding.btCrearPartida.setOnClickListener {
             findNavController().navigate(R.id.action_nav_home_to_nav_PartyCreator)
         }
-
+        binding.btPrueba.setOnClickListener {
+            findNavController().navigate(R.id.action_nav_home_to_nav_playParty)
+        }
         binding.btAddCharacter.setOnClickListener {
             findNavController().navigate(R.id.action_nav_home_to_nav_CharacterCreator)
         }
         binding.btJoinParty.setOnClickListener{
-            findNavController().navigate(R.id.action_nav_home_to_nav_JoinParty)
+            var bundle = Bundle()
+            CoroutineScope(Dispatchers.IO).launch {
+               bundle = loadBundle()
+            }
+            findNavController().navigate(R.id.action_nav_home_to_nav_JoinParty, bundle)
         }
+    }
+
+    private fun loadBundle(): Bundle {
+        val partyId = 1
+        val bundle = Bundle()
+        //id partida
+        bundle.putInt("partyId", partyId)
+        //ip del servidor 127.0.0.1
+        bundle.putString("ip", "127.0.0.1")
+
+        return bundle
     }
 
     private fun spiners() {

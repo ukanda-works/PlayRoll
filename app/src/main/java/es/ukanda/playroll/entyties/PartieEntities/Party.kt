@@ -41,6 +41,16 @@ data class Party(
             return gson.fromJson(json, Party::class.java)
         }
 
+        fun removeIdFromParty(party: Party): Party {
+            return Party(
+                partyName = party.partyName,
+                partyCreator = party.partyCreator,
+                partyDescription = party.partyDescription,
+                partyConfig = party.partyConfig,
+                sesions = party.sesions
+            )
+        }
+
     }
 
 }

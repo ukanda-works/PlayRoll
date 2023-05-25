@@ -40,6 +40,9 @@
         <action
             android:id="@+id/action_nav_home_to_nav_about"
             app:destination="@id/nav_about" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_playParty"
+            app:destination="@id/nav_playParty" />
     </fragment>
 
     <fragment
@@ -129,6 +132,9 @@
         android:name="es.ukanda.playroll.ui.fragment.PlayPartyMasterFragment"
         android:label="Play party MASTER"
         tools:layout="@layout/fragment_play_party" >
+        <action
+            android:id="@+id/action_nav_playPartyMaster_to_nav_playParty"
+            app:destination="@id/nav_playParty" />
     </fragment>
 
     <fragment

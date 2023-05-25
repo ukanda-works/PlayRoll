@@ -1,5 +1,14 @@
 package es.ukanda.playroll.controllers.helpers
 
+import com.google.firebase.auth.FirebaseAuth
+import com.google.gson.Gson
+import com.google.gson.JsonObject
+import com.google.gson.reflect.TypeToken
+import es.ukanda.playroll.customExceptions.CustomException
+import es.ukanda.playroll.entyties.PartieEntities.CharacterEntity
+import es.ukanda.playroll.entyties.PartieEntities.Inventario
+import es.ukanda.playroll.entyties.PartieEntities.Player
+import es.ukanda.playroll.entyties.PartieEntities.PlayerCharacters
 import org.json.JSONArray
 import org.json.JSONObject
 import java.net.DatagramSocket
@@ -50,5 +59,67 @@ class ComunicationHelpers {
             }
             return socket!!
         }
+
+        fun convertStringToCharacterList(mensaje: String): List<CharacterEntity> {
+            val jsonArray = JSONArray(mensaje)
+            val characterList = mutableListOf<CharacterEntity>()
+
+            for (i in 0 until jsonArray.length()) {
+                val character = CharacterEntity.fromJson(jsonArray.get(0).toString())
+                characterList.add(character)
+            }
+
+            return characterList
+        }
+
+        fun convertStringToPlayerList(mensaje: String): List<Player> {
+            val jsonArray = JSONArray(mensaje)
+            val playerList = mutableListOf<Player>()
+
+            for (i in 0 until jsonArray.length()) {
+                val player = Player.fromJson(jsonArray.get(0).toString())
+                playerList.add(player)
+            }
+
+            return playerList
+        }
+
+        fun convertStringToInventarioList(mensaje: String): List<Inventario> {
+            val jsonArray = JSONArray(mensaje)
+            val inventarioList = mutableListOf<Inventario>()
+
+            for (i in 0 until jsonArray.length()) {
+                val inventario = Inventario.fromJson(jsonArray.get(0).toString())
+                inventarioList.add(inventario)
+            }
+
+            return inventarioList
+        }
+
+        fun convertStringToPlayerCharacterList(mensaje: String): List<PlayerCharacters> {
+            val jsonArray = JSONArray(mensaje)
+            val playerCharacterList = mutableListOf<PlayerCharacters>()
+
+            for (i in 0 until jsonArray.length()) {
+                val playerCharacter = PlayerCharacters.fromJson(jsonArray.get(0).toString())
+                playerCharacterList.add(playerCharacter)
+            }
+
+            return playerCharacterList
+        }
+
+        fun getHashFromUser():String{
+            try {
+                val user = FirebaseAuth.getInstance().currentUser
+                val email = user?.email ?: throw CustomException("No se ha podido obtener el email del usuario")
+                return email.hashCode().toString()
+            }catch (e:Exception){
+                e.printStackTrace()
+            }catch (e: CustomException){
+                e.printStackTrace()
+            }
+            return ""
+        }
+
     }
 }

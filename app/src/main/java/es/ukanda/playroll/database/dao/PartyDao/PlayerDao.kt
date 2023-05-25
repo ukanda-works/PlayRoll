@@ -10,7 +10,7 @@ interface PlayerDao {
     suspend fun getPlayerById(playerId: Int): Player
 
     @Insert
-    suspend fun insertPlayer(player: Player)
+    suspend fun insertPlayer(player: Player): Long
 
     @Update
     suspend fun updatePlayer(player: Player)

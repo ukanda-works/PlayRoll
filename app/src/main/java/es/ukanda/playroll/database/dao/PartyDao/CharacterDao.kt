@@ -12,10 +12,11 @@ interface CharacterDao {
     @Query("SELECT * FROM characters WHERE characterID = :characterId")
     suspend fun getCharacterById(characterId: Int): CharacterEntity
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertCharacter(character: CharacterEntity)
+    fun insertCharacter(character: CharacterEntity) : Long
 
     @Query("SELECT * FROM characters")
     fun getAllCharacters(): List<CharacterEntity>
+
 
 
 

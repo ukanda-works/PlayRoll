@@ -62,6 +62,23 @@ data class CharacterEntity(
             val gson = com.google.gson.Gson()
             return gson.fromJson(json, CharacterEntity::class.java)
         }
+        fun removeIdFromCharacter(character: CharacterEntity): CharacterEntity {
+            return CharacterEntity(
+                name = character.name,
+                playerName = character.playerName,
+                description = character.description,
+                clase = character.clase,
+                race = character.race,
+                alignment = character.alignment,
+                level = character.level,
+                experience = character.experience,
+                background = character.background,
+                statistics = character.statistics,
+                salvaciones = character.salvaciones,
+                skills = character.skills
+            )
+        }
+
     }
 
 }

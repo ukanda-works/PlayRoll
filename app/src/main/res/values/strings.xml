@@ -63,4 +63,5 @@
     <string name="clas">Clase</string>
     <string name="add_characters">Añade los personajes</string>
     <string name="start_game">Comenzar partida</string>
+    <string name="player_name">Nombre Jugador</string>
 </resources>

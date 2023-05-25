@@ -14,6 +14,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputLayout
@@ -62,6 +63,7 @@ class JoinPartyFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getDatabaseData()
+        recicleViewInit()
         rgInit()
         getIp()
         /*CoroutineScope(Dispatchers.IO).launch {
@@ -80,7 +82,11 @@ class JoinPartyFragment : Fragment() {
         }
 
     }
-
+    private fun recicleViewInit() {
+        adapter = PartyAdapter(partyList)
+        binding.rvPartidasAbiertas.layoutManager = LinearLayoutManager(context)
+        binding.rvPartidasAbiertas.adapter = adapter
+    }
     fun getDatabaseData(){
         CoroutineScope(Dispatchers.IO).launch {
             characterEntityList = PartyDb.getDatabase(context!!).characterDao().getAllCharacters()
@@ -212,7 +218,9 @@ class JoinPartyFragment : Fragment() {
         val recyclerView = view.findViewById<RecyclerView>(R.id.rvCharactersJoin)
         initRecycler(listCharacter,recyclerView)
 
-        builder.setPositiveButton("Aceptar", null) // Quitamos el OnClickListener original
+        builder.setPositiveButton("Aceptar", DialogInterface.OnClickListener { dialog, which ->
+            dialog.dismiss()
+        })
 
         builder.setNegativeButton("Cancelar", DialogInterface.OnClickListener { dialog, which ->
             dialog.dismiss()
@@ -239,6 +247,8 @@ class JoinPartyFragment : Fragment() {
                     println("--------------------alias: $alias")
                     println("--------------------pass: $pass")
                     println("--------------------wcharacter: ${character.name}")
+
+                    ControllSocket.startParty(targetIp.value!!, 5000, alias, pass, character)
                     alertDialog.dismiss()
                 }
             }
@@ -291,6 +301,14 @@ class JoinPartyFragment : Fragment() {
                     Toast.makeText(instance.context, "Esperando a que comience la partida", Toast.LENGTH_SHORT).show()
                     //se queda escuchando por el 5691
                     //cuando reciba el mensaje de start se va a la pantalla de juego
+                }
+            }else if(newValue == ControllSocket.Companion.ConnectionState.STARTED){
+                instance.activity?.runOnUiThread {
+                    Toast.makeText(instance.context, "La partida ha comenzado", Toast.LENGTH_SHORT).show()
+                    val bundle = Bundle()
+                    bundle.putInt("party", party.value!!.partyID)
+                    bundle.putString("player", targetIp.value!!)
+                    instance.findNavController().navigate(R.id.action_nav_JoinParty_to_nav_playParty,bundle)
                 }
             }
         }

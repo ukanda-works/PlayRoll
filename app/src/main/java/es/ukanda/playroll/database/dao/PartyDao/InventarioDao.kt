@@ -9,7 +9,7 @@ interface InventarioDao {
     suspend fun getInventarioById(inventarioId: Int): Inventario
 
     @Insert
-    suspend fun insertInventario(inventario: Inventario)
+    suspend fun insertInventario(inventario: Inventario) : Long
 
     @Update
     suspend fun updateInventario(inventario: Inventario)
