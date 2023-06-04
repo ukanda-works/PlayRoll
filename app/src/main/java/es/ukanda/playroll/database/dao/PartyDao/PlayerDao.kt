@@ -9,7 +9,7 @@ interface PlayerDao {
     @Query("SELECT * FROM players WHERE playerID = :playerId")
     suspend fun getPlayerById(playerId: Int): Player
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPlayer(player: Player): Long
 
     @Update
@@ -20,10 +20,4 @@ interface PlayerDao {
 
     @Query("SELECT * FROM players")
     suspend fun getAllPlayers(): List<Player>
-
-    @Query("SELECT * FROM players WHERE partyID = :partyId")
-    suspend fun getPlayersByPartyId(partyId: Int): List<Player>
-
-
-
 }

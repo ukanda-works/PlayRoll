@@ -21,6 +21,6 @@ interface PartyDao {
     fun insertParty(party: Party) : Long
 
    /* @Query("SELECT * FROM characters WHERE partyID = :partyId")
-    fun getCharactersForParty(partyId: Int): List<CharacterEntity>*/
+    fun getCharactersForParty(partyId: Int): List<characters>*/
 
 }

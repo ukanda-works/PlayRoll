@@ -20,6 +20,7 @@ import es.ukanda.playroll.database.db.PartyDb
 import es.ukanda.playroll.databinding.FragmentHomeBinding
 import es.ukanda.playroll.entyties.PartieEntities.CharacterEntity
 import es.ukanda.playroll.entyties.PartieEntities.Party
+import es.ukanda.playroll.pruebas.TestPartyConexion
 import es.ukanda.playroll.pruebas.Test_uno
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -71,27 +72,28 @@ class HomeFragment : Fragment() {
             findNavController().navigate(R.id.action_nav_home_to_nav_PartyCreator)
         }
         binding.btPrueba.setOnClickListener {
-            findNavController().navigate(R.id.action_nav_home_to_nav_playParty)
+            var bundle = Bundle()
+            CoroutineScope(Dispatchers.IO).launch {
+                bundle = loadBundle()
+                CoroutineScope(Dispatchers.Main).launch {
+                    findNavController().navigate(R.id.action_nav_home_to_nav_playParty, bundle)
+                }
+            }
         }
         binding.btAddCharacter.setOnClickListener {
             findNavController().navigate(R.id.action_nav_home_to_nav_CharacterCreator)
         }
         binding.btJoinParty.setOnClickListener{
-            var bundle = Bundle()
-            CoroutineScope(Dispatchers.IO).launch {
-               bundle = loadBundle()
-            }
-            findNavController().navigate(R.id.action_nav_home_to_nav_JoinParty, bundle)
+            findNavController().navigate(R.id.action_nav_home_to_nav_JoinParty)
         }
     }
 
     private fun loadBundle(): Bundle {
-        val partyId = 1
+        val partyId = 7
         val bundle = Bundle()
-        //id partida
-        bundle.putInt("partyId", partyId)
-        //ip del servidor 127.0.0.1
-        bundle.putString("ip", "127.0.0.1")
+        bundle.putInt("party", partyId)
+        bundle.putBoolean("isMaster", false)
+        bundle.putString("ipServer", "127.0.0.1")
 
         return bundle
     }

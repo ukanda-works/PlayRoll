@@ -28,6 +28,16 @@ class Inventario(
     //movidas varias
     //se aprovecha y se mete aqui la vida
 ) {
+    override fun hashCode(): Int {
+        val prime = 31
+        var result = 1
+
+        result = result * prime + partyID
+        result = result * prime + characterID
+        result = result * prime + health
+
+        return result
+    }
     fun toJson(): String {
         val gson = Gson()
         return gson.toJson(this)

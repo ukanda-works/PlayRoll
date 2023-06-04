@@ -8,7 +8,7 @@ interface InventarioDao {
     @Query("SELECT * FROM inventarios WHERE inventarioID = :inventarioId")
     suspend fun getInventarioById(inventarioId: Int): Inventario
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertInventario(inventario: Inventario) : Long
 
     @Update

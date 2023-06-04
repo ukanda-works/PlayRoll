@@ -50,6 +50,7 @@ class JoinPartyFragment : Fragment() {
 
     private lateinit var characterAdapter: CharacterAdapter
 
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -197,7 +198,8 @@ class JoinPartyFragment : Fragment() {
         builder.setTitle("Entablar conexion")
         val view = layoutInflater.inflate(R.layout.dialog_join_alias, null)
         builder.setView(view)
-        if (party.partyConfig?.get("Pass").equals("")) {
+        val configuration = party.partyConfig
+        if (configuration?.get("Pass").equals("")) {
             println("no hay pass")
             view.findViewById<TextView>(R.id.tvPassJoin).visibility = View.GONE
             view.findViewById<EditText>(R.id.etPassJoin).visibility = View.GONE
@@ -209,10 +211,11 @@ class JoinPartyFragment : Fragment() {
             passWd.visibility = View.VISIBLE
             passTv.visibility = View.VISIBLE
         }
-
-        if (!party.partyConfig?.get("Pass").equals("true")) {
+        if(configuration?.get("OnlyOwn").equals("false")){
             listCharacter.addAll(characterList)
             listCharacter.addAll(characterEntityList)
+        }else{
+            listCharacter.addAll(characterList)
         }
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.rvCharactersJoin)
@@ -244,10 +247,6 @@ class JoinPartyFragment : Fragment() {
                 } else if (alias == "") {
                     Toast.makeText(context, "Introduce un alias", Toast.LENGTH_SHORT).show()
                 } else {
-                    println("--------------------alias: $alias")
-                    println("--------------------pass: $pass")
-                    println("--------------------wcharacter: ${character.name}")
-
                     ControllSocket.startParty(targetIp.value!!, 5000, alias, pass, character)
                     alertDialog.dismiss()
                 }
@@ -307,7 +306,8 @@ class JoinPartyFragment : Fragment() {
                     Toast.makeText(instance.context, "La partida ha comenzado", Toast.LENGTH_SHORT).show()
                     val bundle = Bundle()
                     bundle.putInt("party", party.value!!.partyID)
-                    bundle.putString("player", targetIp.value!!)
+                    bundle.putString("ipServer", targetIp.value!!)
+                    bundle.putBoolean("isMaster", false)
                     instance.findNavController().navigate(R.id.action_nav_JoinParty_to_nav_playParty,bundle)
                 }
             }

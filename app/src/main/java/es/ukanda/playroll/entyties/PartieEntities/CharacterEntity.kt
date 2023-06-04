@@ -37,6 +37,26 @@ data class CharacterEntity(
         val gson = com.google.gson.Gson()
         return gson.toJson(this)
     }
+
+    override fun hashCode(): Int {
+        val prime = 31
+        var result = 1
+
+        result = result * prime + name.hashCode()
+        result = result * prime + playerName.hashCode()
+        result = result * prime + description.hashCode()
+        result = result * prime + clase.hashCode()
+        result = result * prime + race.hashCode()
+        result = result * prime + alignment
+        result = result * prime + level
+        result = result * prime + experience
+        result = result * prime + background.hashCode()
+        result = result * prime + statistics.hashCode()
+        result = result * prime + salvaciones.hashCode()
+        result = result * prime + skills.hashCode()
+
+        return result
+    }
     companion object{
         val typeAlignment = mapOf<Int,String>(
             0 to "lawful_good",

@@ -1,14 +1,11 @@
 package es.ukanda.playroll.database.dao.PartyDao
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 import es.ukanda.playroll.entyties.PartieEntities.PlayerCharacters
 
 @Dao
 interface PlayerCharacterDao {
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPartyPlayerCharacter(partyPlayerCharacter: PlayerCharacters)
 
     @Delete

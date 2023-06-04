@@ -6,17 +6,20 @@ import androidx.room.PrimaryKey
 import com.google.gson.Gson
 
 
-@Entity(tableName = "players",
-        foreignKeys = [ForeignKey(entity = Party::class,
-                                  parentColumns = ["partyID"],
-                                  childColumns = ["partyID"],
-                                  onDelete = ForeignKey.CASCADE)])
+@Entity(tableName = "players")
 data class Player(
     @PrimaryKey(autoGenerate = true) val playerID: Int = 0,
-    val partyID: Int,
     val name: String,
     val identifier: String,// es el hash del email del jugador
 ) {
+    override fun hashCode(): Int {
+        val prime = 31
+        var result = 1
+        result = result * prime + name.hashCode()
+        result = result * prime + identifier.hashCode()
+
+        return result
+    }
     fun toJson(): String {
         val gson = Gson()
         return gson.toJson(this)
@@ -28,7 +31,6 @@ data class Player(
         }
         fun removeIdFromPlayer(player: Player): Player {
             return Player(
-                partyID = player.partyID,
                 name = player.name,
                 identifier = player.identifier
                 // añadir campos adicionales aquí si es necesario

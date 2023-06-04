@@ -5,17 +5,20 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.CorrectionInfo
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.color.utilities.PointProviderLab
 import com.google.firebase.auth.FirebaseAuth
 import es.ukanda.playroll.R
+import es.ukanda.playroll.controllers.game.GameController
 import es.ukanda.playroll.database.db.PartyDb
 import es.ukanda.playroll.databinding.FragmentCreatePartyBinding
 import es.ukanda.playroll.databinding.FragmentLoginBinding
 import es.ukanda.playroll.entyties.PartieEntities.CharacterEntity
 import es.ukanda.playroll.entyties.PartieEntities.Party
+import es.ukanda.playroll.entyties.PartieEntities.Player
 import es.ukanda.playroll.entyties.PartieEntities.PlayerCharacters
 import es.ukanda.playroll.ui.adapter.CharacterAdapter
 import kotlinx.coroutines.CoroutineScope
@@ -28,6 +31,8 @@ class CreatePartyFragment : Fragment() {
     private val binding get() = _binding!!
     private var characterList = mutableListOf<CharacterEntity>()
     private lateinit var characterAdapter: CharacterAdapter
+    private lateinit var gameController: GameController
+    private lateinit var currentPlayer: Player
 
     companion object{
 
@@ -44,8 +49,16 @@ class CreatePartyFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        gameController = GameController(context!!)
+        initLoad()
         initRecycler()
         buttons()
+    }
+
+    private fun initLoad() {
+        CoroutineScope(Dispatchers.IO).launch{
+            currentPlayer = gameController.getCurrentPlayer()
+        }
     }
 
     private fun buttons() {
@@ -78,7 +91,8 @@ class CreatePartyFragment : Fragment() {
                     PartyDb.getDatabase(requireContext()).playerCharacterDao().insertPartyPlayerCharacter(
                         PlayerCharacters(
                             partyID = partida.toInt(),
-                            characterID = it.characterID))
+                            characterID = it.characterID,
+                            playerID = currentPlayer.playerID))
                 }
                 }
             }

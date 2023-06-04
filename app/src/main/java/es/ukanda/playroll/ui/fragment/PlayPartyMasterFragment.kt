@@ -20,6 +20,7 @@ import es.ukanda.playroll.databinding.FragmentPlayPartyMasterBinding
 import es.ukanda.playroll.entyties.PartieEntities.CharacterEntity
 import es.ukanda.playroll.entyties.PartieEntities.Party
 import es.ukanda.playroll.entyties.PartieEntities.Player
+import es.ukanda.playroll.entyties.PartieEntities.PlayerCharacters
 import kotlinx.coroutines.*
 import java.io.*
 import java.lang.Thread.sleep
@@ -33,6 +34,7 @@ class PlayPartyMasterFragment : Fragment(){
 
     lateinit var party: Party
     var listaJugadores = mutableMapOf<Player, String>()
+    var listaJugadoresCharacter = mutableMapOf<String, CharacterEntity>()
     lateinit var characterList : List<CharacterEntity>
 
     companion object{
@@ -70,18 +72,16 @@ class PlayPartyMasterFragment : Fragment(){
             }
             builder.setNegativeButton("No"){dialog, which ->
             }
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
         }
     }
 
     private fun startGame() {
 
         CoroutineScope(Dispatchers.IO).launch {
-            //antes de enviarse las cosas se almacenan
             val db = PartyDb.getDatabase(requireContext())
-
-            val partyId = db.partyDao().insertParty(party)
-            val savedParty = db.partyDao().getParty(partyId.toInt())
-
+            val savedParty = db.partyDao().getParty(party.partyID)
             val savedPlayers = mutableListOf<Player>()
             val jsonPlayerList = mutableListOf<String>()
             listaJugadores.forEach {
@@ -90,11 +90,17 @@ class PlayPartyMasterFragment : Fragment(){
                 savedPlayers.add(saved)
                 jsonPlayerList.add(saved.toJson())
             }
+            val savedPlayerCharacterList = mutableListOf<String>()
+            savedPlayers.forEach {
+                val playerHash = it.identifier
+                val character = listaJugadoresCharacter[playerHash]
+                val playerCharacter = PlayerCharacters(partyID = savedParty.partyID, playerID = it.playerID, characterID = character!!.characterID)
+                db.playerCharacterDao().insertPartyPlayerCharacter(playerCharacter)
+                savedPlayerCharacterList.add(playerCharacter.toJson())
+            }
 
             //TODO implementar inventarios
 
-
-            //luego se leen y se envian
             val gson = Gson()
             val jsonCharaterList = mutableListOf<String>()
             characterList.forEach {
@@ -105,7 +111,7 @@ class PlayPartyMasterFragment : Fragment(){
                                 "party" to savedParty.toJson(),
                                 "characters" to jsonCharaterList,
                                 "players" to jsonPlayerList,
-                                "player_character" to "")//hay que pasar la relacion entre jugadores y personajes
+                                "player_character" to savedPlayerCharacterList)//hay que pasar la relacion entre jugadores y personajes
             val mensajeJson = gson.toJson(mensaje)
             listaJugadores.values.forEach{ ip ->
                 var socket = Socket(ip, 5691)
@@ -116,11 +122,15 @@ class PlayPartyMasterFragment : Fragment(){
                 socket.close()
             }
             val bundle = Bundle()
-            bundle.putInt("id", savedParty.partyID)
-            //el bundle de master incluira un map con un hash de jugadores y su ip
+            bundle.putInt("party", savedParty.partyID)
+            val playerList = mutableMapOf<String,String>()
+            listaJugadores.forEach {
+                playerList.put(it.key.identifier, it.value)
+            }
+            bundle.putSerializable("players", playerList as Serializable)
             bundle.putBoolean("isMaster", true)
             //esto tal vez haya que hacerlo en el hilo principal
-            findNavController().navigate(R.id.action_nav_playPartyMaster_to_nav_playParty)
+            findNavController().navigate(R.id.action_nav_playPartyMaster_to_nav_playParty, bundle)
         }
 
     }
@@ -149,7 +159,7 @@ class PlayPartyMasterFragment : Fragment(){
          party =db.partyDao().getParty(partyId)
          val playerCharacters = db.playerCharacterDao().getPlayersAndCharactersByPartyId(partyId)
          val characters = mutableListOf<CharacterEntity>()
-            playerCharacters.forEach {
+         playerCharacters.forEach {
                 characters.add(db.characterDao().getCharacterById(it.characterID))
             }
          characterList = characters
@@ -315,9 +325,11 @@ private class ServerThread(val clientSocket: Socket, val fragment: PlayPartyMast
             "start" -> {
                 val alias = decodedMensaje["alias"]
                 val hash = decodedMensaje["hash"]
-                val characterOwn = decodedMensaje["characterOwn"]
-                val selectedCharacter = decodedMensaje["selectedCharacter"]
-                //almacenar en la base de datos
+                val characterOwn = decodedMensaje["characterOwn"].toBoolean()
+                val selectedCharacter = CharacterEntity.fromJson(decodedMensaje["selectedCharacter"]!!)
+                CoroutineScope(Dispatchers.IO).launch {
+                    addPlayerCharacter(hash!!, selectedCharacter!!, characterOwn)
+                }
                 addPlayer(alias!!, clientSocket.inetAddress.hostAddress, hash!!)
                 val sendResponse = listOf("reponse" to "ok")
                 output.write(Gson().toJson(sendResponse))
@@ -333,8 +345,18 @@ private class ServerThread(val clientSocket: Socket, val fragment: PlayPartyMast
         }
     }
 
+    private suspend fun addPlayerCharacter(hash: String, selectedCharacter: CharacterEntity, characterOwn: Boolean) {
+        if (characterOwn){
+            val characterId = PartyDb.getDatabase(fragment.requireContext()).characterDao().insertCharacter(CharacterEntity.removeIdFromCharacter(selectedCharacter))
+            val savedCharacter = PartyDb.getDatabase(fragment.requireContext()).characterDao().getCharacterById(characterId.toInt())
+            fragment.listaJugadoresCharacter.put(hash, savedCharacter)
+        }else{
+            fragment.listaJugadoresCharacter.put(hash, selectedCharacter)
+        }
+    }
+
     private fun addPlayer(alias: String, ip:String, hash:String) {
-        val player = Player(name = alias, partyID = fragment.party.partyID, identifier = hash)
+        val player = Player(name = alias, identifier = hash)
         fragment.listaJugadores.put(player,ip)
         fragment.activity?.runOnUiThread {
             fragment.updatePlayerList()

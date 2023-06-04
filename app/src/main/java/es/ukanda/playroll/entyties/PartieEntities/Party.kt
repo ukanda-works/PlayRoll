@@ -16,9 +16,22 @@ data class Party(
     val partyDescription: String? = null,
     @TypeConverters(HashMapConverter::class)
     var partyConfig: HashMap<String, String>? = HashMap(),
-    var sesions: Int = 0
+    var sessions: Int = 0,
+    var own : Boolean = false
     //añadir campo para configuracion
 ) {
+    override fun hashCode(): Int {
+        val prime = 31
+        var result = 1
+
+        result = result * prime + partyName.hashCode()
+        result = result * prime + partyCreator.hashCode()
+        result = result * prime + (partyDescription?.hashCode() ?: 0)
+        result = result * prime + (partyConfig?.hashCode() ?: 0)
+        result = result * prime + sessions
+
+        return result
+    }
     fun toJson(): String {
         val gson = Gson()
         return gson.toJson(this)
@@ -47,7 +60,8 @@ data class Party(
                 partyCreator = party.partyCreator,
                 partyDescription = party.partyDescription,
                 partyConfig = party.partyConfig,
-                sesions = party.sesions
+                sessions = party.sessions,
+                own = party.own
             )
         }
 

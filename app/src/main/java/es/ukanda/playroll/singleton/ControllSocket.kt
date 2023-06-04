@@ -99,21 +99,22 @@ class ControllSocket {
                    if (decodedMensaje["reponse"].equals("ok")){
                        println("aceptada")
                           JoinPartyFragment.setConexionEstate(ConnectionState.STARTING)
+                            waitStart()
                    }else{
                        println("rechazada")
                        JoinPartyFragment.setConexionEstate(ConnectionState.ERROR)
                    }
                }
                "started" -> {
-                   if (decodedMensaje["reponse"].equals("ok")){
+                   if (decodedMensaje["response"].equals("ok")){
                        println("aceptada")
                        var partyRecived = Party.fromJson(decodedMensaje["party"].toString())
                        partyRecived = Party.removeIdFromParty(partyRecived)
 
                        var recivedCharacters = ComunicationHelpers.convertStringToCharacterList(decodedMensaje["characters"].toString())
                        var recivedPlayers = ComunicationHelpers.convertStringToPlayerList(decodedMensaje["players"].toString())
-                       var recivedPlayerCharacters = ComunicationHelpers.convertStringToPlayerCharacterList(decodedMensaje["playerCharacters"].toString())
-                       var recivedInventarios = ComunicationHelpers.convertStringToInventarioList(decodedMensaje["inventarios"].toString())
+                       var recivedPlayerCharacters = ComunicationHelpers.convertStringToPlayerCharacterList(decodedMensaje["player_character"].toString())
+                       //var recivedInventarios = ComunicationHelpers.convertStringToInventarioList(decodedMensaje["inventarios"].toString())
 
                        CoroutineScope(Dispatchers.IO).launch {
                            val db = PartyDb.getDatabase(JoinPartyFragment.instance.requireContext())
@@ -122,7 +123,7 @@ class ControllSocket {
                            val savedCharacters = mutableListOf<CharacterEntity>()
                            val savedPlayers = mutableListOf<Player>()
                            val savedInventarios = mutableListOf<Inventario>()
-                             recivedCharacters.forEach {
+                           recivedCharacters.forEach {
                                  val oldId  = it.characterID
                                  val id =db.characterDao().insertCharacter(CharacterEntity.removeIdFromCharacter(it))
                                  savedCharacters.add(db.characterDao().getCharacterById(id.toInt()))
@@ -132,12 +133,12 @@ class ControllSocket {
                                             playerCharacter.characterID = id.toInt()
                                         }
                                     }
-                                    recivedInventarios.forEach { inventario ->
+                                    /*recivedInventarios.forEach { inventario ->
                                         inventario.partyID = partyId.toInt()
                                         if (inventario.characterID == oldId){
                                             inventario.characterID = id.toInt()
                                         }
-                                    }
+                                    }*/
                             }
                            recivedPlayers.forEach {
                                val oldId = it.playerID
@@ -149,10 +150,10 @@ class ControllSocket {
                                       }
                                  }
                            }
-                           recivedInventarios.forEach {
+                           /*recivedInventarios.forEach {
                                val id = db.inventarioDao().insertInventario(Inventario.removeIdFromInventario(it))
                                savedInventarios.add(db.inventarioDao().getInventarioById(id.toInt()))
-                           }
+                           }*/
 
                             recivedPlayerCharacters.forEach {
                                  db.playerCharacterDao().insertPartyPlayerCharacter(it)
@@ -178,7 +179,12 @@ class ControllSocket {
                     var writer = BufferedWriter(OutputStreamWriter(clientSocket.getOutputStream()))
                     var reader = BufferedReader(InputStreamReader(clientSocket.getInputStream()))
                     //se envia el alias y el personaje con la peticion start
-                    val mensaje = listOf("peticion" to "start","alias" to alias, "personaje" to personaje.toJson(), "hash" to ComunicationHelpers.getHashFromUser())
+                    val mensaje = listOf("peticion" to "start",
+                                    "alias" to alias,
+                                    "selectedCharacter" to personaje.toJson(),
+                                    "pass" to pass,
+                                    "characterOwn" to false, //indica si el personaje es propio o no, true si es propio
+                                    "hash" to ComunicationHelpers.getHashFromUser())
                     writer.write(Gson().toJson(mensaje))
                     writer.newLine()
                     writer.flush()
@@ -201,17 +207,17 @@ class ControllSocket {
             job?.cancel()
         }
 
-        fun waitStart(ip:String, timeout: Int = 5000){
-            job = CoroutineScope(Dispatchers.IO).launch {
+        fun waitStart(){
+            CoroutineScope(Dispatchers.IO).launch {
+                println("esperando a que el servidor inicie la partida")
                 try {
                     var serverSocket = ServerSocket(5691)
+                    println("escuchando...")
                     val socket = serverSocket.accept()
-                    var writer = BufferedWriter(OutputStreamWriter(socket.getOutputStream()))
                     var reader = BufferedReader(InputStreamReader(socket.getInputStream()))
-                    //se espera a que el servidor envie la alerta de inicio
                     val mensajeRecibido = reader.readLine()
                     procesarRespuesta("started", mensajeRecibido)
-
+                    serverSocket.close()
                 } catch (e: Exception) {
                     JoinPartyFragment.setConexionEstate(ConnectionState.ERROR)
                     JoinPartyFragment.setErrorMensaje(e.message ?: "Error")
@@ -219,7 +225,6 @@ class ControllSocket {
                     e.printStackTrace()
                 }
             }
-            job?.cancel()
         }
 
     }

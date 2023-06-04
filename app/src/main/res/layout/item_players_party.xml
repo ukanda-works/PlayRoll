@@ -39,7 +39,7 @@
             app:layout_constraintStart_toEndOf="@+id/tvClaseItemCharacter" />
 
         <TextView
-            android:id="@+id/tvLevel2"
+            android:id="@+id/tvNamePlayerItemPlayers"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
@@ -64,6 +64,16 @@
             android:text="@string/race"
             app:layout_constraintBottom_toBottomOf="parent"
             tools:layout_editor_absoluteX="24dp" />
+
+        <Button
+            android:id="@+id/btPlayerInteract"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="16dp"
+            android:text="X"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
