@@ -34,10 +34,6 @@ class CreatePartyFragment : Fragment() {
     private lateinit var gameController: GameController
     private lateinit var currentPlayer: Player
 
-    companion object{
-
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -85,7 +81,6 @@ class CreatePartyFragment : Fragment() {
                 //la partida
                 var partida = PartyDb.getDatabase(requireContext()).partyDao().insertParty(party)
                 //los personajes a la entidad playerCharacter
-                println("Partida creada con id: $partida")
                 if (!selectedCharacters.isEmpty()){
                     selectedCharacters.forEach {
                     PartyDb.getDatabase(requireContext()).playerCharacterDao().insertPartyPlayerCharacter(
@@ -93,25 +88,20 @@ class CreatePartyFragment : Fragment() {
                             partyID = partida.toInt(),
                             characterID = it.characterID,
                             playerID = currentPlayer.playerID))
-                }
+                    }
                 }
             }
-            println("Partida creada")
-            Toast.makeText(context, "Partida creada", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, getString(R.string.party_created), Toast.LENGTH_SHORT).show()
         }catch (e: Exception){
-            println("Error al crear la partida")
             println(e)
         }
     }
 
     fun initRecycler(){
-        //corrutina
         CoroutineScope(Dispatchers.IO).launch {
-            //se obtienen los personajes del usuario
             val listCharacter = PartyDb.getDatabase(requireContext()).characterDao().getAllCharacters()
             characterList = listCharacter.toMutableList()
             characterAdapter = CharacterAdapter(characterList, characterList.count()) { character, isSelected ->
-
             }
             binding.rvCharactersCreator.layoutManager  = LinearLayoutManager(context)
             binding.rvCharactersCreator.adapter = characterAdapter

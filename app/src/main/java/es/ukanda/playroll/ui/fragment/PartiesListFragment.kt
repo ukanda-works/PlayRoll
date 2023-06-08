@@ -9,6 +9,7 @@ import es.ukanda.playroll.R
 import es.ukanda.playroll.databinding.FragmentHelpBinding
 import es.ukanda.playroll.databinding.FragmentPartiesListBinding
 
+
 class PartiesListFragment : Fragment() {
     private var _binding: FragmentPartiesListBinding? = null
     private val binding get() = _binding!!

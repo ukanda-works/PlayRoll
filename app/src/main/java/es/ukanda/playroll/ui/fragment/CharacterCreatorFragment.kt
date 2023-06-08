@@ -23,7 +23,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-
 class CharacterCreatorFragment : Fragment() {
     private var _binding: FragmentCharacterCreatorBinding? = null
     private val binding get() = _binding!!
@@ -47,8 +46,6 @@ class CharacterCreatorFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCharacterCreatorBinding.inflate(inflater, container, false)
-
-
         return binding.root
     }
 
@@ -60,13 +57,9 @@ class CharacterCreatorFragment : Fragment() {
         buttons()
         spinners()
         if(arguments?.getString("from").equals("camera")){
-            Toast.makeText(requireContext(), "camara", Toast.LENGTH_SHORT).show()
             fromCamara()
         }else if(arguments?.getString("from").equals("edit")){
-            Toast.makeText(requireContext(), "edit", Toast.LENGTH_SHORT).show()
-            //editCharacter()
-        }else{
-            Toast.makeText(requireContext(), "new", Toast.LENGTH_SHORT).show()
+            editCharacter()
         }
     }
 
@@ -97,7 +90,6 @@ class CharacterCreatorFragment : Fragment() {
     }
 
     private fun buttons() {
-
         binding.btCreateCharacter.setOnClickListener {
             try{
                 validateform1()
@@ -109,11 +101,9 @@ class CharacterCreatorFragment : Fragment() {
                 e.printStackTrace()
             }
         }
-
         binding.btnCamera.setOnClickListener {
             findNavController().navigate(es.ukanda.playroll.R.id.action_nav_CharacterCreator_to_nav_camera)
         }
-
     }
 
     private fun validateform1() {
@@ -130,11 +120,9 @@ class CharacterCreatorFragment : Fragment() {
             val inteligencia = binding.formCreateCharacter.etInteligencia2.text.toString()
             val sabiduria = binding.formCreateCharacter.etSabiduria2.text.toString()
             val carisma = binding.formCreateCharacter.etCarisma2.text.toString()
-            //val salvacion = binding.formCreateCharacter.spTiradasSalvacion2.selectedItem.toString()
-            //val habilidad = binding.formCreateCharacter.spSkills2.selectedItem.toString()
 
             if (nivel.toInt() < 1 || nivel.toInt() > 20) {
-                throw CustomException("El nivel debe estar entre 1 y 20")
+                throw CustomException(getString(es.ukanda.playroll.R.string.the_level_must_be_between_1_and_20))
             }
 
             character.name = name
@@ -145,26 +133,26 @@ class CharacterCreatorFragment : Fragment() {
             character.level = nivel.toInt()
 
             if (fuerza.isEmpty() || destreza.isEmpty() || constitucion.isEmpty() || inteligencia.isEmpty() || sabiduria.isEmpty() || carisma.isEmpty()) {
-                throw CustomException("Rellena todos los campos")
+                throw CustomException(getString(es.ukanda.playroll.R.string.fill_in_all_the_fields))
             }
 
             if (fuerza.toInt() < 1 || fuerza.toInt() > 20) {
-                throw CustomException("La fuerza debe estar entre 1 y 20")
+                throw CustomException(getString(es.ukanda.playroll.R.string.the_force_must_be_between_1_and_20))
             }
             if (destreza.toInt() < 1 || destreza.toInt() > 20) {
-                throw CustomException("La destreza debe estar entre 1 y 20")
+                throw CustomException(getString(es.ukanda.playroll.R.string.dexterity_must_be_between_1_and_20))
             }
             if (constitucion.toInt() < 1 || constitucion.toInt() > 20) {
-                throw CustomException("La constitucion debe estar entre 1 y 20")
+                throw CustomException(getString(es.ukanda.playroll.R.string.constitucion_must_be_between_1_and_20))
             }
             if (inteligencia.toInt() < 1 || inteligencia.toInt() > 20) {
-                throw CustomException("La inteligencia debe estar entre 1 y 20")
+                throw CustomException(getString(es.ukanda.playroll.R.string.intelligence_must_be_between_1_and_20))
             }
             if (sabiduria.toInt() < 1 || sabiduria.toInt() > 20) {
-                throw CustomException("La sabiduria debe estar entre 1 y 20")
+                throw CustomException(getString(es.ukanda.playroll.R.string.wisdom_must_be_between_1_and_20))
             }
             if (carisma.toInt() < 1 || carisma.toInt() > 20) {
-                throw CustomException("El carisma debe estar entre 1 y 20")
+                throw CustomException(getString(es.ukanda.playroll.R.string.charisma_must_be_between_1_and_20))
             }
             val stats = HashMap<String, Int>(
                 mapOf(
@@ -177,37 +165,25 @@ class CharacterCreatorFragment : Fragment() {
                 )
             )
             character.statistics = stats
-            /*val skills = listOf<String>(
-                habilidad
-            )
-            character.skills = skills
-            val savingThrows = listOf<String>(
-                salvacion
-            )
-            character.salvaciones = savingThrows*/
-
         }catch (e: CustomException){
             throw e
         }
         catch (e: Exception){
             e.printStackTrace()
-            throw CustomException("Error al validar datos")
+            throw CustomException(getString(es.ukanda.playroll.R.string.error_validating_data))
         }
     }
 
     private fun addCharacter() {
         try{
-            //se añade desde una corrutina
             CoroutineScope(Dispatchers.IO).launch {
                 PartyDb.getDatabase(requireContext()).characterDao().insertCharacter(character)
                 withContext(Dispatchers.Main){
-                    Toast.makeText(context, "Personaje creado", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, getString(es.ukanda.playroll.R.string.character_created), Toast.LENGTH_SHORT).show()
                 }
             }
         }catch (e: Exception){
-            println("Error al crear el personaje")
-            println(e)
-            Toast.makeText(context, "Error al crear el personaje", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, getString(es.ukanda.playroll.R.string.error_creating_character), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -218,47 +194,21 @@ class CharacterCreatorFragment : Fragment() {
 
     private fun fromCamara() {
         val alertDialogBuilder = AlertDialog.Builder(context)
-        alertDialogBuilder.setTitle("Advertencia")
-        alertDialogBuilder.setMessage("Puede que la informacion detectada no sea correcta, por favor revisela")
-        alertDialogBuilder.setPositiveButton("Aceptar") { dialog, _ ->
+        alertDialogBuilder.setTitle(getString(es.ukanda.playroll.R.string.warning))
+        alertDialogBuilder.setMessage(getString(es.ukanda.playroll.R.string.warning_camera_correct_info))
+        alertDialogBuilder.setPositiveButton(getString(es.ukanda.playroll.R.string.accept)) { dialog, _ ->
             dialog.dismiss()
         }
 
         val alertDialog = alertDialogBuilder.create()
         alertDialog.show()
 
-        val personaje = arguments?.getSerializable("personaje") as List<Pair<String,String>>
+        val personaje = arguments?.getSerializable(getString(es.ukanda.playroll.R.string.character)) as List<Pair<String,String>>
         val bundle = mutableMapOf<String, String>()
         for (pair in personaje) {
             bundle[pair.first] = pair.second
         }
-/*
-        val statistics = HashMap<String, Int>(
-            mapOf(
-                "fuerza" to bundle.getOrDefault("fuerza", 0).toString().toInt(),
-                "destreza" to bundle.getOrDefault("destreza", 0).toString().toInt(),
-                "constitucion" to bundle.getOrDefault("constitucion", 0).toString().toInt(),
-                "inteligencia" to bundle.getOrDefault("inteligencia", 0).toString().toInt(),
-                "sabiduria" to bundle.getOrDefault("sabiduria", 0).toString().toInt(),
-                "carisma" to bundle.getOrDefault("carisma", 0).toString().toInt()
-            )
-        )*/
 
-       /* character.name = bundle.getOrDefault("name", "")
-        character.statistics = statistics
-        var level = bundle.getOrDefault("level", 0).toString()
-        if (level.equals("")){
-            level = "0"
-        }
-
-        character.level = level.toInt()
-        character.clase = bundle.getOrDefault("clase", "")
-
-        character.alignment = bundle.getOrDefault("alignment", "5").toInt()
-        character.race = bundle.getOrDefault("race", "")
-        character.background = bundle.getOrDefault("background", "")*/
-
-        println("---------------------")
         bundle.forEach() { (key, value) ->
             println("$key = $value")
             when(key){
@@ -276,11 +226,7 @@ class CharacterCreatorFragment : Fragment() {
                 "sabiduria" -> character.statistics["sabiduria"] = value.toInt()
                 "carisma" -> character.statistics["carisma"] = value.toInt()
             }
-
         }
-        println("---------------------")
-        println(character)
-
         rellenarFormulario()
     }
 
@@ -320,7 +266,6 @@ class CharacterCreatorFragment : Fragment() {
                 binding.formCreateCharacter.spAlineamiento.setSelection(alignmentList.indexOf(it))
             }
         }
-
         //stats
         binding.formCreateCharacter.etFuerza2.setText(character.statistics["fuerza"].toString())
         binding.formCreateCharacter.etDestreza2.setText(character.statistics["destreza"].toString())
@@ -328,8 +273,5 @@ class CharacterCreatorFragment : Fragment() {
         binding.formCreateCharacter.etInteligencia2.setText(character.statistics["inteligencia"].toString())
         binding.formCreateCharacter.etSabiduria2.setText(character.statistics["sabiduria"].toString())
         binding.formCreateCharacter.etCarisma2.setText(character.statistics["carisma"].toString())
-
-
     }
-
 }

@@ -42,8 +42,8 @@ class PlayPartyMasterFragment : Fragment(){
         var conexionEstate = MutableLiveData<Boolean>()
         var errorMensaje = MutableLiveData<String>()
         var lastResponse = MutableLiveData<Boolean>()
-
     }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -59,18 +59,17 @@ class PlayPartyMasterFragment : Fragment(){
         setParty(partyId)
         getIp()
         setBtn()
-
     }
 
     private fun setBtn() {
         binding.btStartGame.setOnClickListener {
             val builder = AlertDialog.Builder(requireContext())
-            builder.setTitle("Comenzar partida")
-            builder.setMessage("¿Estas seguro de que quieres comenzar la partida?")
-            builder.setPositiveButton("Si"){dialog, which ->
+            builder.setTitle(getString(R.string.start_game))
+            builder.setMessage(getString(R.string.are_you_sure_you_want_to_start_the_game))
+            builder.setPositiveButton(getString(R.string.yes)){dialog, which ->
                 startGame()
             }
-            builder.setNegativeButton("No"){dialog, which ->
+            builder.setNegativeButton(R.string.no){dialog, which ->
             }
             val dialog: AlertDialog = builder.create()
             dialog.show()
@@ -78,7 +77,6 @@ class PlayPartyMasterFragment : Fragment(){
     }
 
     private fun startGame() {
-
         CoroutineScope(Dispatchers.IO).launch {
             val db = PartyDb.getDatabase(requireContext())
             val savedParty = db.partyDao().getParty(party.partyID)
@@ -98,9 +96,6 @@ class PlayPartyMasterFragment : Fragment(){
                 db.playerCharacterDao().insertPartyPlayerCharacter(playerCharacter)
                 savedPlayerCharacterList.add(playerCharacter.toJson())
             }
-
-            //TODO implementar inventarios
-
             val gson = Gson()
             val jsonCharaterList = mutableListOf<String>()
             characterList.forEach {
@@ -111,7 +106,7 @@ class PlayPartyMasterFragment : Fragment(){
                                 "party" to savedParty.toJson(),
                                 "characters" to jsonCharaterList,
                                 "players" to jsonPlayerList,
-                                "player_character" to savedPlayerCharacterList)//hay que pasar la relacion entre jugadores y personajes
+                                "player_character" to savedPlayerCharacterList)
             val mensajeJson = gson.toJson(mensaje)
             listaJugadores.values.forEach{ ip ->
                 var socket = Socket(ip, 5691)
@@ -129,22 +124,21 @@ class PlayPartyMasterFragment : Fragment(){
             }
             bundle.putSerializable("players", playerList as Serializable)
             bundle.putBoolean("isMaster", true)
-            //esto tal vez haya que hacerlo en el hilo principal
             findNavController().navigate(R.id.action_nav_playPartyMaster_to_nav_playParty, bundle)
         }
-
     }
 
     private fun setParty(partyId: Int) {
         CoroutineScope(Dispatchers.IO).launch {
             if (partyId == 0){
-                //lanzar error de que no se ha encontrado la party
+                withContext(Dispatchers.Main){
+                    Toast.makeText(requireContext(), getString(R.string.error_party_not_found), Toast.LENGTH_LONG).show()
+                }
             }else{
                 initDb(partyId)
                 starServerUdp()
                 starServerTcp()
             }
-
         }
     }
 
@@ -172,31 +166,17 @@ class PlayPartyMasterFragment : Fragment(){
                 val buffer = ByteArray(1024)
                 while (true) {
                     val packet = DatagramPacket(buffer, buffer.size)
-                    CoroutineScope(Dispatchers.Main).launch {
-                        Toast.makeText(requireContext(), "Esperando", Toast.LENGTH_SHORT).show()
-                    }
                     socket.receive(packet)
-                    CoroutineScope(Dispatchers.Main).launch {
-                        Toast.makeText(requireContext(), "Recibido", Toast.LENGTH_SHORT).show()
-                    }
-                    //muestro el mensaje recibido
-                    val message = String(packet.data, 0, packet.length)
-                    CoroutineScope(Dispatchers.Main).launch {
-                        Toast.makeText(requireContext(), "Mensaje: $message", Toast.LENGTH_SHORT).show()
-                    }
                     sleep(1000)
                     val address = packet.address
                     val data = party.toJson().toByteArray()
                     val packet2 = DatagramPacket(data, data.size, address, 5688)
                     socket.send(packet2)
-                    activity?.runOnUiThread {
-                        Toast.makeText(requireContext(), "Respondiendo", Toast.LENGTH_SHORT).show()
-                    }
                 }
             }catch (e: Exception) {
                 e.printStackTrace()
                 CoroutineScope(Dispatchers.Main).launch {
-                    Toast.makeText(requireContext(), "Error:${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "${getString(R.string.error)}: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -209,26 +189,19 @@ class PlayPartyMasterFragment : Fragment(){
             try {
                 val serverSocket = ServerSocket(5690)
                 CoroutineScope(Dispatchers.Main).launch {
-                    Toast.makeText(requireContext(), "Esperando jugadores en el puerto ${serverSocket.localPort}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.waiting_for_user_requests), Toast.LENGTH_SHORT).show()
                 }
                 while (true) {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        Toast.makeText(requireContext(), "Escuchando", Toast.LENGTH_SHORT).show()
-                    }
                     val socket = withContext(Dispatchers.IO) {
                         serverSocket.accept()
                     }
-                    CoroutineScope(Dispatchers.Main).launch {
-                        Toast.makeText(requireContext(), "Recibido", Toast.LENGTH_SHORT).show()
-                    }
                     val serverThread = ServerThread(socket, this@PlayPartyMasterFragment)
                     serverThread.start()
-
                 }
             }catch (e: Exception) {
                 e.printStackTrace()
                CoroutineScope(Dispatchers.Main).launch {
-                   Toast.makeText(requireContext(), "Error:${e.message}", Toast.LENGTH_SHORT).show()
+                   Toast.makeText(requireContext(), "${getString(R.string.error)}: ${e.message}", Toast.LENGTH_SHORT).show()
                }
             }
         }
@@ -252,19 +225,17 @@ class PlayPartyMasterFragment : Fragment(){
 
     }
 
-    fun showPetition(message: String, title:String)
-    {
+    fun showPetition(message: String, title:String) {
             val builder = AlertDialog.Builder(context)
             builder.setTitle(title)
             builder.setMessage(message)
-            builder.setPositiveButton("Aceptar") { _, _ ->
+            builder.setPositiveButton(getString(R.string.accept)) { _, _ ->
                 lastResponse.value= true
             }
-            builder.setNegativeButton("Rechazar") { _, _ ->
+            builder.setNegativeButton(getString(R.string.decline)) { _, _ ->
                 lastResponse.value = false
             }
             val dialog = builder.create()
-
             dialog.show()
     }
 
@@ -286,24 +257,18 @@ private class ServerThread(val clientSocket: Socket, val fragment: PlayPartyMast
     }
 
     private fun processMessage(message: String, output: BufferedWriter) {
-        println("mensaje: $message -----------------------------------------------------")
         val decodedMensaje = ComunicationHelpers.getMapFromJson(message)
-        println("decodedMensaje: $decodedMensaje -----------------------------------------------------")
         val peticion = decodedMensaje["peticion"]
-        println("peticion: $peticion -----------------------------------------------------")
         when (peticion) {
             "join" -> {
                 val nombre = decodedMensaje["nombre"]
-                val mensaje = "El usuario $nombre quiere unirse a la partida"
                 fragment.activity?.runOnUiThread {
-                    fragment.showPetition(mensaje, "Petición de unión")
+                    fragment.showPetition(fragment.getString(R.string.user_want_to_join,nombre), fragment.getString(R.string.union_request))
                 }
                     while (PlayPartyMasterFragment.lastResponse.value == null) {
-                        println("esperando respuesta ui")
                         sleep(1000)
                     }
                 if (PlayPartyMasterFragment.lastResponse.value!!) {
-                    println("aceptado")
                     val jsonCharacterEntity = mutableListOf<String>()
                     fragment.characterList.forEach {
                         jsonCharacterEntity.add(it.toJson())
@@ -311,7 +276,6 @@ private class ServerThread(val clientSocket: Socket, val fragment: PlayPartyMast
                     val sendResponse = listOf("reponse" to "ok",
                                         "party" to fragment.party.toJson(),
                                         "characters" to jsonCharacterEntity)
-                    println("sendResponse: $sendResponse -----------------------------------------------------")
                     output.write(Gson().toJson(sendResponse))
                     output.newLine()
                     output.flush()

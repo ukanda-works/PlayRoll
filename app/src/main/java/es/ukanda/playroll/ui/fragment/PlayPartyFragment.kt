@@ -11,6 +11,7 @@ import androidx.fragment.app.FragmentPagerAdapter
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import es.ukanda.playroll.R
 import es.ukanda.playroll.controllers.helpers.ComunicationHelpers
 import es.ukanda.playroll.database.db.PartyDb
 import es.ukanda.playroll.databinding.FragmentPlayPartyBinding
@@ -64,7 +65,7 @@ class PlayPartyFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         dataLoaded.observe(viewLifecycleOwner, Observer { loaded ->
             if (loaded == true) {
-                Toast.makeText(requireContext(), "Datos cargados", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.uploaded_data), Toast.LENGTH_SHORT).show()
                 initListenerSocket()
                 initTabs()
             }
@@ -75,7 +76,6 @@ class PlayPartyFragment : Fragment() {
 
     private fun loadBundle() {
         val bundle = arguments
-        println("bundle: $bundle----------------------------------------")
         if (bundle != null) {
             val master = bundle.getBoolean("isMaster")
             if (master) {
@@ -89,7 +89,7 @@ class PlayPartyFragment : Fragment() {
                 initDb(partyId)
             }
         }else{
-            Toast.makeText(requireContext(), "Error al cargar los datos", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.error_loading_data), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -125,18 +125,6 @@ class PlayPartyFragment : Fragment() {
         CoroutineScope(Dispatchers.IO).launch {
             lateinit var serverSocket: ServerSocket
             try {
-                println("puerto: $port")
-                serverSocket = ServerSocket(port)
-
-            }catch (e: BindException){
-                println("error al crear el socket ${e.message}")
-                // Se busca el socket que está usando la dirección y se cierra
-                val inetAddress = InetAddress.getLocalHost()
-                val socketAddress = InetSocketAddress(inetAddress, port)
-                val conflictingSocket = ServerSocket()
-                conflictingSocket.bind(socketAddress)
-                conflictingSocket.close()
-                serverSocket.close()
                 serverSocket = ServerSocket(port)
             }catch(e: Exception) {
                 e.printStackTrace()
@@ -153,9 +141,9 @@ class PlayPartyFragment : Fragment() {
 
     private fun initTabs() {
         val adapter = ViewPagerAdapter(childFragmentManager)
-        adapter.addFragment(PlayPartyPlayersFragment(), "Jugadores")
-        adapter.addFragment(PlayPartyInventarioFragment(), "Inventario")
-        adapter.addFragment(PlayPartyCombatFragment(), "Combate")
+        adapter.addFragment(PlayPartyPlayersFragment(), getString(R.string.players))
+        adapter.addFragment(PlayPartyInventarioFragment(), getString(R.string.inventory))
+        adapter.addFragment(PlayPartyCombatFragment(), getString(R.string.combat))
         binding.viewPager.adapter = adapter
         binding.tabLayout.setupWithViewPager(binding.viewPager)
 

@@ -38,12 +38,10 @@ class CameraFragment : Fragment(), SurfaceHolder.Callback, Camera.PictureCallbac
     val cameraViewModel = CameraViewModel() //ViewModelProvider(this).get(CameraViewModel::class.java)
     val procesedObserver = Observer<Boolean> { isProcesed ->
         if (isProcesed) {
-            Toast.makeText(context, "Foto procesada", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "photo_processed", Toast.LENGTH_SHORT).show()
             val bundle = Bundle()
-            //bundle.putByteArray("image", cameraViewModel.getByteArray())
             bundle.putSerializable("personaje", cameraViewModel.getFoundText() as java.io.Serializable)
             bundle.putSerializable("from", "camera")
-            //findNavController().navigate(R.id.action_nav_camera_to_nav_camera_result, bundle)
             findNavController().navigate(R.id.action_nav_camera_to_nav_CharacterCreator, bundle)
         }
     }
@@ -71,10 +69,9 @@ class CameraFragment : Fragment(), SurfaceHolder.Callback, Camera.PictureCallbac
             requestPermissions(CAMERA_PERMISSIONS, 10)
         } else {
             val alertDialogBuilder = AlertDialog.Builder(context)
-            alertDialogBuilder.setTitle("Advertencia")
-            alertDialogBuilder.setMessage("Esta opcion funciona, pero aun esta en desarrollo. Puede que no funcione correctamente. " +
-                    "Para mejorar la lectura de datos intente centrar la ficha de personaje en la parte superior de la pantalla.")
-            alertDialogBuilder.setPositiveButton("Aceptar") { dialog, _ ->
+            alertDialogBuilder.setTitle(getString(R.string.warning))
+            alertDialogBuilder.setMessage(getString(R.string.camera_warning))
+            alertDialogBuilder.setPositiveButton(getString(R.string.accept)) { dialog, _ ->
                 dialog.dismiss()
             }
 
@@ -114,15 +111,14 @@ class CameraFragment : Fragment(), SurfaceHolder.Callback, Camera.PictureCallbac
     ) {
         if (requestCode == 10) {
             if (checkPermissions()) {
-                Toast.makeText(context, "Permisos concedidos", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, getString(R.string.permissions_granted), Toast.LENGTH_SHORT).show()
                 camera = Camera.open()
             } else {
                 Toast.makeText(
                     context,
-                    "Se denegaron los permisos necesarios.",
+                    getString(R.string.permissions_denied),
                     Toast.LENGTH_SHORT
                 ).show()
-                //vuelve al fragment anterior
                 findNavController().navigateUp()
             }
         }
@@ -185,14 +181,10 @@ class CameraFragment : Fragment(), SurfaceHolder.Callback, Camera.PictureCallbac
                 croppedWidth,
                 croppedHeight
             )
-
             cameraViewModel.setPicture(bipMap)
-            //Toast.makeText(context, "Foto tomada calidad: ${bipMap.height} x ${bipMap.width}", Toast.LENGTH_SHORT).show()
 
         } catch (e: IOException) {
             e.printStackTrace()
         }
     }
-
-
 }

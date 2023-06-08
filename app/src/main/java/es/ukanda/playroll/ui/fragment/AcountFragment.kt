@@ -38,7 +38,7 @@ class AcountFragment : Fragment() {
         currentUser?.let {
             val userName = currentUser.displayName
             val email = currentUser.email
-            val loginType = "No determinado"
+            val loginType = getString(R.string.undetermined)
 
             binding.tvUserName.text = userName
             binding.tvEmail.text = email
@@ -50,5 +50,4 @@ class AcountFragment : Fragment() {
             }
         }
     }
-
 }

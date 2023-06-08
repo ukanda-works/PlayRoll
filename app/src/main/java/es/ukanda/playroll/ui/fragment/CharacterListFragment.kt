@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import es.ukanda.playroll.databinding.FragmentCharacterListBinding
 
-
 class CharacterListFragment : Fragment() {
     private var _binding: FragmentCharacterListBinding ? = null
     private val binding get() = _binding!!

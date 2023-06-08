@@ -22,13 +22,11 @@ class ResultCameraFragment : Fragment() {
     lateinit var texto: String
     lateinit var imagen: Bitmap
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentResultCameraBinding.inflate(inflater, container, false)
-
         personaje = arguments?.getSerializable("personaje") as Map<String,String>
         imagen = BitmapFactory.decodeByteArray(arguments?.getByteArray("image"), 0, arguments?.getByteArray("image")!!.size)
         return binding.root
@@ -42,8 +40,8 @@ class ResultCameraFragment : Fragment() {
         binding.tvNombreResult.text = personaje.getValue("Nombre")
         binding.tvDescripcionResult.text = personaje.getValue("Descripcion")
         binding.imageView.setImageBitmap(imagen.let { it })
-        //binding.imageView.setImageBitmap(Bitmap.createBitmap(imagenRotada, 0, 0, with!!, height))
     }
+
     private fun rotateBitmap(source: Bitmap, angle: Float): Bitmap {
         val matrix = Matrix()
         matrix.postRotate(angle)

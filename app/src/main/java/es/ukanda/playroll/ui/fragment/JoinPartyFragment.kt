@@ -67,13 +67,6 @@ class JoinPartyFragment : Fragment() {
         recicleViewInit()
         rgInit()
         getIp()
-        /*CoroutineScope(Dispatchers.IO).launch {
-            var party = PartyDb.getDatabase(context!!).partyDao().getParty(3)
-            CoroutineScope(Dispatchers.Main).launch {
-                mostrarDialogoConTextField(party, characterEntityList)
-            }
-        }*/
-
         conexionEstate.observe(viewLifecycleOwner) { newValue ->
             onConexionEstateChanged(newValue)
         }
@@ -98,9 +91,9 @@ class JoinPartyFragment : Fragment() {
         binding.btBuscarLocal.setOnClickListener {
             try {
                 buscarPartida()
-                Toast.makeText(context, "Buscando partidas", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, getString(R.string.looking_for_games), Toast.LENGTH_SHORT).show()
             }catch (e: Exception){
-                Toast.makeText(context, "Error al buscar partidas", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, getString(R.string.error_when_searching_for_games), Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -168,7 +161,7 @@ class JoinPartyFragment : Fragment() {
         }
         }catch (e: Exception){
             activity?.runOnUiThread {
-                Toast.makeText(context, "Error al procesar el mensaje", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, getString(R.string.error_processing_message), Toast.LENGTH_SHORT).show()
             }
             e.printStackTrace()
         }
@@ -177,7 +170,6 @@ class JoinPartyFragment : Fragment() {
     private fun getIp(){
         var ip = ""
         CoroutineScope(Dispatchers.IO).launch {
-
                 val wifiManager = context!!.getSystemService(Context.WIFI_SERVICE) as WifiManager
                 val ipAddress = wifiManager.connectionInfo.ipAddress
                 val addressBytes = byteArrayOf(
@@ -195,17 +187,14 @@ class JoinPartyFragment : Fragment() {
     fun mostrarDialogoConTextField(party: Party, characterList : List<CharacterEntity>) {
         val builder = AlertDialog.Builder(this.context!!)
         val listCharacter = mutableListOf<CharacterEntity>()
-        builder.setTitle("Entablar conexion")
+        builder.setTitle(getString(R.string.make_connection))
         val view = layoutInflater.inflate(R.layout.dialog_join_alias, null)
         builder.setView(view)
         val configuration = party.partyConfig
         if (configuration?.get("Pass").equals("")) {
-            println("no hay pass")
             view.findViewById<TextView>(R.id.tvPassJoin).visibility = View.GONE
             view.findViewById<EditText>(R.id.etPassJoin).visibility = View.GONE
-
         }else {
-            println("hay pass")
             val passWd = view.findViewById<EditText>(R.id.etPassJoin)
             val passTv = view.findViewById<TextView>(R.id.tvPassJoin)
             passWd.visibility = View.VISIBLE
@@ -221,11 +210,11 @@ class JoinPartyFragment : Fragment() {
         val recyclerView = view.findViewById<RecyclerView>(R.id.rvCharactersJoin)
         initRecycler(listCharacter,recyclerView)
 
-        builder.setPositiveButton("Aceptar", DialogInterface.OnClickListener { dialog, which ->
+        builder.setPositiveButton(getString(R.string.accept), DialogInterface.OnClickListener { dialog, which ->
             dialog.dismiss()
         })
 
-        builder.setNegativeButton("Cancelar", DialogInterface.OnClickListener { dialog, which ->
+        builder.setNegativeButton(getString(R.string.cancel), DialogInterface.OnClickListener { dialog, which ->
             dialog.dismiss()
         })
 
@@ -242,20 +231,17 @@ class JoinPartyFragment : Fragment() {
                 val character = getSelectedCharacter()
 
                 if (character == null) {
-                    println("personaje no seleccionado")
-                    Toast.makeText(context, "Selecciona un personaje", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, getString(R.string.select_a_character), Toast.LENGTH_SHORT).show()
                 } else if (alias == "") {
-                    Toast.makeText(context, "Introduce un alias", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, getString(R.string.enter_a_nickname), Toast.LENGTH_SHORT).show()
                 } else {
                     ControllSocket.startParty(targetIp.value!!, 5000, alias, pass, character)
                     alertDialog.dismiss()
                 }
             }
         }
-
         alertDialog.show()
     }
-
 
     companion object {
         var _targetIp = MutableLiveData<String>()
@@ -279,31 +265,25 @@ class JoinPartyFragment : Fragment() {
         val party: LiveData<Party>
             get() = _party
         fun onConexionEstateChanged(newValue: ControllSocket.Companion.ConnectionState) {
-            val message = "Nuevo valor de conexión: $newValue"
-            instance.activity?.runOnUiThread {
-                Toast.makeText(instance.context, message, Toast.LENGTH_SHORT).show()
-            }
             if (newValue == ControllSocket.Companion.ConnectionState.ACCEPTED) {
                 instance.activity?.runOnUiThread {
                    instance.mostrarDialogoConTextField(party.value!!, characterList.value!!)
                 }
             }else if(newValue == ControllSocket.Companion.ConnectionState.REJECTED){
                 instance.activity?.runOnUiThread {
-                    Toast.makeText(instance.context, "Conexion rechazada", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(instance.context,  instance.getString(R.string.connection_refused), Toast.LENGTH_SHORT).show()
                 }
             }else if(newValue == ControllSocket.Companion.ConnectionState.ERROR){
                 instance.activity?.runOnUiThread {
-                    Toast.makeText(instance.context, "Conexion perdida", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(instance.context,  instance.getString(R.string.connection_loss), Toast.LENGTH_SHORT).show()
                 }
             }else if(newValue == ControllSocket.Companion.ConnectionState.STARTING){
                 instance.activity?.runOnUiThread {
-                    Toast.makeText(instance.context, "Esperando a que comience la partida", Toast.LENGTH_SHORT).show()
-                    //se queda escuchando por el 5691
-                    //cuando reciba el mensaje de start se va a la pantalla de juego
+                    Toast.makeText(instance.context, instance.getString(R.string.waiting_for_the_game_to_start), Toast.LENGTH_SHORT).show()
                 }
             }else if(newValue == ControllSocket.Companion.ConnectionState.STARTED){
                 instance.activity?.runOnUiThread {
-                    Toast.makeText(instance.context, "La partida ha comenzado", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(instance.context, instance.getString(R.string.the_game_has_started), Toast.LENGTH_SHORT).show()
                     val bundle = Bundle()
                     bundle.putInt("party", party.value!!.partyID)
                     bundle.putString("ipServer", targetIp.value!!)
@@ -314,7 +294,7 @@ class JoinPartyFragment : Fragment() {
         }
 
         private fun onErrorMensajeChanged(newValue: String?) {
-            val message = "Nuevo valor de error: $newValue"
+            val message = "${instance.getString(R.string.error)}: $newValue"
             instance.activity?.runOnUiThread {
                 Toast.makeText(instance.context, message, Toast.LENGTH_LONG).show()
             }
@@ -342,9 +322,7 @@ class JoinPartyFragment : Fragment() {
     }
 
     fun initRecycler(characterList: List<CharacterEntity>, recyclerView: RecyclerView ){
-
             characterAdapter = CharacterAdapter(characterList, 1) { character, isSelected ->
-
             }
             recyclerView.layoutManager  = LinearLayoutManager(context)
             recyclerView.adapter = characterAdapter
@@ -353,10 +331,10 @@ class JoinPartyFragment : Fragment() {
     fun getSelectedCharacter(): CharacterEntity? {
         val charactesSelected = characterAdapter.getSelectedCharacters()
         if(charactesSelected.size > 1){
-            Toast.makeText(context, "Selecciona solo un personaje", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, instance.getString(R.string.select_only_one_character), Toast.LENGTH_SHORT).show()
             return null
         }else if(charactesSelected.size == 0){
-            Toast.makeText(context, "Selecciona un personaje", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, instance.getString(R.string.select_a_character), Toast.LENGTH_SHORT).show()
             return null
         }else{
             return charactesSelected[0]

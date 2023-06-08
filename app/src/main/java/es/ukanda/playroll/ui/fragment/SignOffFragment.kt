@@ -25,7 +25,6 @@ class SignOffFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSignOffBinding.inflate(inflater, container, false)
-
         return binding.root
     }
 
@@ -36,8 +35,6 @@ class SignOffFragment : Fragment() {
 
     private fun setup() {
         val pref = activity?.getSharedPreferences(getString(R.string.prefs_file), 0)
-        println("pref:")
-        println(pref?.getString("email", "no hay email"))
         val email = pref?.getString("email", null)
 
         val provider = pref?.getString("provider", null)
@@ -47,9 +44,9 @@ class SignOffFragment : Fragment() {
                 val pref = activity?.getSharedPreferences(getString(R.string.prefs_file), 0)?.edit()
                 pref?.clear()
                 pref?.apply()
-                Toast.makeText(context, "Sesion cerrada", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, getString(R.string.closed_session), Toast.LENGTH_SHORT).show()
             }else{
-                Toast.makeText(context, "Necesitas iniciar sesion", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, getString(R.string.you_need_to_login), Toast.LENGTH_SHORT).show()
 
             }
         }

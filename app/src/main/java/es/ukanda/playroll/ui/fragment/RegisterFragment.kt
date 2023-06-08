@@ -42,10 +42,10 @@ class RegisterFragment : Fragment() {
                     binding.etPasswordRegister.text.toString()
                 ).addOnCompleteListener {
                     if (it.isSuccessful) {
-                        Toast.makeText(this.context, "Usuario registrado", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this.context, getString(R.string.user_successfully_registered), Toast.LENGTH_SHORT).show()
                         findNavController().navigate(R.id.action_nav_register_to_nav_home)
                     } else {
-                        Toast.makeText(this.context, "Error al registrar", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this.context, getString(R.string.failed_to_register), Toast.LENGTH_SHORT).show()
                     }
                 }
             }

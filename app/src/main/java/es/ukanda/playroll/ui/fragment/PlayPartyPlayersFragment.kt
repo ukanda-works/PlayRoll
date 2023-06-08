@@ -32,13 +32,10 @@ class PlayPartyPlayersFragment : Fragment() {
     }
 
     private fun initRecyclerView() {
-
         playerAdapter = PlayersPlayPartyAdapter(PlayPartyFragment.playersCompanion,
                         PlayPartyFragment.charactersCompanion,
                         PlayPartyFragment.playerCharactersCompanion)
         binding.rvPlayersPlayParty.layoutManager = LinearLayoutManager(requireContext())
         binding.rvPlayersPlayParty.adapter = playerAdapter
     }
-
-
 }

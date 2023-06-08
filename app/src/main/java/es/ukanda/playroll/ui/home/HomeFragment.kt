@@ -71,15 +71,6 @@ class HomeFragment : Fragment() {
         binding.btCrearPartida.setOnClickListener {
             findNavController().navigate(R.id.action_nav_home_to_nav_PartyCreator)
         }
-        binding.btPrueba.setOnClickListener {
-            var bundle = Bundle()
-            CoroutineScope(Dispatchers.IO).launch {
-                bundle = loadBundle()
-                CoroutineScope(Dispatchers.Main).launch {
-                    findNavController().navigate(R.id.action_nav_home_to_nav_playParty, bundle)
-                }
-            }
-        }
         binding.btAddCharacter.setOnClickListener {
             findNavController().navigate(R.id.action_nav_home_to_nav_CharacterCreator)
         }
@@ -94,7 +85,6 @@ class HomeFragment : Fragment() {
         bundle.putInt("party", partyId)
         bundle.putBoolean("isMaster", false)
         bundle.putString("ipServer", "127.0.0.1")
-
         return bundle
     }
 
@@ -127,10 +117,6 @@ class HomeFragment : Fragment() {
             binding.spParties.setSelection(0)
             binding.spCharacters.setSelection(0)
 
-            //seteamos el listener de los spinners
-            //navegamos a la pantalla de la partida o personaje seleccionado enviando id
-
-
             binding.spParties.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
 
                 override fun onItemSelected(adapterView: AdapterView<*>, view: View?, position: Int, id: Long) {
@@ -145,27 +131,6 @@ class HomeFragment : Fragment() {
                     // Nothing to do here
                 }
             }
-
-            /*binding.spCharacters.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>?,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    val character = characterList[position]
-                    val bundle = Bundle()
-                    bundle.putInt("id", character.characterID)
-                    if(character.characterID != 0){
-                        findNavController().navigate(R.id.action_nav_home_to_nav_CharacterInfo, bundle)
-                    }else{
-                        Toast.makeText(context, "No hay personajes", Toast.LENGTH_SHORT).show()
-                    }
-                }
-                override fun onNothingSelected(parent: AdapterView<*>?) {}
-            }*/
-
-
         }
     }
 
@@ -177,7 +142,6 @@ class HomeFragment : Fragment() {
         }
     }
 
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -187,6 +151,4 @@ class HomeFragment : Fragment() {
         val user = FirebaseAuth.getInstance().currentUser
         return user != null
     }
-
-
 }
