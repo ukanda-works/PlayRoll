@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
@@ -36,6 +37,7 @@ class PlayPartyMasterFragment : Fragment(){
     var listaJugadores = mutableMapOf<Player, String>()
     var listaJugadoresCharacter = mutableMapOf<String, CharacterEntity>()
     lateinit var characterList : List<CharacterEntity>
+    lateinit var serverSocket: ServerSocket
 
     companion object{
         lateinit var instance: PlayPartyMasterFragment
@@ -55,6 +57,7 @@ class PlayPartyMasterFragment : Fragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (activity as AppCompatActivity?)!!.supportActionBar!!.hide()
         val partyId = arguments?.getInt("id") ?: 0
         setParty(partyId)
         getIp()
@@ -124,7 +127,14 @@ class PlayPartyMasterFragment : Fragment(){
             }
             bundle.putSerializable("players", playerList as Serializable)
             bundle.putBoolean("isMaster", true)
-            findNavController().navigate(R.id.action_nav_playPartyMaster_to_nav_playParty, bundle)
+            try {
+                serverSocket.close()
+            }catch (e: Exception){
+                e.printStackTrace()
+            }
+            CoroutineScope(Dispatchers.Main).launch {
+                findNavController().navigate(R.id.action_nav_playPartyMaster_to_nav_playParty, bundle)
+            }
         }
     }
 
@@ -187,7 +197,7 @@ class PlayPartyMasterFragment : Fragment(){
     private fun starServerTcp() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val serverSocket = ServerSocket(5690)
+                serverSocket = ServerSocket(5690)
                 CoroutineScope(Dispatchers.Main).launch {
                     Toast.makeText(requireContext(), getString(R.string.waiting_for_user_requests), Toast.LENGTH_SHORT).show()
                 }
@@ -200,9 +210,6 @@ class PlayPartyMasterFragment : Fragment(){
                 }
             }catch (e: Exception) {
                 e.printStackTrace()
-               CoroutineScope(Dispatchers.Main).launch {
-                   Toast.makeText(requireContext(), "${getString(R.string.error)}: ${e.message}", Toast.LENGTH_SHORT).show()
-               }
             }
         }
     }
@@ -220,7 +227,6 @@ class PlayPartyMasterFragment : Fragment(){
                 (ipAddress shr 24 and 0xff).toByte()
             )
             ip = InetAddress.getByAddress(addressBytes).hostAddress ?: ""
-            binding.tvIpMaster.text = "Tu ip es: $ip"
         }
 
     }

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.lifecycle.LiveData
@@ -63,6 +64,7 @@ class PlayPartyFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (activity as AppCompatActivity?)!!.supportActionBar!!.hide()
         dataLoaded.observe(viewLifecycleOwner, Observer { loaded ->
             if (loaded == true) {
                 Toast.makeText(requireContext(), getString(R.string.uploaded_data), Toast.LENGTH_SHORT).show()
@@ -80,7 +82,7 @@ class PlayPartyFragment : Fragment() {
             val master = bundle.getBoolean("isMaster")
             if (master) {
                 isMaster = true
-                playersIp = bundle.getSerializable("playersIp") as Map<String, String>
+                playersIp = bundle.getSerializable("players") as Map<String, String>
             }else{
                 ipServer = bundle.getString("ipServer").toString()
             }
@@ -94,6 +96,9 @@ class PlayPartyFragment : Fragment() {
     }
 
     private suspend fun initDb(partyId: Int) {
+        CoroutineScope(Dispatchers.Main).launch{
+            Toast.makeText(context, "cargando partida", Toast.LENGTH_SHORT).show()
+        }
         val db = PartyDb.getDatabase(requireContext())
         party = db.partyDao().getParty(partyId)
         playerCharacters.addAll(db.playerCharacterDao().getPlayersAndCharactersByPartyId(partyId))
@@ -126,16 +131,20 @@ class PlayPartyFragment : Fragment() {
             lateinit var serverSocket: ServerSocket
             try {
                 serverSocket = ServerSocket(port)
-            }catch(e: Exception) {
-                e.printStackTrace()
-            }
-            while (true){
-                val socket = withContext(Dispatchers.IO) {
-                    serverSocket.accept()
+                while (true){
+                    val socket = withContext(Dispatchers.IO) {
+
+                        serverSocket.accept()
+                    }
+                    val serverThread = ServerThread(socket, this@PlayPartyFragment)
+                    serverThread.start()
                 }
-                val serverThread = ServerThread(socket, this@PlayPartyFragment)
-                serverThread.start()
+            }catch(e: Exception) {
+                println("---------------------------------------")
+                e.printStackTrace()
+                println("---------------------------------------")
             }
+
         }
     }
 

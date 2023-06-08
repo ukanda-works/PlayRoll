@@ -203,7 +203,7 @@ class CharacterCreatorFragment : Fragment() {
         val alertDialog = alertDialogBuilder.create()
         alertDialog.show()
 
-        val personaje = arguments?.getSerializable(getString(es.ukanda.playroll.R.string.character)) as List<Pair<String,String>>
+        val personaje = arguments?.getSerializable("personaje") as List<Pair<String,String>>
         val bundle = mutableMapOf<String, String>()
         for (pair in personaje) {
             bundle[pair.first] = pair.second

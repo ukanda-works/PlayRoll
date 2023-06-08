@@ -42,7 +42,6 @@ class AcountFragment : Fragment() {
 
             binding.tvUserName.text = userName
             binding.tvEmail.text = email
-            binding.tvLoginType.text = loginType
 
             val photoUrl = currentUser.photoUrl
             if (photoUrl != null) {

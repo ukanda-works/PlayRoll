@@ -10,6 +10,7 @@ import android.view.*
 import android.widget.Toast
 import android.hardware.Camera
 import android.net.Uri
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -35,6 +36,7 @@ class CameraFragment : Fragment(), SurfaceHolder.Callback, Camera.PictureCallbac
     private lateinit var surfaceHolder: SurfaceHolder
 
 
+
     val cameraViewModel = CameraViewModel() //ViewModelProvider(this).get(CameraViewModel::class.java)
     val procesedObserver = Observer<Boolean> { isProcesed ->
         if (isProcesed) {
@@ -54,6 +56,8 @@ class CameraFragment : Fragment(), SurfaceHolder.Callback, Camera.PictureCallbac
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentCameraBinding.inflate(inflater, container, false)
+
+
         surfaceHolder = binding.surfaceView.holder
         surfaceHolder.addCallback(this)
 
@@ -84,6 +88,7 @@ class CameraFragment : Fragment(), SurfaceHolder.Callback, Camera.PictureCallbac
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (activity as AppCompatActivity?)!!.supportActionBar!!.hide()
     }
 
     public override fun onResume() {

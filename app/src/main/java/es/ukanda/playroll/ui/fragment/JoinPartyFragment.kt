@@ -179,7 +179,6 @@ class JoinPartyFragment : Fragment() {
                     (ipAddress shr 24 and 0xff).toByte()
                 )
                 ip = InetAddress.getByAddress(addressBytes).hostAddress
-            binding.tvIp.text = "Tu ip es: $ip"
         }
 
     }

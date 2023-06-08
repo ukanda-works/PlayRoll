@@ -123,4 +123,7 @@
     <string name="failed_to_login">Error al iniciar sesión</string>
     <string name="roll_dice">Lanza el dado</string>
     <string name="press_roll">Pulsa el dado para lanzar</string>
+    <string name="select_lenguage">Selecciona un idioma</string>
+    <string name="player_list">Lista de jugadores</string>
+    <string name="stop_sharing">Dejar de compartir</string>
 </resources>
