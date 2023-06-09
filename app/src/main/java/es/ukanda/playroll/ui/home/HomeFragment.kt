@@ -96,7 +96,7 @@ class HomeFragment : Fragment() {
             var partyList = database.partyDao().getAllParties().stream().filter {it.own}.toList() as MutableList
             var characterList =database.characterDao().getAllCharacters().stream().filter {it.own}.toList() as MutableList
 
-                val party = Party(0, "No hay partidas","")
+                val party = Party(0, getString(R.string.no_parties),"")
                 partyList.add(0, party)
             if(characterList.isEmpty()){
                 val character = CharacterEntity()
@@ -137,7 +137,7 @@ class HomeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         if (!isFirebaseUserLoggedIn()) {
-            Toast.makeText(context, "Necesitas iniciar sesion", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, getString(R.string.do_you_need_sing_in), Toast.LENGTH_SHORT).show()
             findNavController().navigate(R.id.action_nav_home_to_nav_login)
         }
     }

@@ -19,8 +19,4 @@ interface PartyDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertParty(party: Party) : Long
-
-   /* @Query("SELECT * FROM characters WHERE partyID = :partyId")
-    fun getCharactersForParty(partyId: Int): List<characters>*/
-
 }

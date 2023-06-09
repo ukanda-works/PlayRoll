@@ -12,6 +12,4 @@ interface PlayerCharacterDao {
     suspend fun deletePartyPlayerCharacter(partyPlayerCharacter: PlayerCharacters)
     @Query("SELECT * FROM party_player_character WHERE partyID = :partyId")
     suspend fun getPlayersAndCharactersByPartyId(partyId: Int): List<PlayerCharacters>
-
-
 }

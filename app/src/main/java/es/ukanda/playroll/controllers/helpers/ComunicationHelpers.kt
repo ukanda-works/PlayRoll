@@ -134,10 +134,8 @@ class ComunicationHelpers {
                 val caracter = caracteres[indice]
                 sb.append(caracter)
             }
-
             return sb.toString()
         }
-
 
     }
 }

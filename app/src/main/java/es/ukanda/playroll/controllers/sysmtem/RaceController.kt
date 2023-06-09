@@ -16,20 +16,12 @@ class RaceController(context: Context) {
         raceDao.deleteRace(race)
     }
 
-    fun updateRace(race: Race){
-        //TODO: Implementar updateRace
-    }
-
     fun addRaceList(raceList: List<Race>){
         raceDao.insertAllRaces(raceList)
     }
 
     fun getAllRaces():List<Race>{
        return raceDao.getAllRaces()
-    }
-
-    fun getRace(race: Race){
-        //TODO: Implementar getRace
     }
 
     fun deleteAllRaces(){

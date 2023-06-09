@@ -14,7 +14,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
 import com.google.gson.Gson
 import es.ukanda.playroll.R
-import es.ukanda.playroll.controllers.comunication.PetitionResponseListerner
 import es.ukanda.playroll.controllers.helpers.ComunicationHelpers
 import es.ukanda.playroll.database.db.PartyDb
 import es.ukanda.playroll.databinding.FragmentPlayPartyMasterBinding

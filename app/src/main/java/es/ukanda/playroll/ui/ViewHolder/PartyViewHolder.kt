@@ -16,7 +16,7 @@ import java.net.InetAddress
 class PartyViewHolder(val binding: ItemPartidaRvBinding, val ip: InetAddress): RecyclerView.ViewHolder(binding.root) {
     init {
         binding.root.setOnClickListener {
-            Toast.makeText(binding.root.context, "Conectando a ${ip.toString()}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(binding.root.context, "Enviando peticion de union", Toast.LENGTH_SHORT).show()
             try {
                 CoroutineScope(Dispatchers.IO).launch {
                     JoinPartyFragment.setTargetIp(ip.hostAddress)

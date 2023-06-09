@@ -25,8 +25,6 @@ class Inventario(
     var partyID: Int,
     var characterID: Int,
     var health: Int,
-    //movidas varias
-    //se aprovecha y se mete aqui la vida
 ) {
     override fun hashCode(): Int {
         val prime = 31

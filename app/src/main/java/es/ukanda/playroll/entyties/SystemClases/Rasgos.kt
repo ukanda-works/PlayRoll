@@ -19,7 +19,6 @@ data class Rasgos(
     @TypeConverters(Converters::class)
     val typeModifyer :List<String>//sera un enum
 ){
-    //TODO: hacer los rasgos
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

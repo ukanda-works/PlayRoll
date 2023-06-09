@@ -41,14 +41,12 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         val progressDialog = ProgressDialog(this)
-        progressDialog.setMessage("Cargando...")
+        progressDialog.setMessage(getString(R.string.loading))
         progressDialog.setCancelable(false)
         progressDialog.show()
 
         Handler().postDelayed({
             checkPermissions()
-            //se chequea si el usuario esta logeado
-            //se chequean los permisos
 
             progressDialog.dismiss()
         }, 1000)
@@ -137,11 +135,6 @@ class MainActivity : AppCompatActivity() {
                 else -> false
             }
         }
-
-
-
-
-
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.nav_home, R.id.miSignOut, R.id.miSignOut
@@ -152,13 +145,13 @@ class MainActivity : AppCompatActivity() {
     }
     private fun showSignOutConfirmationDialog(navController: NavController) {
         AlertDialog.Builder(this)
-            .setTitle("Cerrar sesión")
-            .setMessage("¿Estás seguro de que quieres cerrar la sesión?")
-            .setPositiveButton("Sí") { dialog: DialogInterface, _: Int ->
+            .setTitle(getString(R.string.sign_out))
+            .setMessage(getString(R.string.sign_out_confirmation))
+            .setPositiveButton(R.string.yes) { dialog: DialogInterface, _: Int ->
                 signOutAndNavigateToLogin(navController)
                 dialog.dismiss()
             }
-            .setNegativeButton("No") { dialog: DialogInterface, _: Int ->
+            .setNegativeButton(getText(R.string.no)) { dialog: DialogInterface, _: Int ->
                 dialog.dismiss()
             }
             .show()
@@ -173,7 +166,7 @@ class MainActivity : AppCompatActivity() {
             val prefs = getSharedPreferences(getString(R.string.prefs_file), 0).edit()
             prefs.clear()
             prefs.apply()
-            Toast.makeText(this, "Sesión cerrada", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.sesion_closed), Toast.LENGTH_SHORT).show()
         }
 
         navController.navigate(R.id.action_nav_home_to_nav_login)

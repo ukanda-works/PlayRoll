@@ -132,4 +132,10 @@
     <string name="start_combat">Empezar combate</string>
     <string name="salvation_roll">Tirada de salvacion</string>
     <string name="master_options">Opciones de master</string>
+    <string name="sesion_closed">Sesion cerrada</string>
+    <string name="sign_out">Cerrar sesion</string>
+    <string name="sign_out_confirmation">Estas seguro de que quieres cerrar la sesion actual?</string>
+    <string name="loading">Cargando...</string>
+    <string name="do_you_need_sing_in">Necesitas iniciar sesion</string>
+    <string name="no_parties">No hay partidas</string>
 </resources>

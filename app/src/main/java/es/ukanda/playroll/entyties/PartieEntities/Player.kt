@@ -33,7 +33,6 @@ data class Player(
             return Player(
                 name = player.name,
                 identifier = player.identifier
-                // añadir campos adicionales aquí si es necesario
             )
         }
     }
