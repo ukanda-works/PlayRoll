@@ -10,11 +10,12 @@
     tools:context=".ui.fragment.PartiesListFragment" >
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvPatiesList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listitem="@layout/item_partida_rv"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:listitem="@layout/item_partida_rv" />
 </androidx.constraintlayout.widget.ConstraintLayout>

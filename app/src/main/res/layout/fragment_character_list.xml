@@ -10,11 +10,12 @@
     tools:context=".ui.fragment.CharacterListFragment" >
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvCharacterList"
         android:layout_width="409dp"
-        tools:listitem="@layout/item_player_own"
         android:layout_height="729dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:listitem="@layout/item_player_own" />
 </androidx.constraintlayout.widget.ConstraintLayout>

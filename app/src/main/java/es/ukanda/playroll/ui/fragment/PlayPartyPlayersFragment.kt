@@ -29,6 +29,13 @@ class PlayPartyPlayersFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
+        buttons()
+    }
+
+    private fun buttons() {
+        binding.btExitParty.setOnClickListener {
+            instance.exitParty()
+        }
     }
 
     private fun initRecyclerView() {

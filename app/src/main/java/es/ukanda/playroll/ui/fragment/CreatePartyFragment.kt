@@ -55,6 +55,15 @@ class CreatePartyFragment : Fragment() {
         CoroutineScope(Dispatchers.IO).launch{
             currentPlayer = gameController.getCurrentPlayer()
         }
+        val partyId = arguments?.getInt("id") ?: 0
+        if (partyId != 0){
+            CoroutineScope(Dispatchers.IO).launch {
+                val party = PartyDb.getDatabase(requireContext()).partyDao().getParty(partyId)
+                binding.etName.setText(party.partyName)
+                binding.cbOnlyOwn.isChecked = party.partyConfig?.get("OnlyOwn")!!.toBoolean()
+                binding.etPassword.setText(party.partyConfig!!["Pass"])
+            }
+        }
     }
 
     private fun buttons() {
@@ -74,7 +83,7 @@ class CreatePartyFragment : Fragment() {
         partyConfig["Pass"] = passwd
         val currentUser = firebaseAuth.currentUser
         val userName =  currentUser?.displayName ?: "Anonimo"
-        val party = Party(partyName = binding.etName.text.toString(), partyCreator =  userName ,partyDescription = "", partyConfig = partyConfig)
+        val party = Party(partyName = binding.etName.text.toString(), partyCreator =  userName ,partyDescription = "", partyConfig = partyConfig, own = true)
         try{
             //se añade desde una corrutina
             CoroutineScope(Dispatchers.IO).launch {

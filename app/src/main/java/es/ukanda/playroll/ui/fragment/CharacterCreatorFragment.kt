@@ -59,7 +59,8 @@ class CharacterCreatorFragment : Fragment() {
         if(arguments?.getString("from").equals("camera")){
             fromCamara()
         }else if(arguments?.getString("from").equals("edit")){
-            editCharacter()
+            val characterId = arguments?.getInt("id") ?: 0
+            editCharacter(characterId)
         }
     }
 
@@ -131,6 +132,7 @@ class CharacterCreatorFragment : Fragment() {
             character.clase = clase
             character.alignment = CharacterEntity.getAlignment(alineamiento)
             character.level = nivel.toInt()
+            character.own = true
 
             if (fuerza.isEmpty() || destreza.isEmpty() || constitucion.isEmpty() || inteligencia.isEmpty() || sabiduria.isEmpty() || carisma.isEmpty()) {
                 throw CustomException(getString(es.ukanda.playroll.R.string.fill_in_all_the_fields))
@@ -188,8 +190,11 @@ class CharacterCreatorFragment : Fragment() {
     }
 
 
-    private fun editCharacter() {
-        //TODO("Not yet implemented")
+    private fun editCharacter(id: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+           character = PartyDb.getDatabase(requireContext()).characterDao().getCharacterById(id)
+            rellenarFormulario()
+        }
     }
 
     private fun fromCamara() {

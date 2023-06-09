@@ -12,6 +12,8 @@ import androidx.fragment.app.FragmentPagerAdapter
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
+import com.google.gson.Gson
 import es.ukanda.playroll.R
 import es.ukanda.playroll.controllers.helpers.ComunicationHelpers
 import es.ukanda.playroll.database.db.PartyDb
@@ -37,6 +39,9 @@ class PlayPartyFragment : Fragment() {
 
     private val listenPort = 5691
     private val writePort = 5690
+
+    lateinit var clientSocket: ClientSocket
+
     private var isMaster = false
     lateinit var playersIp : Map<String, String>
     private lateinit var ipServer: String
@@ -73,7 +78,18 @@ class PlayPartyFragment : Fragment() {
             }
         })
         loadBundle()
+        initSockets()
 
+    }
+
+    private fun initSockets() {
+        CoroutineScope(Dispatchers.IO).launch {
+            if (isMaster) {
+                //clientSocket = ClientSocketServer(playersIp, listenPort, this@PlayPartyFragment)
+            }else{
+                clientSocket = ClientSocket(ipServer, writePort, this@PlayPartyFragment)
+            }
+        }
     }
 
     private fun loadBundle() {
@@ -82,6 +98,7 @@ class PlayPartyFragment : Fragment() {
             val master = bundle.getBoolean("isMaster")
             if (master) {
                 isMaster = true
+                addMasterTab()
                 playersIp = bundle.getSerializable("players") as Map<String, String>
             }else{
                 ipServer = bundle.getString("ipServer").toString()
@@ -94,6 +111,8 @@ class PlayPartyFragment : Fragment() {
             Toast.makeText(requireContext(), getString(R.string.error_loading_data), Toast.LENGTH_SHORT).show()
         }
     }
+
+
 
     private suspend fun initDb(partyId: Int) {
         CoroutineScope(Dispatchers.Main).launch{
@@ -158,6 +177,21 @@ class PlayPartyFragment : Fragment() {
 
     }
 
+    private fun addMasterTab() {
+        val adapter = ViewPagerAdapter(childFragmentManager)
+        adapter.addFragment(PlayPartyMasterOptionsFragment(), getString(R.string.master_options))
+        binding.viewPager.adapter = adapter
+        binding.tabLayout.setupWithViewPager(binding.viewPager)
+    }
+
+    fun exitParty() {
+        sendByMensaje()
+        findNavController().navigate(R.id.action_nav_playParty_to_nav_home)
+    }
+
+    private fun sendByMensaje() {
+    }
+
     private inner class ViewPagerAdapter(manager: FragmentManager) :
         FragmentPagerAdapter(manager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
@@ -211,6 +245,45 @@ class PlayPartyFragment : Fragment() {
     }
 
     class ClientSocket(val ip: String, val port: Int, Fragment: PlayPartyFragment){
+
+        private val socket = Socket(ip, port)
+
+        private fun sendMensaje(mensaje: String){
+            if (socket.isClosed) {
+                socket.connect(InetSocketAddress(ip, port))
+            }
+            val output = BufferedWriter(OutputStreamWriter(socket.getOutputStream()))
+            output.write(mensaje)
+            output.newLine()
+            output.flush()
+        }
+
+        fun sendByMensaje(){
+            val mensaje = listOf("peticion" to "exit")
+            sendMensaje(Gson().toJson(mensaje))
+        }
+        companion object {
+            enum class RollDiceType {
+                Salvacion, Ataque, Daño
+            }
+        }
+        fun askRollDice(type: RollDiceType, num: Int){
+            //se envia la peticion al master
+            //se espera la respuesta
+            //si el master acepta se muestra el dialogo para tirar dado
+            //tras tirar el dado se envia el resultado al master
+
+        }
+    }
+
+    class ClientSocketServer(val ipUsers: Map<String, String>, val port: Int, Fragment: PlayPartyFragment){
+
+
+
+        fun sendByMensaje(){
+            val mensaje = listOf("peticion" to "exit")
+            //sendMensaje(Gson().toJson(mensaje))
+        }
         companion object {
             enum class RollDiceType {
                 Salvacion, Ataque, Daño

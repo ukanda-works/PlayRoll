@@ -1,10 +1,12 @@
 package es.ukanda.playroll.entyties.PartieEntities
 
+import android.service.carrier.CarrierIdentifier
 import android.text.Layout.Alignment
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
+import es.ukanda.playroll.controllers.helpers.ComunicationHelpers
 import es.ukanda.playroll.database.db.Converters
 import es.ukanda.playroll.database.db.IntHashMapConverter
 
@@ -27,7 +29,10 @@ data class CharacterEntity(
     var salvaciones : List<String>,//hacer un controller para esto
     @TypeConverters(Converters::class)
     var skills : List<String>,//hacer un controller para esto
+    var own : Boolean = false,
+    val identifier: String = ComunicationHelpers.generarIdentificador("Char_", name)
     ) {
+
     //constructor vacio
     constructor() : this(0,
                     "",
@@ -102,3 +107,4 @@ data class CharacterEntity(
     }
 
 }
+

@@ -66,7 +66,7 @@ class PartyManagerFragment : Fragment() {
                 findNavController().navigate(R.id.action_nav_PartyManager_to_nav_playPartyMaster, bundle)
             }
         }
-        binding.btEditar.setOnClickListener {
+        binding.btEditarPartida.setOnClickListener {
             val bundle = Bundle()
             bundle.putInt("id", party.partyID)
             if(party.partyID != 0){

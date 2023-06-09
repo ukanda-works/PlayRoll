@@ -46,7 +46,6 @@ class ControllSocket {
                     writer.write(Gson().toJson(sendmensaje))
                     writer.newLine()
                     writer.flush()
-                    println("esperando respuesta..."    )
                     val mensaje = reader.readLine()
                     if (!mensaje.isEmpty()) {
                         procesarRespuesta("join", mensaje)
@@ -66,55 +65,41 @@ class ControllSocket {
         }
 
         suspend fun procesarRespuesta(type: String, message: String) {
-            println("Mensaje recibido $message")
-
             val decodedMensaje = ComunicationHelpers.getMapFromJson(message)
-            println("Mensaje decodificado $decodedMensaje")
-
            when(type){
                "join" -> {
                   if (decodedMensaje["reponse"].equals("ok")){
-                      println("aceptada")
                         if (decodedMensaje["party"] != null){
                             val partyRecived = decodedMensaje["party"].toString()
-                            println("party recibida $partyRecived")
                             JoinPartyFragment.setParty(Party.fromJson(partyRecived))
                         }
                       val listaPersonajesJson = decodedMensaje["characters"]!!
-                      println("lista recibida $listaPersonajesJson")
                       val listaPersonajes = ComunicationHelpers.convertStringToCharacterList(listaPersonajesJson)
-                      println("lista recibida convertida $listaPersonajes")
-                        if (!listaPersonajes.isEmpty()){
-                            println("lista recibida $listaPersonajes")
+                      if (!listaPersonajes.isEmpty()){
                             JoinPartyFragment.setCharacterList(listaPersonajes)
                         }
                       delay(500)
                       JoinPartyFragment.setConexionEstate(ConnectionState.ACCEPTED)
                   }else{
-                      println("rechazada")
                       JoinPartyFragment.setConexionEstate(ConnectionState.REJECTED)
                   }
                }
                "start" -> {
                    if (decodedMensaje["reponse"].equals("ok")){
-                       println("aceptada")
                           JoinPartyFragment.setConexionEstate(ConnectionState.STARTING)
                             waitStart()
                    }else{
-                       println("rechazada")
                        JoinPartyFragment.setConexionEstate(ConnectionState.ERROR)
                    }
                }
                "started" -> {
                    if (decodedMensaje["response"].equals("ok")){
-                       println("aceptada")
                        var partyRecived = Party.fromJson(decodedMensaje["party"].toString())
                        partyRecived = Party.removeIdFromParty(partyRecived)
 
                        var recivedCharacters = ComunicationHelpers.convertStringToCharacterList(decodedMensaje["characters"].toString())
                        var recivedPlayers = ComunicationHelpers.convertStringToPlayerList(decodedMensaje["players"].toString())
                        var recivedPlayerCharacters = ComunicationHelpers.convertStringToPlayerCharacterList(decodedMensaje["player_character"].toString())
-                       //var recivedInventarios = ComunicationHelpers.convertStringToInventarioList(decodedMensaje["inventarios"].toString())
 
                        CoroutineScope(Dispatchers.IO).launch {
                            val db = PartyDb.getDatabase(JoinPartyFragment.instance.requireContext())
@@ -122,7 +107,6 @@ class ControllSocket {
                            JoinPartyFragment.setParty(db.partyDao().getParty(partyId.toInt()))
                            val savedCharacters = mutableListOf<CharacterEntity>()
                            val savedPlayers = mutableListOf<Player>()
-                           val savedInventarios = mutableListOf<Inventario>()
                            recivedCharacters.forEach {
                                  val oldId  = it.characterID
                                  val id =db.characterDao().insertCharacter(CharacterEntity.removeIdFromCharacter(it))
@@ -133,12 +117,6 @@ class ControllSocket {
                                             playerCharacter.characterID = id.toInt()
                                         }
                                     }
-                                    /*recivedInventarios.forEach { inventario ->
-                                        inventario.partyID = partyId.toInt()
-                                        if (inventario.characterID == oldId){
-                                            inventario.characterID = id.toInt()
-                                        }
-                                    }*/
                             }
                            recivedPlayers.forEach {
                                val oldId = it.playerID
@@ -150,17 +128,9 @@ class ControllSocket {
                                       }
                                  }
                            }
-                           /*recivedInventarios.forEach {
-                               val id = db.inventarioDao().insertInventario(Inventario.removeIdFromInventario(it))
-                               savedInventarios.add(db.inventarioDao().getInventarioById(id.toInt()))
-                           }*/
-
                             recivedPlayerCharacters.forEach {
                                  db.playerCharacterDao().insertPartyPlayerCharacter(it)
                             }
-
-
-
                        }
                        JoinPartyFragment.setConexionEstate(ConnectionState.STARTED)
                    }else{
@@ -169,7 +139,6 @@ class ControllSocket {
                    }
                }
            }
-
         }
 
         fun startParty(ip:String, timeout: Int = 5000, alias: String,pass:String, personaje: CharacterEntity){
@@ -178,12 +147,11 @@ class ControllSocket {
                     var clientSocket = Socket(ip, 5690)
                     var writer = BufferedWriter(OutputStreamWriter(clientSocket.getOutputStream()))
                     var reader = BufferedReader(InputStreamReader(clientSocket.getInputStream()))
-                    //se envia el alias y el personaje con la peticion start
                     val mensaje = listOf("peticion" to "start",
                                     "alias" to alias,
                                     "selectedCharacter" to personaje.toJson(),
                                     "pass" to pass,
-                                    "characterOwn" to false, //indica si el personaje es propio o no, true si es propio
+                                    "characterOwn" to false,
                                     "hash" to ComunicationHelpers.getHashFromUser())
                     writer.write(Gson().toJson(mensaje))
                     writer.newLine()
@@ -209,7 +177,6 @@ class ControllSocket {
 
         fun waitStart(){
             CoroutineScope(Dispatchers.IO).launch {
-                println("esperando a que el servidor inicie la partida")
                 try {
                     var serverSocket = ServerSocket(5691)
                     println("escuchando...")
@@ -226,7 +193,6 @@ class ControllSocket {
                 }
             }
         }
-
     }
 
 }

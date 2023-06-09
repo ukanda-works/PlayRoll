@@ -12,6 +12,7 @@ import es.ukanda.playroll.entyties.PartieEntities.PlayerCharacters
 import org.json.JSONArray
 import org.json.JSONObject
 import java.net.DatagramSocket
+import java.util.*
 
 class ComunicationHelpers {
     companion object{
@@ -120,6 +121,23 @@ class ComunicationHelpers {
             }
             return ""
         }
+
+        fun generarIdentificador(prefijo: String,objeto: String): String {
+            val caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+            val longitud = 8
+
+            val random = Random(System.currentTimeMillis())
+            val sb = StringBuilder(prefijo)
+
+            repeat(longitud) {
+                val indice = random.nextInt(caracteres.length)
+                val caracter = caracteres[indice]
+                sb.append(caracter)
+            }
+
+            return sb.toString()
+        }
+
 
     }
 }

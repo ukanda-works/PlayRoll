@@ -9,25 +9,34 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragment.PlayPartyPlayersFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvPlayersPlayParty"
-        android:layout_width="398dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="32dp"
-        app:layout_constraintBottom_toTopOf="@+id/btExitParty"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:listitem="@layout/item_players_party" />
-
     <Button
-        android:id="@+id/btExitParty"
+        android:id="@+id/btCloseParty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
-        android:text="@string/exit_party"
+        android:text="@string/close_party"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btStartCombat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/start_combat"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btTiradaSalvacion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/salvation_roll"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btStartCombat" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

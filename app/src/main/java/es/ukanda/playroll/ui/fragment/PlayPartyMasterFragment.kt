@@ -37,7 +37,9 @@ class PlayPartyMasterFragment : Fragment(){
     var listaJugadores = mutableMapOf<Player, String>()
     var listaJugadoresCharacter = mutableMapOf<String, CharacterEntity>()
     lateinit var characterList : List<CharacterEntity>
+
     lateinit var serverSocket: ServerSocket
+    lateinit var socketUdp: DatagramSocket
 
     companion object{
         lateinit var instance: PlayPartyMasterFragment
@@ -71,6 +73,20 @@ class PlayPartyMasterFragment : Fragment(){
             builder.setMessage(getString(R.string.are_you_sure_you_want_to_start_the_game))
             builder.setPositiveButton(getString(R.string.yes)){dialog, which ->
                 startGame()
+            }
+            builder.setNegativeButton(R.string.no){dialog, which ->
+            }
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
+        }
+        binding.btnStopSharing.setOnClickListener {
+            val builder = AlertDialog.Builder(requireContext())
+            builder.setTitle(getString(R.string.stop_sharing))
+            builder.setMessage(getString(R.string.are_you_sure_you_want_to_stop_sharing))
+            builder.setPositiveButton(getString(R.string.yes)){dialog, which ->
+                closeServerTcp()
+                closeServerUdp()
+                findNavController().navigate(R.id.action_playPartyMasterFragment_to_home)
             }
             builder.setNegativeButton(R.string.no){dialog, which ->
             }
@@ -172,26 +188,31 @@ class PlayPartyMasterFragment : Fragment(){
     private fun starServerUdp(){
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val socket = DatagramSocket(5689)
+                socketUdp = DatagramSocket(5689)
                 val buffer = ByteArray(1024)
                 while (true) {
                     val packet = DatagramPacket(buffer, buffer.size)
-                    socket.receive(packet)
+                    socketUdp.receive(packet)
                     sleep(1000)
                     val address = packet.address
                     val data = party.toJson().toByteArray()
                     val packet2 = DatagramPacket(data, data.size, address, 5688)
-                    socket.send(packet2)
+                    socketUdp.send(packet2)
                 }
             }catch (e: Exception) {
                 e.printStackTrace()
-                CoroutineScope(Dispatchers.Main).launch {
-                    Toast.makeText(requireContext(), "${getString(R.string.error)}: ${e.message}", Toast.LENGTH_SHORT).show()
-                }
             }
 
         }
 
+    }
+
+    private fun closeServerUdp(){
+        try {
+            socketUdp.close()
+        }catch (e: Exception){
+            e.printStackTrace()
+        }
     }
 
     private fun starServerTcp() {
@@ -211,6 +232,14 @@ class PlayPartyMasterFragment : Fragment(){
             }catch (e: Exception) {
                 e.printStackTrace()
             }
+        }
+    }
+
+    private fun closeServerTcp(){
+        try {
+            serverSocket.close()
+        }catch (e: Exception){
+            e.printStackTrace()
         }
     }
 

@@ -5,6 +5,7 @@ import androidx.room.PrimaryKey
 import androidx.room.Relation
 import androidx.room.TypeConverters
 import com.google.gson.Gson
+import es.ukanda.playroll.controllers.helpers.ComunicationHelpers
 import es.ukanda.playroll.database.db.HashMapConverter
 import es.ukanda.playroll.database.db.IntHashMapConverter
 
@@ -17,8 +18,8 @@ data class Party(
     @TypeConverters(HashMapConverter::class)
     var partyConfig: HashMap<String, String>? = HashMap(),
     var sessions: Int = 0,
-    var own : Boolean = false
-    //añadir campo para configuracion
+    var own : Boolean = false,
+    val identifier: String = ComunicationHelpers.generarIdentificador("par_", partyName)
 ) {
     override fun hashCode(): Int {
         val prime = 31

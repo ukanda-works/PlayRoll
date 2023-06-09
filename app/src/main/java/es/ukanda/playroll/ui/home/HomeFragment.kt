@@ -25,6 +25,7 @@ import es.ukanda.playroll.pruebas.Test_uno
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.streams.toList
 
 class HomeFragment : Fragment() {
 
@@ -92,9 +93,8 @@ class HomeFragment : Fragment() {
         lifecycleScope.launch(Dispatchers.IO) {
             //se inicializan los spinners con los datos de la base de datos
             val database = PartyDb.getDatabase(context!!)
-            var partyList = database.partyDao().getAllParties()
-            var characterList =
-                database.characterDao().getAllCharacters()
+            var partyList = database.partyDao().getAllParties().stream().filter {it.own}.toList() as MutableList
+            var characterList =database.characterDao().getAllCharacters().stream().filter {it.own}.toList() as MutableList
 
                 val party = Party(0, "No hay partidas","")
                 partyList.add(0, party)
