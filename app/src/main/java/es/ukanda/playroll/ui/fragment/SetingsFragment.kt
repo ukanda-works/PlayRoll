@@ -30,9 +30,9 @@ class SetingsFragment : Fragment() {
 
     fun showDevelopmentAlert(context: Context) {
         val alertDialogBuilder = AlertDialog.Builder(context)
-        alertDialogBuilder.setTitle("En desarrollo")
-        alertDialogBuilder.setMessage("Este apartado aun esta en desarrollo. Pronto estará disponible :D.")
-        alertDialogBuilder.setPositiveButton("Aceptar") { dialog, _ ->
+        alertDialogBuilder.setTitle(getString(R.string.developing))
+        alertDialogBuilder.setMessage(getString(R.string.developing_text_alert))
+        alertDialogBuilder.setPositiveButton(getString(R.string.accept)) { dialog, _ ->
             dialog.dismiss()
         }
 

@@ -9,14 +9,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragment.JoinPartyFragment" >
 
-    <TextView
-        android:id="@+id/tvIp"
-        android:layout_width="38dp"
-        android:layout_height="20dp"
-        android:text="Ip"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvPartidasAbiertas"
         android:layout_width="match_parent"
@@ -33,9 +25,9 @@
         android:id="@+id/btBuscarLocal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="32dp"
         android:text="@string/buscar_partida"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvIp" />
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

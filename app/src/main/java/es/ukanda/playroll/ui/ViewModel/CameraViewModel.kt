@@ -40,22 +40,21 @@ class CameraViewModel: ViewModel() {
 
     fun setPicture(bitmap: Bitmap){
         _picture.value = bitmap
-
         processPicture()
-
     }
 
     private fun processPicture(){
         viewModelScope.launch {
-        try {
-            procesarCabecera()
+            try {
+                procesarCabecera()
 
-        }catch (e: Exception){
-            e.printStackTrace()
-            _textoPrueva.value = "Error: ${e.message}"
-        }
+            }catch (e: Exception){
+                e.printStackTrace()
+                _textoPrueva.value = "Error: ${e.message}"
+            }
         }
     }
+
     private fun procesarCabecera(){
         viewModelScope.launch {
             try {
@@ -176,8 +175,6 @@ class CameraViewModel: ViewModel() {
                 }
             }
 
-            //una vez reconocido se compara con los valores de la base de datos
-            //TODO: hacer la comparacion con la base de datos
             clase = findMostSimilarElement(listOf("Barbaro","Bardo","Clerigo","Druida","Guerrero","Mago","Monje","Paladin","Picaro","Hechicero","Brujo"),clase)!!
             _foundText.value?.set("clase", clase)
             foundAll.add(Pair("clase", clase))
@@ -247,7 +244,6 @@ class CameraViewModel: ViewModel() {
                 }
             }
         }
-       // numbersList.forEach { textotal += "${it.first} altura = ${it.second}\n" }
 
         val stadisticasOrdenadas = mutableListOf<Pair<String, Pair<String, String>>>()
         var i = 0
@@ -414,6 +410,4 @@ class CameraViewModel: ViewModel() {
 
         return dp[m][n]
     }
-
-
 }

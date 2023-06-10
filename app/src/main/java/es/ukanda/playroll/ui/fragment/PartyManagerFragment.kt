@@ -40,7 +40,6 @@ class PartyManagerFragment : Fragment() {
     private fun setParty(partyId: Int) {
         CoroutineScope(Dispatchers.IO).launch {
             if (partyId == 0){
-                party = Party(0,"")
             }else{
                 party = PartyDb.getDatabase(requireContext()).partyDao().getParty(partyId)
             }
@@ -48,7 +47,6 @@ class PartyManagerFragment : Fragment() {
             texviews()
         }
     }
-
 
     private fun texviews() {
         if (party.partyID != 0){
@@ -59,7 +57,7 @@ class PartyManagerFragment : Fragment() {
 
     private fun buttons() {
         binding.btCompartiOnline.setOnClickListener {
-            Toast.makeText(requireContext(), "Estoy trabajando en esto aun", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.this_feature_is_under_development), Toast.LENGTH_SHORT).show()
         }
         binding.btCompartirLocal.setOnClickListener {
             val bundle = Bundle()
@@ -68,7 +66,7 @@ class PartyManagerFragment : Fragment() {
                 findNavController().navigate(R.id.action_nav_PartyManager_to_nav_playPartyMaster, bundle)
             }
         }
-        binding.btEditar.setOnClickListener {
+        binding.btEditarPartida.setOnClickListener {
             val bundle = Bundle()
             bundle.putInt("id", party.partyID)
             if(party.partyID != 0){
@@ -76,6 +74,4 @@ class PartyManagerFragment : Fragment() {
             }
         }
     }
-
-
 }

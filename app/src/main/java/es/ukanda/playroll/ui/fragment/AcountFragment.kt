@@ -38,11 +38,10 @@ class AcountFragment : Fragment() {
         currentUser?.let {
             val userName = currentUser.displayName
             val email = currentUser.email
-            val loginType = "No determinado"
+            val loginType = getString(R.string.undetermined)
 
             binding.tvUserName.text = userName
             binding.tvEmail.text = email
-            binding.tvLoginType.text = loginType
 
             val photoUrl = currentUser.photoUrl
             if (photoUrl != null) {
@@ -50,5 +49,4 @@ class AcountFragment : Fragment() {
             }
         }
     }
-
 }

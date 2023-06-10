@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import es.ukanda.playroll.databinding.FragmentCharacterCreatorBinding
 import es.ukanda.playroll.databinding.FragmentCharacterInfoBinding
 
-
 class CharacterInfoFragment : Fragment() {
     private var _binding: FragmentCharacterInfoBinding? = null
     private val binding get() = _binding!!

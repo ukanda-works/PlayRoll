@@ -13,16 +13,19 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.android.gms.common.internal.safeparcel.SafeParcelReader.createBundle
 import com.google.firebase.auth.FirebaseAuth
 import es.ukanda.playroll.R
 import es.ukanda.playroll.database.db.PartyDb
 import es.ukanda.playroll.databinding.FragmentHomeBinding
 import es.ukanda.playroll.entyties.PartieEntities.CharacterEntity
 import es.ukanda.playroll.entyties.PartieEntities.Party
+import es.ukanda.playroll.pruebas.TestPartyConexion
 import es.ukanda.playroll.pruebas.Test_uno
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.streams.toList
 
 class HomeFragment : Fragment() {
 
@@ -69,7 +72,6 @@ class HomeFragment : Fragment() {
         binding.btCrearPartida.setOnClickListener {
             findNavController().navigate(R.id.action_nav_home_to_nav_PartyCreator)
         }
-
         binding.btAddCharacter.setOnClickListener {
             findNavController().navigate(R.id.action_nav_home_to_nav_CharacterCreator)
         }
@@ -78,15 +80,23 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun loadBundle(): Bundle {
+        val partyId = 7
+        val bundle = Bundle()
+        bundle.putInt("party", partyId)
+        bundle.putBoolean("isMaster", false)
+        bundle.putString("ipServer", "127.0.0.1")
+        return bundle
+    }
+
     private fun spiners() {
         lifecycleScope.launch(Dispatchers.IO) {
             //se inicializan los spinners con los datos de la base de datos
             val database = PartyDb.getDatabase(context!!)
-            var partyList = database.partyDao().getAllParties()
-            var characterList =
-                database.characterDao().getAllCharacters()
+            var partyList = database.partyDao().getAllParties().stream().filter {it.own}.toList() as MutableList
+            var characterList =database.characterDao().getAllCharacters().stream().filter {it.own}.toList() as MutableList
 
-                val party = Party(0, "No hay partidas","")
+                val party = Party(0, getString(R.string.no_parties),"")
                 partyList.add(0, party)
             if(characterList.isEmpty()){
                 val character = CharacterEntity()
@@ -107,10 +117,6 @@ class HomeFragment : Fragment() {
             binding.spParties.setSelection(0)
             binding.spCharacters.setSelection(0)
 
-            //seteamos el listener de los spinners
-            //navegamos a la pantalla de la partida o personaje seleccionado enviando id
-
-
             binding.spParties.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
 
                 override fun onItemSelected(adapterView: AdapterView<*>, view: View?, position: Int, id: Long) {
@@ -125,38 +131,16 @@ class HomeFragment : Fragment() {
                     // Nothing to do here
                 }
             }
-
-            /*binding.spCharacters.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>?,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    val character = characterList[position]
-                    val bundle = Bundle()
-                    bundle.putInt("id", character.characterID)
-                    if(character.characterID != 0){
-                        findNavController().navigate(R.id.action_nav_home_to_nav_CharacterInfo, bundle)
-                    }else{
-                        Toast.makeText(context, "No hay personajes", Toast.LENGTH_SHORT).show()
-                    }
-                }
-                override fun onNothingSelected(parent: AdapterView<*>?) {}
-            }*/
-
-
         }
     }
 
     override fun onResume() {
         super.onResume()
         if (!isFirebaseUserLoggedIn()) {
-            Toast.makeText(context, "Necesitas iniciar sesion", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, getString(R.string.do_you_need_sing_in), Toast.LENGTH_SHORT).show()
             findNavController().navigate(R.id.action_nav_home_to_nav_login)
         }
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -167,6 +151,4 @@ class HomeFragment : Fragment() {
         val user = FirebaseAuth.getInstance().currentUser
         return user != null
     }
-
-
 }

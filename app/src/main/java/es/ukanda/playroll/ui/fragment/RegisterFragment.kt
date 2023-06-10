@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
@@ -31,6 +32,7 @@ class RegisterFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (activity as AppCompatActivity?)!!.supportActionBar!!.hide()
         register()
     }
 
@@ -42,10 +44,10 @@ class RegisterFragment : Fragment() {
                     binding.etPasswordRegister.text.toString()
                 ).addOnCompleteListener {
                     if (it.isSuccessful) {
-                        Toast.makeText(this.context, "Usuario registrado", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this.context, getString(R.string.user_successfully_registered), Toast.LENGTH_SHORT).show()
                         findNavController().navigate(R.id.action_nav_register_to_nav_home)
                     } else {
-                        Toast.makeText(this.context, "Error al registrar", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this.context, getString(R.string.failed_to_register), Toast.LENGTH_SHORT).show()
                     }
                 }
             }

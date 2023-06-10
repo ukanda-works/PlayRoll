@@ -29,17 +29,26 @@
             android:id="@+id/action_nav_home_to_nav_CharacterInfo"
             app:destination="@id/nav_CharacterInfo" />
         <action
-            android:id="@+id/action_nav_home_to_nav_acountInfo"
+            android:id="@+id/action_to_acountInfo"
             app:destination="@id/nav_acountInfo" />
         <action
-            android:id="@+id/action_nav_home_to_nav_settings"
+            android:id="@+id/action_to_settings"
             app:destination="@id/nav_settings" />
         <action
-            android:id="@+id/action_nav_home_to_nav_help"
+            android:id="@+id/action_to_help"
             app:destination="@id/nav_help" />
         <action
-            android:id="@+id/action_nav_home_to_nav_about"
+            android:id="@+id/action_to_about"
             app:destination="@id/nav_about" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_playParty"
+            app:destination="@id/nav_playParty" />
+        <action
+            android:id="@+id/action_to_characterList"
+            app:destination="@id/nav_characterList" />
+        <action
+            android:id="@+id/action_to_partyList"
+            app:destination="@id/nav_partyList" />
     </fragment>
 
     <fragment
@@ -63,13 +72,23 @@
         <action
             android:id="@+id/action_nav_register_to_nav_home"
             app:destination="@id/nav_home" />
+
     </fragment>
 
     <fragment
         android:id="@+id/nav_PartyManager"
         android:name="es.ukanda.playroll.ui.fragment.PartyManagerFragment"
         android:label="Party Manager"
-        tools:layout="@layout/fragment_sign_off" >
+        tools:layout="@layout/fragment_party_manager" >
+        <action
+            android:id="@+id/action_to_settings"
+            app:destination="@id/nav_settings" />
+        <action
+            android:id="@+id/action_to_help"
+            app:destination="@id/nav_help" />
+        <action
+            android:id="@+id/action_to_about"
+            app:destination="@id/nav_about" />
         <action
             android:id="@+id/action_nav_PartyManager_to_nav_PartyCreator"
             app:destination="@id/nav_PartyCreator" />
@@ -81,7 +100,16 @@
         android:id="@+id/nav_PartyCreator"
         android:name="es.ukanda.playroll.ui.fragment.CreatePartyFragment"
         android:label="Create Party"
-        tools:layout="@layout/fragment_sign_off" >
+        tools:layout="@layout/fragment_create_party" >
+        <action
+            android:id="@+id/action_to_settings"
+            app:destination="@id/nav_settings" />
+        <action
+            android:id="@+id/action_to_help"
+            app:destination="@id/nav_help" />
+        <action
+            android:id="@+id/action_to_about"
+            app:destination="@id/nav_about" />
         <action
             android:id="@+id/action_nav_PartyCreator_to_nav_home"
             app:destination="@id/nav_home" />
@@ -90,7 +118,16 @@
         android:id="@+id/nav_JoinParty"
         android:name="es.ukanda.playroll.ui.fragment.JoinPartyFragment"
         android:label="Join Party"
-        tools:layout="@layout/fragment_sign_off" >
+        tools:layout="@layout/fragment_join_party" >
+        <action
+            android:id="@+id/action_to_settings"
+            app:destination="@id/nav_settings" />
+        <action
+            android:id="@+id/action_to_help"
+            app:destination="@id/nav_help" />
+        <action
+            android:id="@+id/action_to_about"
+            app:destination="@id/nav_about" />
         <action
             android:id="@+id/action_nav_JoinParty_to_nav_playParty"
             app:destination="@id/nav_playParty" />
@@ -103,12 +140,30 @@
         <action
             android:id="@+id/action_nav_CharacterInfo_to_nav_CharacterCreator"
             app:destination="@id/nav_CharacterCreator" />
+        <action
+            android:id="@+id/action_to_settings"
+            app:destination="@id/nav_settings" />
+        <action
+            android:id="@+id/action_to_help"
+            app:destination="@id/nav_help" />
+        <action
+            android:id="@+id/action_to_about"
+            app:destination="@id/nav_about" />
     </fragment>
     <fragment
         android:id="@+id/nav_CharacterCreator"
         android:name="es.ukanda.playroll.ui.fragment.CharacterCreatorFragment"
         android:label="Character Creator"
         tools:layout="@layout/fragment_character_creator" >
+        <action
+            android:id="@+id/action_to_settings"
+            app:destination="@id/nav_settings" />
+        <action
+            android:id="@+id/action_to_help"
+            app:destination="@id/nav_help" />
+        <action
+            android:id="@+id/action_to_about"
+            app:destination="@id/nav_about" />
         <action
             android:id="@+id/action_nav_CharacterCreator_to_nav_home"
             app:destination="@id/nav_home" />
@@ -122,13 +177,22 @@
         android:name="es.ukanda.playroll.ui.fragment.PlayPartyFragment"
         android:label="Play party"
         tools:layout="@layout/fragment_play_party" >
+        <action
+            android:id="@+id/action_nav_playParty_to_nav_home"
+            app:destination="@id/nav_home" />
     </fragment>
 
     <fragment
         android:id="@+id/nav_playPartyMaster"
         android:name="es.ukanda.playroll.ui.fragment.PlayPartyMasterFragment"
         android:label="Play party MASTER"
-        tools:layout="@layout/fragment_play_party" >
+        tools:layout="@layout/fragment_play_party_master" >
+        <action
+            android:id="@+id/action_nav_playPartyMaster_to_nav_playParty"
+            app:destination="@id/nav_playParty" />
+        <action
+            android:id="@+id/action_playPartyMasterFragment_to_home"
+            app:destination="@id/nav_home" />
     </fragment>
 
     <fragment
@@ -137,20 +201,7 @@
         android:label="Create Character"
         tools:layout="@layout/fragment_camera" >
         <action
-            android:id="@+id/action_nav_camera_to_nav_camera_result"
-            app:destination="@id/nav_camera_result" />
-        <action
             android:id="@+id/action_nav_camera_to_nav_CharacterCreator"
-            app:destination="@id/nav_CharacterCreator" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/nav_camera_result"
-        android:name="es.ukanda.playroll.ui.fragment.ResultCameraFragment"
-        android:label="Datos recogidos"
-        tools:layout="@layout/fragment_result_camera" >
-        <action
-            android:id="@+id/action_nav_camera_result_to_nav_CharacterCreator"
             app:destination="@id/nav_CharacterCreator" />
     </fragment>
 
@@ -159,6 +210,24 @@
         android:name="es.ukanda.playroll.ui.fragment.AcountFragment"
         android:label="acount"
         tools:layout="@layout/fragment_acount" >
+        <action
+            android:id="@+id/action_to_settings"
+            app:destination="@id/nav_settings" />
+        <action
+            android:id="@+id/action_to_help"
+            app:destination="@id/nav_help" />
+        <action
+            android:id="@+id/action_to_about"
+            app:destination="@id/nav_about" />
+        <action
+            android:id="@+id/action_to_characterList"
+            app:destination="@id/nav_characterList" />
+        <action
+            android:id="@+id/action_to_partyList"
+            app:destination="@id/nav_partyList" />
+        <action
+            android:id="@+id/action_to_home"
+            app:destination="@id/nav_home" />
     </fragment>
 
     <fragment
@@ -166,6 +235,12 @@
         android:name="es.ukanda.playroll.ui.fragment.AboutFragment"
         android:label="Acerca de"
         tools:layout="@layout/fragment_about" >
+        <action
+            android:id="@+id/action_to_help"
+            app:destination="@id/nav_help" />
+        <action
+            android:id="@+id/action_to_settings"
+            app:destination="@id/nav_settings" />
     </fragment>
 
     <fragment
@@ -173,6 +248,12 @@
         android:name="es.ukanda.playroll.ui.fragment.SetingsFragment"
         android:label="Settings"
         tools:layout="@layout/fragment_setings" >
+        <action
+            android:id="@+id/action_to_help"
+            app:destination="@id/nav_help" />
+        <action
+            android:id="@+id/action_to_about"
+            app:destination="@id/nav_about" />
     </fragment>
 
     <fragment
@@ -180,5 +261,65 @@
         android:name="es.ukanda.playroll.ui.fragment.HelpFragment"
         android:label="Ayuda"
         tools:layout="@layout/fragment_help" >
+        <action
+            android:id="@+id/action_to_settings"
+            app:destination="@id/nav_settings" />
+        <action
+            android:id="@+id/action_to_about"
+            app:destination="@id/nav_about" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_characterList"
+        android:name="es.ukanda.playroll.ui.fragment.CharacterListFragment"
+        android:label="Character list"
+        tools:layout="@layout/fragment_character_list" >
+        <action
+            android:id="@+id/action_to_settings"
+            app:destination="@id/nav_settings" />
+        <action
+            android:id="@+id/action_to_help"
+            app:destination="@id/nav_help" />
+        <action
+            android:id="@+id/action_to_about"
+            app:destination="@id/nav_about" />
+        <action
+            android:id="@+id/action_to_home"
+            app:destination="@id/nav_home" />
+        <action
+            android:id="@+id/action_to_partyList"
+            app:destination="@id/nav_partyList" />
+        <action
+            android:id="@+id/action_to_acountInfo"
+            app:destination="@id/nav_acountInfo" />
+        <action
+            android:id="@+id/action_nav_characterList_to_nav_CharacterCreator"
+            app:destination="@id/nav_CharacterCreator" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_partyList"
+        android:name="es.ukanda.playroll.ui.fragment.PartiesListFragment"
+        android:label="Parties list"
+        tools:layout="@layout/fragment_parties_list" >
+        <action
+            android:id="@+id/action_to_settings"
+            app:destination="@id/nav_settings" />
+        <action
+            android:id="@+id/action_to_help"
+            app:destination="@id/nav_help" />
+        <action
+            android:id="@+id/action_to_about"
+            app:destination="@id/nav_about" />
+        <action
+            android:id="@+id/action_to_home"
+            app:destination="@id/nav_home" />
+        <action
+            android:id="@+id/action_to_characterList"
+            app:destination="@id/nav_characterList" />
+        <action
+            android:id="@+id/action_to_acountInfo"
+            app:destination="@id/nav_acountInfo" />
+        <action
+            android:id="@+id/action_nav_partyList_to_nav_PartyManager"
+            app:destination="@id/nav_PartyManager" />
     </fragment>
 </navigation>

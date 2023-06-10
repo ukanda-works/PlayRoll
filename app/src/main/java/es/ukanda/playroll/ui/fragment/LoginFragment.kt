@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -35,7 +36,6 @@ class LoginFragment : Fragment() {
 
         var provider: ProviderType = ProviderType.BASIC
         var email: String = ""
-
     }
 
     override fun onCreateView(
@@ -44,12 +44,12 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (activity as AppCompatActivity?)!!.supportActionBar!!.hide()
         buttons()
     }
 
@@ -59,7 +59,7 @@ class LoginFragment : Fragment() {
     }
 
     private fun buttons() {
-        this.activity?.title = "Login"
+        this.activity?.title = getString(R.string.login)
         binding.btSignIn.setOnClickListener {
             if(binding.etEmailLog.text.isNotEmpty() && binding.etPasswordLog.text.isNotEmpty()) {
                 FirebaseAuth.getInstance().signInWithEmailAndPassword(
@@ -67,7 +67,6 @@ class LoginFragment : Fragment() {
                     binding.etPasswordLog.text.toString()
                 ).addOnCompleteListener {
                     if(it.isSuccessful) {
-                        Toast.makeText(context, "Login correcto", Toast.LENGTH_SHORT).show()
                         provider = ProviderType.BASIC
                         email = binding.etEmailLog.text.toString()
 
@@ -75,14 +74,14 @@ class LoginFragment : Fragment() {
                         prefs?.putString("email", email)
                         prefs?.putString("provider", provider.name)
                         prefs?.apply()
-                        Toast.makeText(context, "Sesion iniciada con exito", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, getString(R.string.session_started_successfully), Toast.LENGTH_SHORT).show()
                         findNavController().navigate(R.id.action_nav_login_to_nav_home)
                     } else {
-                        Toast.makeText(context, "Error al iniciar sesión", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, getString(R.string.failed_to_login), Toast.LENGTH_SHORT).show()
                     }
                 }
             } else {
-                Toast.makeText(context, "Rellena todos los campos", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, getString(R.string.fill_in_all_the_fields), Toast.LENGTH_SHORT).show()
             }
         }
         binding.btRegistrarseLog.setOnClickListener {
@@ -105,16 +104,16 @@ class LoginFragment : Fragment() {
                             prefs?.putString("email", account.email)
                             prefs?.putString("provider", ProviderType.GOOGLE.name)
                             prefs?.apply()
-                            Toast.makeText(context, "Sesion iniciada con exito", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, getString(R.string.session_started_successfully), Toast.LENGTH_SHORT).show()
                             findNavController().navigate(R.id.action_nav_login_to_nav_home)
                         }else{
-                            Toast.makeText(context, "Error al iniciar sesión", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, getString(R.string.failed_to_login), Toast.LENGTH_SHORT).show()
                         }
                     }
 
                 }
                 }catch (e: Exception){
-                    Toast.makeText(context, "Error al iniciar sesión ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "${getString(R.string.error)}: ${e.message}", Toast.LENGTH_SHORT).show()
                     e.printStackTrace()
                 }
             }
