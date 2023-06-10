@@ -8,9 +8,10 @@ import com.google.gson.Gson
 
 @Entity(tableName = "players")
 data class Player(
-    @PrimaryKey(autoGenerate = true) val playerID: Int = 0,
+    @PrimaryKey(autoGenerate = true)
+    val playerID: Int = 0,
     val name: String,
-    val identifier: String,// es el hash del email del jugador
+    val identifier: String,
 ) {
     override fun hashCode(): Int {
         val prime = 31

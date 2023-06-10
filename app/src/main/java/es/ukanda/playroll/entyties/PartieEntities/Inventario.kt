@@ -21,7 +21,8 @@ import com.google.gson.Gson
 )
 
 class Inventario(
-    @PrimaryKey(autoGenerate = true) val inventarioID: Int=0,
+    @PrimaryKey(autoGenerate = true)
+    val inventarioID: Int=0,
     var partyID: Int,
     var characterID: Int,
     var health: Int,

@@ -21,7 +21,10 @@ import es.ukanda.playroll.entyties.PartieEntities.CharacterEntity
 import es.ukanda.playroll.entyties.PartieEntities.Party
 import es.ukanda.playroll.entyties.PartieEntities.Player
 import es.ukanda.playroll.entyties.PartieEntities.PlayerCharacters
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.*
 import java.lang.Thread.sleep
 import java.net.*
@@ -42,8 +45,6 @@ class PlayPartyMasterFragment : Fragment(){
 
     companion object{
         lateinit var instance: PlayPartyMasterFragment
-        var conexionEstate = MutableLiveData<Boolean>()
-        var errorMensaje = MutableLiveData<String>()
         var lastResponse = MutableLiveData<Boolean>()
     }
 
@@ -61,7 +62,6 @@ class PlayPartyMasterFragment : Fragment(){
         (activity as AppCompatActivity?)!!.supportActionBar!!.hide()
         val partyId = arguments?.getInt("id") ?: 0
         setParty(partyId)
-        getIp()
         setBtn()
     }
 
@@ -127,8 +127,8 @@ class PlayPartyMasterFragment : Fragment(){
                                 "player_character" to savedPlayerCharacterList)
             val mensajeJson = gson.toJson(mensaje)
             listaJugadores.values.forEach{ ip ->
-                var socket = Socket(ip, 5691)
-                var writer = BufferedWriter(OutputStreamWriter(socket.getOutputStream()))
+                val socket = Socket(ip, 5691)
+                val writer = BufferedWriter(OutputStreamWriter(socket.getOutputStream()))
                 writer.write(mensajeJson)
                 writer.flush()
                 writer.close()
@@ -242,22 +242,20 @@ class PlayPartyMasterFragment : Fragment(){
         }
     }
 
-    private fun getIp(){
-        var ip = ""
-        CoroutineScope(Dispatchers.IO).launch {
-
-            val wifiManager = context!!.getSystemService(Context.WIFI_SERVICE) as WifiManager
-            val ipAddress = wifiManager.connectionInfo.ipAddress
-            val addressBytes = byteArrayOf(
-                (ipAddress and 0xff).toByte(),
-                (ipAddress shr 8 and 0xff).toByte(),
-                (ipAddress shr 16 and 0xff).toByte(),
-                (ipAddress shr 24 and 0xff).toByte()
-            )
-            ip = InetAddress.getByAddress(addressBytes).hostAddress ?: ""
-        }
-
+    private suspend fun getIp(): String{
+        val wifiManager = context!!.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        val ipAddress = wifiManager.connectionInfo.ipAddress
+        val addressBytes = byteArrayOf(
+            (ipAddress and 0xff).toByte(),
+            (ipAddress shr 8 and 0xff).toByte(),
+            (ipAddress shr 16 and 0xff).toByte(),
+            (ipAddress shr 24 and 0xff).toByte()
+        )
+        return withContext(Dispatchers.IO) {
+            InetAddress.getByAddress(addressBytes)
+        }.hostAddress ?: ""
     }
+
 
     fun showPetition(message: String, title:String) {
             val builder = AlertDialog.Builder(context)
@@ -281,7 +279,7 @@ private class ServerThread(val clientSocket: Socket, val fragment: PlayPartyMast
             val input = BufferedReader(InputStreamReader(clientSocket.getInputStream()))
             val output = BufferedWriter(OutputStreamWriter(clientSocket.getOutputStream()))
 
-            var message = input.readLine()
+            val message = input.readLine()
 
             processMessage(message, output)
 

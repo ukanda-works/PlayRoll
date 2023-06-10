@@ -15,7 +15,6 @@ import es.ukanda.playroll.database.db.IntHashMapConverter
 data class CharacterEntity(
     @PrimaryKey(autoGenerate = true) val characterID: Int=0,
     var name: String,
-    var playerName: String,
     var description: String,
     var clase: String,
     var race: String,
@@ -36,7 +35,7 @@ data class CharacterEntity(
     //constructor vacio
     constructor() : this(0,
                     "",
-                "", "", "", "", 0, 0, 0,"", HashMap(), listOf(), listOf())
+                "", "", "",  0, 0, 0,"", HashMap(), listOf(), listOf())
 
     fun toJson(): String {
         val gson = com.google.gson.Gson()
@@ -48,7 +47,6 @@ data class CharacterEntity(
         var result = 1
 
         result = result * prime + name.hashCode()
-        result = result * prime + playerName.hashCode()
         result = result * prime + description.hashCode()
         result = result * prime + clase.hashCode()
         result = result * prime + race.hashCode()
@@ -90,7 +88,6 @@ data class CharacterEntity(
         fun removeIdFromCharacter(character: CharacterEntity): CharacterEntity {
             return CharacterEntity(
                 name = character.name,
-                playerName = character.playerName,
                 description = character.description,
                 clase = character.clase,
                 race = character.race,
