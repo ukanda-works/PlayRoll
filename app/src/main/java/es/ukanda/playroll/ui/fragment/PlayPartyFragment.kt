@@ -83,18 +83,6 @@ class PlayPartyFragment : Fragment() {
             }
         })
         loadBundle()
-        initSockets()
-
-    }
-
-    private fun initSockets() {
-        CoroutineScope(Dispatchers.IO).launch {
-            if (isMaster) {
-                //clientSocket = ClientSocketServer(playersIp, listenPort, this@PlayPartyFragment)
-            }else{
-                //clientSocket = ClientSocket(ipServer, writePort, this@PlayPartyFragment)
-            }
-        }
     }
 
     private fun loadBundle() {
@@ -128,7 +116,7 @@ class PlayPartyFragment : Fragment() {
 
     private suspend fun initDb(partyId: Int) {
         CoroutineScope(Dispatchers.Main).launch{
-            Toast.makeText(context, "cargando partida", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, getString(R.string.party_loaded), Toast.LENGTH_SHORT).show()
         }
         val db = PartyDb.getDatabase(requireContext())
         party = db.partyDao().getParty(partyId)
@@ -347,35 +335,6 @@ class PlayPartyFragment : Fragment() {
             e.printStackTrace()
         }
         findNavController().navigate(R.id.action_nav_playParty_to_nav_home)
-    }
-
-    class ClientSocket(val ip: String, val port: Int, Fragment: PlayPartyFragment){
-
-        private val socket = Socket(ip, port)
-
-        fun sendMensaje(mensaje: String){
-            if (socket.isClosed) {
-                socket.connect(InetSocketAddress(ip, port))
-            }
-            val output = BufferedWriter(OutputStreamWriter(socket.getOutputStream()))
-            output.write(mensaje)
-            output.newLine()
-            output.flush()
-        }
-        companion object {
-            enum class RollDiceType {
-                Salvacion, Ataque, Daño
-            }
-        }
-
-        fun close(){
-            try {
-                socket.close()
-            }catch (e: Exception){
-                e.printStackTrace()
-            }
-        }
-
     }
 
     companion object{

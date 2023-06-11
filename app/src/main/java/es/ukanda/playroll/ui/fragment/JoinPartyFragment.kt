@@ -227,13 +227,11 @@ class JoinPartyFragment : Fragment() {
                     pass = view.findViewById<EditText>(R.id.etPassJoin).text.toString()
                 }
                 val character = getSelectedCharacter()
-                println("--------------------")
                 if (character == null) {
                     Toast.makeText(context, getString(R.string.select_a_character), Toast.LENGTH_SHORT).show()
                 } else if (alias == "") {
                     Toast.makeText(context, getString(R.string.enter_a_nickname), Toast.LENGTH_SHORT).show()
                 } else {
-                    println("IP")
                     ControllSocket.startParty(targetIp.value!!, 5000, alias, pass, character)
                     alertDialog.dismiss()
                 }

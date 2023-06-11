@@ -148,4 +148,5 @@
     <string name="denied">Peticion denegada</string>
     <string name="ask_for_roll_dice">pide lanzar un dado de</string>
     <string name="want_roll_dice">quiere lanzar los dados</string>
+    <string name="party_loaded">Partida cargada</string>
 </resources>
