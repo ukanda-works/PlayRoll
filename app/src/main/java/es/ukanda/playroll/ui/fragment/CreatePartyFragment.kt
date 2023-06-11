@@ -50,7 +50,14 @@ class CreatePartyFragment : Fragment() {
         initRecycler()
         buttons()
     }
-
+    /**
+    Inicializa la carga de datos.
+    Este método utiliza corrutinas para obtener el jugador actual en segundo plano y configurar los datos de la fiesta.
+    Primero, se obtiene el jugador actual utilizando el controlador del juego en un contexto de Dispatchers.IO.
+    Luego, se verifica si se proporcionó un ID de fiesta en los argumentos.
+    Si se proporciona un ID de fiesta, se obtiene la fiesta correspondiente de la base de datos en un contexto de Dispatchers.IO
+    y se configuran los datos en los campos correspondientes de la interfaz de usuario.
+     */
     private fun initLoad() {
         CoroutineScope(Dispatchers.IO).launch{
             currentPlayer = gameController.getCurrentPlayer()
@@ -65,14 +72,27 @@ class CreatePartyFragment : Fragment() {
             }
         }
     }
+    /**
 
+    Configura los botones de la interfaz de usuario.
+    Este método asigna un listener al botón "Crear" que llama al método createParty()
+    y navega al fragmento de inicio después de crear la fiesta.
+     */
     private fun buttons() {
         binding.btCrear.setOnClickListener {
             createParty()
             findNavController().navigate(R.id.action_nav_PartyCreator_to_nav_home)
         }
     }
-
+    /**
+    Crea una nueva fiesta.
+    Este método obtiene la instancia de FirebaseAuth y los personajes seleccionados de characterAdapter.
+    Luego, se obtiene la contraseña y la configuración de la fiesta desde los campos de la interfaz de usuario.
+    A continuación, se obtiene el usuario actualmente autenticado y se guarda su nombre.
+    Se crea una nueva instancia de Party con los datos proporcionados.
+    Finalmente, se inserta la fiesta en la base de datos utilizando corrutinas y se insertan los personajes asociados
+    a la entidad PlayerCharacter si hay personajes seleccionados.
+     */
     private fun createParty() {
         val firebaseAuth = FirebaseAuth.getInstance()
         val selectedCharacters = characterAdapter.getSelectedCharacters()
@@ -105,7 +125,12 @@ class CreatePartyFragment : Fragment() {
             println(e)
         }
     }
-
+    /**
+    Inicializa el RecyclerView y muestra la lista de personajes disponibles.
+    Este método obtiene la lista de personajes de la base de datos utilizando corrutinas.
+    Luego, crea una instancia de CharacterAdapter y la asocia al RecyclerView.
+    También configura el LayoutManager del RecyclerView para mostrar los elementos en una lista vertical.
+     */
     fun initRecycler(){
         CoroutineScope(Dispatchers.IO).launch {
             val listCharacter = PartyDb.getDatabase(requireContext()).characterDao().getAllCharacters()
@@ -116,9 +141,12 @@ class CreatePartyFragment : Fragment() {
             binding.rvCharactersCreator.adapter = characterAdapter
         }
     }
-
-    private fun getSelectedCharacters(): List<CharacterEntity>{
-        val selectedCharacters = characterAdapter.getSelectedCharacters()
-        return selectedCharacters
-    }
+    /**
+    Obtiene los personajes seleccionados en el RecyclerView.
+    @return Lista de CharacterEntity que representa los personajes seleccionados.
+     */
+        private fun getSelectedCharacters(): List<CharacterEntity>{
+            val selectedCharacters = characterAdapter.getSelectedCharacters()
+            return selectedCharacters
+        }
 }

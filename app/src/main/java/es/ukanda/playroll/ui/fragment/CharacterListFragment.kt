@@ -34,7 +34,12 @@ class CharacterListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initRv()
     }
-
+    /**
+    Inicializa el RecyclerView para mostrar la lista de personajes.
+    Este método utiliza una corrutina para obtener la lista de personajes en segundo plano
+    y luego configura el adaptador del RecyclerView con la lista obtenida.
+    Finalmente, asigna el adaptador y el administrador de diseño al RecyclerView.
+     */
     private fun initRv() {
         CoroutineScope(Dispatchers.IO).launch {
             val characterList = getCharacters()
@@ -47,7 +52,12 @@ class CharacterListFragment : Fragment() {
             }
         }
     }
-
+    /**
+    Obtiene la lista de personajes.
+    Este método suspendido busca en la base de datos todos los personajes y
+    devuelve una lista de los personajes propios.
+    @return La lista de personajes propios.
+     */
     suspend fun getCharacters(): List<CharacterEntity>{
         val characterList = mutableListOf<CharacterEntity>()
        //busca en la base de datos todos los personajes

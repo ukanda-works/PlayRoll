@@ -81,7 +81,9 @@ class PlayPartyFragment : Fragment() {
         initSockets()
 
     }
-
+    /**
+    Inicializa los sockets de conexión.
+     */
     private fun initSockets() {
         CoroutineScope(Dispatchers.IO).launch {
             if (isMaster) {
@@ -91,7 +93,9 @@ class PlayPartyFragment : Fragment() {
             }
         }
     }
-
+    /**
+    Carga los datos del Bundle recibido.
+     */
     private fun loadBundle() {
         val bundle = arguments
         if (bundle != null) {
@@ -113,7 +117,9 @@ class PlayPartyFragment : Fragment() {
     }
 
 
-
+    /**
+    Inicializa la base de datos con la partida y los datos relacionados.
+     */
     private suspend fun initDb(partyId: Int) {
         CoroutineScope(Dispatchers.Main).launch{
             Toast.makeText(context, "cargando partida", Toast.LENGTH_SHORT).show()
@@ -140,7 +146,9 @@ class PlayPartyFragment : Fragment() {
         }
     }
 
-
+    /**
+    Inicializa el listener del socket para recibir conexiones entrantes.
+     */
     private fun initListenerSocket() {
         var port = listenPort
         if (isMaster) {
@@ -166,7 +174,9 @@ class PlayPartyFragment : Fragment() {
 
         }
     }
-
+    /**
+    Inicializa las pestañas del fragmento de juego de la partida.
+     */
     private fun initTabs() {
         val adapter = ViewPagerAdapter(childFragmentManager)
         adapter.addFragment(PlayPartyPlayersFragment(), getString(R.string.players))
@@ -176,19 +186,27 @@ class PlayPartyFragment : Fragment() {
         binding.tabLayout.setupWithViewPager(binding.viewPager)
 
     }
-
+    /**
+    Agrega la pestaña de opciones del maestro en el fragmento de juego de la partida.
+     */
     private fun addMasterTab() {
         val adapter = ViewPagerAdapter(childFragmentManager)
         adapter.addFragment(PlayPartyMasterOptionsFragment(), getString(R.string.master_options))
         binding.viewPager.adapter = adapter
         binding.tabLayout.setupWithViewPager(binding.viewPager)
     }
-
+    /**
+    Función para salir de la partida actual.
+    Envía un mensaje y navega de regreso a la pantalla de inicio.
+     */
     fun exitParty() {
         sendByMensaje()
         findNavController().navigate(R.id.action_nav_playParty_to_nav_home)
     }
-
+    /**
+    Función para enviar un mensaje al servidor o a los jugadores.
+    Aquí debes agregar la lógica para enviar el mensaje.
+     */
     private fun sendByMensaje() {
     }
 

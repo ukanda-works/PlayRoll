@@ -64,7 +64,14 @@ class PlayPartyMasterFragment : Fragment(){
         setParty(partyId)
         setBtn()
     }
-
+    /**
+    Establece el comportamiento de los botones.
+    Este método establece el comportamiento de los botones en la interfaz de usuario.
+    El botón "btStartGame" muestra un diálogo de confirmación para iniciar el juego.
+    El botón "btnStopSharing" muestra un diálogo de confirmación para detener el intercambio.
+    Si se confirma la acción en cualquiera de los diálogos, se ejecutan las respectivas funciones asociadas.
+    En caso contrario, no se realiza ninguna acción.
+     */
     private fun setBtn() {
         binding.btStartGame.setOnClickListener {
             val builder = AlertDialog.Builder(requireContext())
@@ -152,7 +159,17 @@ class PlayPartyMasterFragment : Fragment(){
             }
         }
     }
-
+    /**
+    Realiza las siguientes acciones:
+    Se ejecuta en un hilo de fondo utilizando CoroutineScope.
+    Verifica si el ID de la fiesta es igual a 0.
+    Si es igual a 0, muestra un mensaje de error en el contexto actual utilizando Toast.
+    Si no es igual a 0, realiza lo siguiente:
+    - Inicializa la base de datos con el ID de la fiesta.
+    - Inicia el servidor UDP.
+    - Inicia el servidor TCP.
+    Nota: Este método se ejecuta en un hilo de fondo utilizando CoroutineScope y muestra mensajes de error o realiza acciones en el hilo principal según sea necesario.
+     */
     private fun setParty(partyId: Int) {
         CoroutineScope(Dispatchers.IO).launch {
             if (partyId == 0){
@@ -166,13 +183,31 @@ class PlayPartyMasterFragment : Fragment(){
             }
         }
     }
-
+    /**
+    Actualiza la lista de jugadores.
+    Este método actualiza la lista de jugadores en la interfaz de usuario.
+    Recorre los elementos de la lista de jugadores y realiza lo siguiente para cada elemento:
+    Añade el nombre del jugador y su valor asociado a la vista de texto "tvPlayerList" en formato "Nombre - Valor".
+    Nota: Este método no realiza operaciones en hilos de fondo y se espera que se llame desde el hilo principal.
+     */
     fun updatePlayerList(){
        listaJugadores.forEach {
            binding.tvPlayerList.append("${it.key.name} - ${it.value}\n")
        }
     }
-
+    /**
+    Inicializa la base de datos.
+    Este método inicializa la base de datos utilizando el ID de fiesta proporcionado.
+    Realiza las siguientes acciones:
+    Se suspende y ejecuta en un hilo de fondo utilizando CoroutineScope y Dispatchers.IO.
+    Obtiene una instancia de la base de datos de la fiesta utilizando el contexto actual.
+    Recupera la fiesta correspondiente al ID de fiesta de la base de datos y la asigna a la variable "party".
+    Obtiene los jugadores y los personajes asociados a la fiesta mediante la función "getPlayersAndCharactersByPartyId" de la base de datos.
+    Crea una lista mutable de entidades de personajes y recorre los elementos obtenidos:
+    Obtiene el personaje correspondiente a cada elemento mediante la función "getCharacterById" de la base de datos.
+    Agrega el personaje a la lista "characterList".
+    Nota: Este método se ejecuta en un hilo de fondo y se espera que sea llamado desde una función suspendida.
+     */
      suspend fun initDb(partyId: Int) {
          val db = PartyDb.getDatabase(requireContext())
          party =db.partyDao().getParty(partyId)
@@ -183,7 +218,21 @@ class PlayPartyMasterFragment : Fragment(){
             }
          characterList = characters
     }
-
+    /**
+    Inicia el servidor UDP.
+    Este método inicia un servidor UDP en segundo plano utilizando un hilo de fondo y CoroutineScope.
+    Realiza las siguientes acciones:
+    Crea un objeto DatagramSocket en el puerto 5689 para recibir paquetes UDP.
+    Prepara un búfer de bytes para almacenar los datos recibidos.
+    En un bucle infinito, realiza lo siguiente:
+    Crea un DatagramPacket para recibir el paquete UDP entrante y lo almacena en el búfer.
+    Espera durante 1000 milisegundos (1 segundo).
+    Obtiene la dirección del remitente del paquete.
+    Convierte la fiesta actual a formato JSON y la convierte en un arreglo de bytes.
+    Crea un nuevo DatagramPacket con los datos y la dirección del remitente, y lo envía a través del puerto 5688.
+    Captura cualquier excepción que ocurra e imprime la traza de errores.
+    Nota: Este método se ejecuta en un hilo de fondo y se mantiene en ejecución continuamente hasta que ocurra una excepción.
+     */
     private fun starServerUdp(){
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -205,7 +254,14 @@ class PlayPartyMasterFragment : Fragment(){
         }
 
     }
-
+    /**
+    Cierra el servidor UDP.
+    Este método cierra el servidor UDP.
+    Realiza las siguientes acciones:
+    Intenta cerrar el socket UDP utilizado por el servidor.
+    Captura cualquier excepción que ocurra e imprime la traza de errores.
+    Nota: Este método se utiliza para detener y cerrar el servidor UDP y se espera que se llame cuando sea necesario.
+     */
     private fun closeServerUdp(){
         try {
             socketUdp.close()
@@ -213,7 +269,19 @@ class PlayPartyMasterFragment : Fragment(){
             e.printStackTrace()
         }
     }
-
+    /**
+    Inicia el servidor TCP.
+    Este método inicia un servidor TCP en segundo plano utilizando un hilo de fondo y CoroutineScope.
+    Realiza las siguientes acciones:
+    Crea un objeto ServerSocket en el puerto 5690 para escuchar las conexiones entrantes.
+    Muestra un mensaje en el contexto actual utilizando Toast para indicar que se está esperando solicitudes de usuario.
+    En un bucle infinito, realiza lo siguiente:
+    Acepta una conexión entrante utilizando el método accept() del ServerSocket.
+    Crea un nuevo hilo de servidor (ServerThread) pasando el socket de conexión y una referencia a esta instancia de PlayPartyMasterFragment.
+    Inicia el hilo del servidor.
+    Captura cualquier excepción que ocurra e imprime la traza de errores.
+    Nota: Este método se ejecuta en un hilo de fondo y se mantiene en ejecución continuamente hasta que ocurra una excepción.
+     */
     private fun starServerTcp() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -233,7 +301,14 @@ class PlayPartyMasterFragment : Fragment(){
             }
         }
     }
-
+    /**
+    Cierra el servidor TCP.
+    Este método cierra el servidor TCP.
+    Realiza las siguientes acciones:
+    Intenta cerrar el socket del servidor utilizado por el servidor TCP.
+    Captura cualquier excepción que ocurra e imprime la traza de errores.
+    Nota: Este método se utiliza para detener y cerrar el servidor TCP y se espera que se llame cuando sea necesario.
+     */
     private fun closeServerTcp(){
         try {
             serverSocket.close()
@@ -241,7 +316,17 @@ class PlayPartyMasterFragment : Fragment(){
             e.printStackTrace()
         }
     }
-
+    /**
+    Obtener la dirección IP.
+    Este método suspendido obtiene la dirección IP del dispositivo.
+    Realiza las siguientes acciones:
+    Obtiene una instancia de WifiManager utilizando el servicio de contexto.
+    Obtiene la dirección IP actual del dispositivo desde la información de conexión de Wi-Fi.
+    Convierte la dirección IP en bytes utilizando operaciones de desplazamiento de bits.
+    Utiliza withContext y Dispatchers.IO para realizar una llamada a red y obtener la dirección IP como InetAddress.
+    Devuelve la dirección IP en formato de cadena o una cadena vacía si no se pudo obtener.
+    Nota: Este método suspendido debe llamarse desde un contexto de CoroutineScope para permitir operaciones en el hilo principal y realizar la llamada a red en un hilo de fondo.
+     */
     private suspend fun getIp(): String{
         val wifiManager = context!!.getSystemService(Context.WIFI_SERVICE) as WifiManager
         val ipAddress = wifiManager.connectionInfo.ipAddress
@@ -256,7 +341,19 @@ class PlayPartyMasterFragment : Fragment(){
         }.hostAddress ?: ""
     }
 
-
+    /**
+    Mostrar petición.
+    Este método muestra una petición en forma de diálogo utilizando AlertDialog.
+    Recibe un mensaje y un título para personalizar el contenido del diálogo.
+    Realiza las siguientes acciones:
+    Crea un objeto AlertDialog.Builder utilizando el contexto actual.
+    Establece el título del diálogo utilizando el título proporcionado.
+    Establece el mensaje del diálogo utilizando el mensaje proporcionado.
+    Configura el botón positivo del diálogo para aceptar la petición y establece el valor de lastResponse como verdadero.
+    Configura el botón negativo del diálogo para rechazar la petición y establece el valor de lastResponse como falso.
+    Crea el diálogo utilizando create() y lo muestra.
+    Nota: Este método debe ser llamado desde el contexto adecuado para mostrar el diálogo correctamente.
+     */
     fun showPetition(message: String, title:String) {
             val builder = AlertDialog.Builder(context)
             builder.setTitle(title)
@@ -287,7 +384,37 @@ private class ServerThread(val clientSocket: Socket, val fragment: PlayPartyMast
             e.printStackTrace()
         }
     }
-
+    /**
+    Procesar mensaje.
+    Este método procesa un mensaje recibido y realiza acciones en función del contenido del mensaje.
+    Recibe el mensaje en formato de cadena y un objeto BufferedWriter para enviar respuestas.
+    Realiza las siguientes acciones:
+    Decodifica el mensaje JSON en un mapa utilizando el método getMapFromJson de la clase ComunicationHelpers.
+    Obtiene la solicitud del mensaje ("peticion") y realiza acciones basadas en el tipo de solicitud.
+    En el caso de "join":
+    Obtiene el nombre del remitente del mensaje ("nombre").
+    Muestra una petición al usuario utilizando showPetition del fragmento actual para solicitar su unión.
+    Espera hasta que se obtenga una respuesta del usuario.
+    Si la respuesta es positiva:
+    diff
+    - Crea una lista de personajes en formato JSON utilizando los personajes disponibles en el fragmento.
+    css
+    - Envía una respuesta positiva al remitente con la fiesta actual y la lista de personajes.
+    Si la respuesta es negativa:
+    css
+    - Envía una respuesta negativa al remitente.
+    En el caso de "start":
+    Obtiene el alias, el hash y la información del personaje del remitente.
+    Agrega el personaje seleccionado por el remitente a la base de datos en segundo plano.
+    Agrega al jugador a la lista de jugadores en el fragmento.
+    Envía una respuesta positiva al remitente.
+    En el caso de "adios":
+    Envía un mensaje de despedida al remitente.
+    En cualquier otro caso:
+    Envía un mensaje indicando que no se comprende la solicitud.
+    Nota: Este método asume la existencia de un objeto PlayPartyMasterFragment con métodos y variables relacionadas, como showPetition, lastResponse, party y characterList.
+    Este método debe ser llamado dentro del contexto adecuado y se espera que se utilice en un entorno de servidor para procesar mensajes recibidos.
+     */
     private fun processMessage(message: String, output: BufferedWriter) {
         val decodedMensaje = ComunicationHelpers.getMapFromJson(message)
         val peticion = decodedMensaje["peticion"]
@@ -340,7 +467,20 @@ private class ServerThread(val clientSocket: Socket, val fragment: PlayPartyMast
             }
         }
     }
-
+    /**
+    Agregar personaje del jugador.
+    Este método suspendido agrega un personaje seleccionado por un jugador a la base de datos y lo asigna al jugador correspondiente.
+    Recibe el hash del jugador, el personaje seleccionado y un indicador de si el personaje es propio del jugador.
+    Realiza las siguientes acciones:
+    Si el personaje es propio del jugador:
+    Inserta el personaje en la base de datos utilizando el método insertCharacter de la clase CharacterDao en PartyDb.
+    Recupera el personaje guardado de la base de datos utilizando el método getCharacterById de la clase CharacterDao en PartyDb.
+    Asigna el personaje guardado al jugador correspondiente en el fragmento utilizando el hash del jugador como clave en el mapa listaJugadoresCharacter.
+    Si el personaje no es propio del jugador:
+    Asigna directamente el personaje seleccionado al jugador correspondiente en el fragmento utilizando el hash del jugador como clave en el mapa listaJugadoresCharacter.
+    Nota: Este método suspendido asume la existencia de un objeto fragment con los contextos y métodos relacionados necesarios, así como el mapa listaJugadoresCharacter en el fragmento.
+    Este método debe ser llamado dentro de un contexto de CoroutineScope para permitir operaciones en el hilo principal y realizar operaciones en la base de datos en un hilo de fondo.
+     */
     private suspend fun addPlayerCharacter(hash: String, selectedCharacter: CharacterEntity, characterOwn: Boolean) {
         if (characterOwn){
             val characterId = PartyDb.getDatabase(fragment.requireContext()).characterDao().insertCharacter(CharacterEntity.removeIdFromCharacter(selectedCharacter))
@@ -350,7 +490,15 @@ private class ServerThread(val clientSocket: Socket, val fragment: PlayPartyMast
             fragment.listaJugadoresCharacter.put(hash, selectedCharacter)
         }
     }
-
+    /**
+    Agregar jugador.
+    Este método agrega un jugador a la lista de jugadores en el fragmento y actualiza la lista de jugadores en la interfaz de usuario.
+    Recibe el alias del jugador, la dirección IP y el hash del jugador.
+    Realiza las siguientes acciones:
+    Crea un objeto Player con el nombre del jugador y el hash proporcionados.
+    Agrega el jugador a la lista de jugadores en el fragmento utilizando el jugador como clave y la dirección IP como valor en el mapa listaJugadores.
+    Actualiza la lista de jugadores en la interfaz de usuario llamando al método updatePlayerList del fragmento en el hilo principal.
+     */
     private fun addPlayer(alias: String, ip:String, hash:String) {
         val player = Player(name = alias, identifier = hash)
         fragment.listaJugadores.put(player,ip)

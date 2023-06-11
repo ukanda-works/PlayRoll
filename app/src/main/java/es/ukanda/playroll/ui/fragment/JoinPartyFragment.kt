@@ -76,17 +76,31 @@ class JoinPartyFragment : Fragment() {
         }
 
     }
+    /**
+    Inicializa la vista del RecyclerView para mostrar una lista de partidas.
+    Crea y configura un adaptador de tipo PartyAdapter y lo asigna al RecyclerView.
+     */
     private fun recicleViewInit() {
         adapter = PartyAdapter(partyList)
         binding.rvPartidasAbiertas.layoutManager = LinearLayoutManager(context)
         binding.rvPartidasAbiertas.adapter = adapter
     }
+    /**
+    Obtiene los datos de la base de datos.
+    Realiza una operación asíncrona para obtener la lista de entidades de personajes desde la base de datos.
+     */
     fun getDatabaseData(){
         CoroutineScope(Dispatchers.IO).launch {
             characterEntityList = PartyDb.getDatabase(context!!).characterDao().getAllCharacters()
         }
     }
-
+    /**
+    Inicializa el componente de radio group (rg).
+    Configura el click listener para el botón de buscar localmente (btBuscarLocal).
+    Al hacer clic en el botón, se ejecuta el método buscarPartida() para buscar partidas.
+    Muestra un mensaje de "Buscando juegos" mediante un Toast de duración corta.
+    En caso de producirse alguna excepción, se muestra un mensaje de error mediante un Toast.
+     */
     private fun rgInit() {
         binding.btBuscarLocal.setOnClickListener {
             try {
@@ -98,7 +112,12 @@ class JoinPartyFragment : Fragment() {
         }
 
     }
-
+    /**
+    Realiza una búsqueda de partida mediante el uso de sockets UDP.
+    Envía un mensaje de difusión (broadcast) a través del socket UDP para descubrir partidas disponibles.
+    Luego, espera y procesa los mensajes recibidos a través del socket UDP.
+    Este método se ejecuta en un contexto de hilos de fondo.
+     */
     private fun buscarPartida() {
         CoroutineScope(Dispatchers.IO).launch {
         try {
@@ -129,7 +148,10 @@ class JoinPartyFragment : Fragment() {
         }
         }
     }
-
+    /**
+    Obtiene la dirección de difusión (broadcast) para la red actual.
+    @return La dirección de difusión (broadcast) de la red actual, o null si no se encuentra disponible.
+     */
     private fun getBroadcastAddress(): InetAddress? {
         val interfaces = NetworkInterface.getNetworkInterfaces()
         while (interfaces.hasMoreElements()) {
@@ -146,7 +168,10 @@ class JoinPartyFragment : Fragment() {
         }
         return null
     }
-
+    /**
+    Procesa un mensaje recibido a través de un paquete DatagramPacket.
+    @param packet El paquete DatagramPacket que contiene el mensaje a procesar.
+     */
     private fun procesarMensaje(packet: DatagramPacket){
         try{
         val json = String(packet.data, 0, packet.length)
@@ -166,7 +191,11 @@ class JoinPartyFragment : Fragment() {
             e.printStackTrace()
         }
     }
-
+    /**
+    Obtiene la dirección IP del dispositivo en el que se está ejecutando la aplicación.
+    El método se ejecuta en un contexto de hilos de fondo y utiliza operaciones asíncronas.
+    La dirección IP obtenida se guarda en la variable 'ip'.
+     */
     private fun getIp(){
         var ip = ""
         CoroutineScope(Dispatchers.IO).launch {
@@ -182,7 +211,11 @@ class JoinPartyFragment : Fragment() {
         }
 
     }
-
+    /**
+    Muestra un diálogo con un campo de texto y opciones de selección para unirte a una partida.
+    @param party La partida a la que se desea unir.
+    @param characterList La lista de personajes disponibles para seleccionar.
+     */
     fun mostrarDialogoConTextField(party: Party, characterList : List<CharacterEntity>) {
         val builder = AlertDialog.Builder(this.context!!)
         val listCharacter = mutableListOf<CharacterEntity>()
@@ -263,6 +296,11 @@ class JoinPartyFragment : Fragment() {
         val _party = MutableLiveData<Party>()
         val party: LiveData<Party>
             get() = _party
+        /**
+        Muestra un diálogo con un campo de texto y opciones de selección para unirte a una partida.
+        @param party La partida a la que se desea unir.
+        @param characterList La lista de personajes disponibles para seleccionar.
+         */
         fun onConexionEstateChanged(newValue: ControllSocket.Companion.ConnectionState) {
             if (newValue == ControllSocket.Companion.ConnectionState.ACCEPTED) {
                 instance.activity?.runOnUiThread {
@@ -291,42 +329,67 @@ class JoinPartyFragment : Fragment() {
                 }
             }
         }
-
+        /**
+        Método que se invoca cuando cambia el mensaje de error.
+        @param newValue El nuevo valor del mensaje de error.
+         */
         private fun onErrorMensajeChanged(newValue: String?) {
             val message = "${instance.getString(R.string.error)}: $newValue"
             instance.activity?.runOnUiThread {
                 Toast.makeText(instance.context, message, Toast.LENGTH_LONG).show()
             }
         }
-
+        /**
+        Establece la dirección IP de destino.
+        @param newValue La nueva dirección IP de destino.
+         */
         fun setTargetIp(newValue: String) {
             _targetIp.postValue(newValue)
         }
-
+        /**
+        Establece el estado de la conexión.
+        @param newValue El nuevo estado de la conexión.
+         */
         fun setConexionEstate(newValue: ControllSocket.Companion.ConnectionState) {
             _conexionEstate.postValue(newValue)
         }
-
+        /**
+        Establece el mensaje de error.
+        @param newValue El nuevo mensaje de error.
+         */
         fun setErrorMensaje(newValue: String) {
             _errorMensaje.postValue(newValue)
         }
-
+        /**
+        Establece la lista de personajes.
+        @param newValue La nueva lista de personajes.
+         */
         fun setCharacterList(newValue: List<CharacterEntity>) {
             _characterList.postValue(newValue)
         }
-
+        /**
+        Establece la instancia de la Party.
+        @param newValue La nueva instancia de Party.
+         */
         fun setParty(newValue: Party) {
             _party.postValue(newValue)
         }
     }
-
+    /**
+    Inicializa el RecyclerView con la lista de personajes.
+    @param characterList La lista de personajes a mostrar.
+    @param recyclerView El RecyclerView en el que se mostrarán los personajes.
+     */
     fun initRecycler(characterList: List<CharacterEntity>, recyclerView: RecyclerView ){
             characterAdapter = CharacterAdapter(characterList, 1) { character, isSelected ->
             }
             recyclerView.layoutManager  = LinearLayoutManager(context)
             recyclerView.adapter = characterAdapter
         }
-
+    /**
+    Obtiene el personaje seleccionado.
+    @return El personaje seleccionado, o null si no se ha seleccionado ningún personaje o se han seleccionado más de uno.
+     */
     fun getSelectedCharacter(): CharacterEntity? {
         val charactesSelected = characterAdapter.getSelectedCharacters()
         if(charactesSelected.size > 1){

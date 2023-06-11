@@ -30,7 +30,12 @@ class AcountFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setup()
     }
-
+    /**
+    Realiza la configuración inicial de la actividad.
+    Este método obtiene la instancia de FirebaseAuth y el usuario actualmente autenticado.
+    Si existe un usuario autenticado, se muestra su nombre de usuario, correo electrónico
+    y se carga su foto de perfil si está disponible.
+     */
     private fun setup() {
         firebaseAuth = FirebaseAuth.getInstance()
         val currentUser = firebaseAuth.currentUser
