@@ -1,14 +1,22 @@
 package es.ukanda.playroll.ui.fragment
 
+import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
+import androidx.fragment.app.findFragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -22,29 +30,26 @@ import es.ukanda.playroll.entyties.PartieEntities.CharacterEntity
 import es.ukanda.playroll.entyties.PartieEntities.Party
 import es.ukanda.playroll.entyties.PartieEntities.Player
 import es.ukanda.playroll.entyties.PartieEntities.PlayerCharacters
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import java.net.*
+import kotlin.random.Random
 
 
 class PlayPartyFragment : Fragment() {
     private var _binding: FragmentPlayPartyBinding? = null
     private val binding get() = _binding!!
 
-    private val listenPort = 5691
-    private val writePort = 5690
-
-    lateinit var clientSocket: ClientSocket
+    val listenPort = 5691
+    val writePort = 5690
 
     private var isMaster = false
     lateinit var playersIp : Map<String, String>
     private lateinit var ipServer: String
+    lateinit var serverSocket: ServerSocket
 
     //relacionado a la partida
     //partida
@@ -87,7 +92,7 @@ class PlayPartyFragment : Fragment() {
             if (isMaster) {
                 //clientSocket = ClientSocketServer(playersIp, listenPort, this@PlayPartyFragment)
             }else{
-                clientSocket = ClientSocket(ipServer, writePort, this@PlayPartyFragment)
+                //clientSocket = ClientSocket(ipServer, writePort, this@PlayPartyFragment)
             }
         }
     }
@@ -98,10 +103,17 @@ class PlayPartyFragment : Fragment() {
             val master = bundle.getBoolean("isMaster")
             if (master) {
                 isMaster = true
-                addMasterTab()
                 playersIp = bundle.getSerializable("players") as Map<String, String>
+                CoroutineScope(Dispatchers.IO).launch{
+                    playersIp.forEach(){
+                        var alias = PartyDb.getDatabase(requireContext()).playerDao().getPlayerByIdentifier(it.key)!!.name
+                        playersIpCompanion.put(alias, it.value)
+                    }
+                }
+
             }else{
                 ipServer = bundle.getString("ipServer").toString()
+                ipServerCompanion = ipServer
             }
             val partyId = bundle.getInt("party")
             CoroutineScope(Dispatchers.IO).launch {
@@ -147,7 +159,6 @@ class PlayPartyFragment : Fragment() {
             port = writePort
         }
         CoroutineScope(Dispatchers.IO).launch {
-            lateinit var serverSocket: ServerSocket
             try {
                 serverSocket = ServerSocket(port)
                 while (true){
@@ -159,37 +170,30 @@ class PlayPartyFragment : Fragment() {
                     serverThread.start()
                 }
             }catch(e: Exception) {
-                println("---------------------------------------")
                 e.printStackTrace()
-                println("---------------------------------------")
             }
 
         }
     }
 
     private fun initTabs() {
-        val adapter = ViewPagerAdapter(childFragmentManager)
-        adapter.addFragment(PlayPartyPlayersFragment(), getString(R.string.players))
-        adapter.addFragment(PlayPartyInventarioFragment(), getString(R.string.inventory))
-        adapter.addFragment(PlayPartyCombatFragment(), getString(R.string.combat))
-        binding.viewPager.adapter = adapter
-        binding.tabLayout.setupWithViewPager(binding.viewPager)
+        if (isMaster) {
+            val adapter = ViewPagerAdapter(childFragmentManager)
+            adapter.addFragment(PlayPartyPlayersFragment(), getString(R.string.players))
+            adapter.addFragment(PlayPartyMasterOptionsFragment(), getString(R.string.master_options))
+            adapter.addFragment(PlayPartyCombatFragment(), getString(R.string.combat))
+            binding.viewPager.adapter = adapter
+            binding.tabLayout.setupWithViewPager(binding.viewPager)
+        }else{
+            val adapter = ViewPagerAdapter(childFragmentManager)
+            adapter.addFragment(PlayPartyPlayersFragment(), getString(R.string.players))
+            adapter.addFragment(PlayPartyInventarioFragment(), getString(R.string.inventory))
+            adapter.addFragment(PlayPartyCombatFragment(), getString(R.string.combat))
+            binding.viewPager.adapter = adapter
+            binding.tabLayout.setupWithViewPager(binding.viewPager)
+        }
 
-    }
 
-    private fun addMasterTab() {
-        val adapter = ViewPagerAdapter(childFragmentManager)
-        adapter.addFragment(PlayPartyMasterOptionsFragment(), getString(R.string.master_options))
-        binding.viewPager.adapter = adapter
-        binding.tabLayout.setupWithViewPager(binding.viewPager)
-    }
-
-    fun exitParty() {
-        sendByMensaje()
-        findNavController().navigate(R.id.action_nav_playParty_to_nav_home)
-    }
-
-    private fun sendByMensaje() {
     }
 
     private inner class ViewPagerAdapter(manager: FragmentManager) :
@@ -231,11 +235,103 @@ class PlayPartyFragment : Fragment() {
         }
 
         private fun processMessage(message: String, output: BufferedWriter) {
-            println("mensaje: $message -----------------------------------------------------")
             val decodedMensaje = ComunicationHelpers.getMapFromJson(message)
-            println("decodedMensaje: $decodedMensaje -----------------------------------------------------")
             val peticion = decodedMensaje["peticion"]
-            println("peticion: $peticion -----------------------------------------------------")
+            if(fragment.isMaster){
+                when(peticion){
+                    "roll_dice_result" ->{
+                        val numResult = decodedMensaje["num"]!!.toInt()
+                        val clientIp = clientSocket.inetAddress.hostAddress
+                        var alias = ""
+                        playersIpCompanion.forEach(){
+                            if(it.value == clientIp){
+                                alias = it.key
+                            }
+                        }
+                        CoroutineScope(Dispatchers.Main).launch{
+                            Toast.makeText(fragment.requireContext(), "Resultado de ${alias}: $numResult", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    "bye" -> {
+                        val clientIp = clientSocket.inetAddress.hostAddress
+                        var alias = ""
+                        playersIpCompanion.forEach(){
+                            if(it.value == clientIp){
+                                alias = it.key
+                            }
+                        }
+                        CoroutineScope(Dispatchers.Main).launch{
+                            Toast.makeText(fragment.requireContext(), "Se ha desconectado ${alias}", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    "roll_dice_player" ->{
+                        val rollNumber = decodedMensaje["dice_num"]?.toInt()
+                        val clientIp = clientSocket.inetAddress.hostAddress
+                        var alias = ""
+                        playersIpCompanion.forEach(){
+                            if(it.value == clientIp){
+                                alias = it.key
+                            }
+                        }
+                        CoroutineScope(Dispatchers.Main).launch{
+                            val builder = AlertDialog.Builder(fragment.requireContext())
+                            builder.setTitle(fragment.getString(R.string.roll_dice))
+                            builder.setMessage("${alias} ${fragment.getString(R.string.want_roll_dice)} ${rollNumber}")
+                            builder.setPositiveButton(fragment.getString(R.string.yes)) { dialog, which ->
+                                sendOkRoll(rollNumber!!, clientIp)
+                            }
+                            builder.setNegativeButton(fragment.getString(R.string.no)) { dialog, which ->
+                                dialog.dismiss()
+                            }
+                            val dialog: AlertDialog = builder.create()
+                            dialog.show()
+                            interrupt()
+                        }
+                    }
+                }
+            }else{
+                when(peticion){
+                    "end_party" -> {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            Toast.makeText(fragment.requireContext(), fragment.getString(R.string.the_game_has_end), Toast.LENGTH_SHORT).show()
+                        }
+                        fragment.endParty()
+                    }
+                    "roll_dice" ->{
+                        val rollNumber = decodedMensaje["dice_num"]?.toInt()
+                        CoroutineScope(Dispatchers.Main).launch {
+                            fragment.mostarDialogoLanzarDados(rollNumber!!)
+                            interrupt()
+                        }
+                    }
+                    "roll_dice_player_result" ->{
+                        if(decodedMensaje["response"].equals("ok")){
+                            val rollNumber = decodedMensaje["dice_num"]?.toInt()
+                            CoroutineScope(Dispatchers.Main).launch {
+                                fragment.mostarDialogoLanzarDados(rollNumber!!)
+                                interrupt()
+                            }
+                        }else{
+                            CoroutineScope(Dispatchers.Main).launch {
+                                Toast.makeText(fragment.requireContext(), fragment.getString(R.string.denied), Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private fun sendOkRoll(rollNumber: Int, ip: String) {
+            val mensaje =Gson().toJson(listOf("peticion" to "roll_dice_player_result","response" to "ok", "dice_num" to rollNumber))
+            CoroutineScope(Dispatchers.IO).launch {
+                val socket = Socket(ip, fragment.listenPort)
+                val output = BufferedWriter(OutputStreamWriter(socket.getOutputStream()))
+                output.write(mensaje)
+                output.newLine()
+                output.flush()
+                socket.close()
+            }
+
         }
 
         override fun interrupt() {
@@ -244,11 +340,20 @@ class PlayPartyFragment : Fragment() {
         }
     }
 
+    fun endParty() {
+        try {
+            serverSocket.close()
+        }catch (e: Exception){
+            e.printStackTrace()
+        }
+        findNavController().navigate(R.id.action_nav_playParty_to_nav_home)
+    }
+
     class ClientSocket(val ip: String, val port: Int, Fragment: PlayPartyFragment){
 
         private val socket = Socket(ip, port)
 
-        private fun sendMensaje(mensaje: String){
+        fun sendMensaje(mensaje: String){
             if (socket.isClosed) {
                 socket.connect(InetSocketAddress(ip, port))
             }
@@ -257,59 +362,71 @@ class PlayPartyFragment : Fragment() {
             output.newLine()
             output.flush()
         }
-
-        fun sendByMensaje(){
-            val mensaje = listOf("peticion" to "exit")
-            sendMensaje(Gson().toJson(mensaje))
-        }
         companion object {
             enum class RollDiceType {
                 Salvacion, Ataque, Daño
             }
         }
-        fun askRollDice(type: RollDiceType, num: Int){
-            //se envia la peticion al master
-            //se espera la respuesta
-            //si el master acepta se muestra el dialogo para tirar dado
-            //tras tirar el dado se envia el resultado al master
 
-        }
-    }
-
-    class ClientSocketServer(val ipUsers: Map<String, String>, val port: Int, Fragment: PlayPartyFragment){
-
-
-
-        fun sendByMensaje(){
-            val mensaje = listOf("peticion" to "exit")
-            //sendMensaje(Gson().toJson(mensaje))
-        }
-        companion object {
-            enum class RollDiceType {
-                Salvacion, Ataque, Daño
+        fun close(){
+            try {
+                socket.close()
+            }catch (e: Exception){
+                e.printStackTrace()
             }
         }
-        fun askRollDice(type: RollDiceType, num: Int){
-            //se envia la peticion al master
-            //se espera la respuesta
-            //si el master acepta se muestra el dialogo para tirar dado
-            //tras tirar el dado se envia el resultado al master
 
-        }
     }
 
     companion object{
         private var instance: PlayPartyFragment? = null
 
+        var playersIpCompanion = mutableMapOf<String, String>()
         val playersCompanion = mutableListOf<Player>()
         val charactersCompanion = mutableListOf<CharacterEntity>()
         val playerCharactersCompanion = mutableListOf<PlayerCharacters>()
+
+        lateinit var ipServerCompanion: String
 
         fun getInstance(): PlayPartyFragment {
             if (instance == null) {
                 instance = PlayPartyFragment()
             }
             return instance as PlayPartyFragment
+        }
+    }
+
+    suspend fun mostarDialogoLanzarDados(num: Int){
+        val builder = AlertDialog.Builder(this.context!!)
+        builder.setTitle(getString(R.string.roll_dice))
+        val view = layoutInflater.inflate(R.layout.dialog_roll_dice, null)
+        builder.setView(view)
+        view.findViewById<ImageView>(R.id.ivDice).setOnClickListener {
+            CoroutineScope(Dispatchers.IO).launch {
+                val socket = Socket(ipServer, writePort)
+                val output = BufferedWriter(OutputStreamWriter(socket.getOutputStream()))
+                val result = view.findViewById<TextView>(R.id.tvDiceNumber)
+                var numResult = 0
+                repeat(6) {
+                    numResult = Random.nextInt(1, num)
+                    delay(500)
+                    withContext(Dispatchers.Main) {
+                        result.text = numResult.toString()
+                    }
+                }
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "${getString(R.string.result)}: $numResult", Toast.LENGTH_SHORT).show()
+                }
+                val mensaje = Gson().toJson(listOf("peticion" to "roll_dice_result", "num" to numResult))
+                output.write(mensaje)
+                output.newLine()
+                output.flush()
+                socket.close()
+            }
+        }
+        val dialog = builder.create()
+        withContext(Dispatchers.Main) {
+            dialog.show()
         }
     }
 }

@@ -13,7 +13,7 @@ import es.ukanda.playroll.entyties.PartieEntities.*
 
 @Database(
     entities = [CharacterEntity ::class, Party::class, Player::class, Inventario::class, PlayerCharacters::class],
-    version = 14,
+    version = 15,
 )
 @TypeConverters(Converters::class,HashMapConverter::class,IntHashMapConverter::class)
 abstract class PartyDb: RoomDatabase() {

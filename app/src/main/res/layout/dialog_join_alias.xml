@@ -20,7 +20,7 @@
             android:textSize="16sp" />
 
         <EditText
-            android:id="@+id/etAliasJoin"
+            android:id="@+id/etNumeroCaras"
             android:layout_width="150dp"
             android:layout_height="wrap_content" />
     </LinearLayout>

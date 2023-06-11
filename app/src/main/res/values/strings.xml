@@ -138,4 +138,14 @@
     <string name="loading">Cargando...</string>
     <string name="do_you_need_sing_in">Necesitas iniciar sesion</string>
     <string name="no_parties">No hay partidas</string>
+    <string name="result">Resultado</string>
+    <string name="ask_roll_dice">Pedir tirada de dados</string>
+    <string name="size_of_dice">Numero de caras</string>
+    <string name="confirm_exit_party">Estas seguro de que quieres abandonar la partida?</string>
+    <string name="the_game_has_end">La partida ha finalizado</string>
+    <string name="party_ended">Partida finalizada</string>
+    <string name="ask_master_roll_dice">Pedir tirada</string>
+    <string name="denied">Peticion denegada</string>
+    <string name="ask_for_roll_dice">pide lanzar un dado de</string>
+    <string name="want_roll_dice">quiere lanzar los dados</string>
 </resources>

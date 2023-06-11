@@ -17,7 +17,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.textfield.TextInputLayout
 import com.google.gson.Gson
 import es.ukanda.playroll.R
 import es.ukanda.playroll.controllers.helpers.ComunicationHelpers.Companion.openUdpSocket
@@ -222,18 +221,19 @@ class JoinPartyFragment : Fragment() {
         alertDialog.setOnShowListener {
             val acceptButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
             acceptButton.setOnClickListener {
-                val alias = view.findViewById<EditText>(R.id.etAliasJoin).text.toString()
+                val alias = view.findViewById<EditText>(R.id.etNumeroCaras).text.toString()
                 var pass = ""
                 if (!party.partyConfig?.get("Pass").equals("")) {
                     pass = view.findViewById<EditText>(R.id.etPassJoin).text.toString()
                 }
                 val character = getSelectedCharacter()
-
+                println("--------------------")
                 if (character == null) {
                     Toast.makeText(context, getString(R.string.select_a_character), Toast.LENGTH_SHORT).show()
                 } else if (alias == "") {
                     Toast.makeText(context, getString(R.string.enter_a_nickname), Toast.LENGTH_SHORT).show()
                 } else {
+                    println("IP")
                     ControllSocket.startParty(targetIp.value!!, 5000, alias, pass, character)
                     alertDialog.dismiss()
                 }

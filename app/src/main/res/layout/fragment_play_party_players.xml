@@ -9,15 +9,26 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragment.PlayPartyPlayersFragment">
 
+    <Button
+        android:id="@+id/btPedirTirada"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/ask_master_roll_dice"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvPlayersPlayParty"
-        android:layout_width="398dp"
+        android:layout_width="360dp"
         android:layout_height="0dp"
+        android:layout_marginTop="24dp"
         android:layout_marginBottom="32dp"
         app:layout_constraintBottom_toTopOf="@+id/btExitParty"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btPedirTirada"
         tools:listitem="@layout/item_players_party" />
 
     <Button

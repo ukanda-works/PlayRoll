@@ -96,6 +96,8 @@ class PlayPartyMasterFragment : Fragment(){
 
     private fun startGame() {
         CoroutineScope(Dispatchers.IO).launch {
+            closeServerTcp()
+            closeServerUdp()
             val db = PartyDb.getDatabase(requireContext())
             val savedParty = db.partyDao().getParty(party.partyID)
             val savedPlayers = mutableListOf<Player>()
@@ -148,6 +150,7 @@ class PlayPartyMasterFragment : Fragment(){
                 e.printStackTrace()
             }
             CoroutineScope(Dispatchers.Main).launch {
+
                 findNavController().navigate(R.id.action_nav_playPartyMaster_to_nav_playParty, bundle)
             }
         }
