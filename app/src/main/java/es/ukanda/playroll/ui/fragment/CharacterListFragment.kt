@@ -34,7 +34,9 @@ class CharacterListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initRv()
     }
-
+    /**
+    Inicializa el RecyclerView para mostrar la lista de personajes.
+     */
     private fun initRv() {
         CoroutineScope(Dispatchers.IO).launch {
             val characterList = getCharacters()
@@ -47,7 +49,10 @@ class CharacterListFragment : Fragment() {
             }
         }
     }
-
+    /**
+    Obtiene la lista de personajes.
+    @return La lista de personajes propios.
+     */
     suspend fun getCharacters(): List<CharacterEntity>{
         val characterList = mutableListOf<CharacterEntity>()
        //busca en la base de datos todos los personajes

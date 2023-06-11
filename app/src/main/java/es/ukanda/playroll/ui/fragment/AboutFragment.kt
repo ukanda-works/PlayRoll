@@ -27,6 +27,11 @@ class AboutFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         showDevelopmentAlert(requireContext())
     }
+
+    /**
+    Muestra un cuadro de diálogo de alerta indicando que la funcionalidad se encuentra en desarrollo.
+    @param context El contexto actual.
+     */
     fun showDevelopmentAlert(context: Context) {
         val alertDialogBuilder = AlertDialog.Builder(context)
         alertDialogBuilder.setTitle(getString(R.string.developing))

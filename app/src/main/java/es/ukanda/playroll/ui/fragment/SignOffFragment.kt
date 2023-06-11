@@ -32,7 +32,10 @@ class SignOffFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setup()
     }
-
+    /**
+    Configura funcionalidad de cierre de sesión.
+    Esta funcion configura la funcionalidad de cierre de sesión al hacer clic en el botón correspondiente.
+     */
     private fun setup() {
         val pref = activity?.getSharedPreferences(getString(R.string.prefs_file), 0)
         val email = pref?.getString("email", null)

@@ -37,7 +37,9 @@ class PartiesListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initRv()
     }
-
+    /**
+    Inicializa el RecyclerView con la lista de partidas.
+    */
     private fun initRv() {
         CoroutineScope(Dispatchers.IO).launch {
             val partiesList = getParties()
@@ -48,7 +50,10 @@ class PartiesListFragment : Fragment() {
             }
         }
     }
-
+    /**
+    Obtiene la lista de partidas desde la base de datos de forma suspendida.
+    @return Lista de partidas obtenidas de la base de datos.
+     */
     suspend fun getParties(): List<Party>{
         val partiesList = mutableListOf<Party>()
         val db = PartyDb.getDatabase(requireContext())

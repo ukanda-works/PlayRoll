@@ -57,7 +57,9 @@ class LoginFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
+    /**
+    Configura los botones y las acciones asociadas en la pantalla de inicio de sesión.
+    */
     private fun buttons() {
         this.activity?.title = getString(R.string.login)
         binding.btSignIn.setOnClickListener {

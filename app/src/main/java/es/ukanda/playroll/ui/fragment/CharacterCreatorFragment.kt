@@ -63,7 +63,9 @@ class CharacterCreatorFragment : Fragment() {
             editCharacter(characterId)
         }
     }
-
+    /**
+    Configura los spinners utilizados en la interfaz de usuario.
+     */
     private fun spinners() {
         val context = this.requireContext()
         CoroutineScope(Dispatchers.IO).launch {
@@ -89,7 +91,9 @@ class CharacterCreatorFragment : Fragment() {
         }
 
     }
-
+    /**
+    Configura los botones utilizados en la interfaz de usuario.
+     */
     private fun buttons() {
         binding.btCreateCharacter.setOnClickListener {
             try{
@@ -106,7 +110,9 @@ class CharacterCreatorFragment : Fragment() {
             findNavController().navigate(es.ukanda.playroll.R.id.action_nav_CharacterCreator_to_nav_camera)
         }
     }
-
+    /**
+    Valida el formulario de creación de personajes.
+     */
     private fun validateform1() {
         try{
             val name = binding.formCreateCharacter.etName.text.toString()
@@ -175,7 +181,9 @@ class CharacterCreatorFragment : Fragment() {
             throw CustomException(getString(es.ukanda.playroll.R.string.error_validating_data))
         }
     }
-
+    /**
+    Agrega un personaje a la base de datos.
+     */
     private fun addCharacter() {
         try{
             CoroutineScope(Dispatchers.IO).launch {
@@ -189,7 +197,10 @@ class CharacterCreatorFragment : Fragment() {
         }
     }
 
-
+    /**
+    Edita un personaje existente.
+    @param id El ID del personaje a editar.
+     */
     private fun editCharacter(id: Int) {
         CoroutineScope(Dispatchers.IO).launch {
            character = PartyDb.getDatabase(requireContext()).characterDao().getCharacterById(id)
@@ -197,6 +208,9 @@ class CharacterCreatorFragment : Fragment() {
         }
     }
 
+    /**
+    Procesa los datos obtenidos desde la cámara para actualizar el personaje.
+     */
     private fun fromCamara() {
         val alertDialogBuilder = AlertDialog.Builder(context)
         alertDialogBuilder.setTitle(getString(es.ukanda.playroll.R.string.warning))

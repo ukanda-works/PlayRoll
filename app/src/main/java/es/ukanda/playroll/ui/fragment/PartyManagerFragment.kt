@@ -36,7 +36,10 @@ class PartyManagerFragment : Fragment() {
         val partyId = arguments?.getInt("id") ?: 0
         setParty(partyId)
     }
-
+    /**
+    Establece la partida actual a partir del ID proporcionado.
+    @param partyId ID de la partida a establecer.
+     */
     private fun setParty(partyId: Int) {
         CoroutineScope(Dispatchers.IO).launch {
             if (partyId == 0){
@@ -47,14 +50,19 @@ class PartyManagerFragment : Fragment() {
             texviews()
         }
     }
-
+    /**
+    Actualiza los textos de las vistas con la información de la partida actual.
+    Si no hay una partida actual, los textos permanecen sin cambios.
+     */
     private fun texviews() {
         if (party.partyID != 0){
             binding.tvNombrePartidaManager.text = party.partyName
             binding.tvDescripcionManager.text = party.partyDescription
         }
     }
-
+    /**
+    Configura los botones y sus acciones correspondientes.
+     */
     private fun buttons() {
         binding.btCompartiOnline.setOnClickListener {
             Toast.makeText(requireContext(), getString(R.string.this_feature_is_under_development), Toast.LENGTH_SHORT).show()

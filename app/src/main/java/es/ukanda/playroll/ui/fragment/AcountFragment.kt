@@ -30,7 +30,9 @@ class AcountFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setup()
     }
-
+    /**
+    Realiza la configuración inicial de la actividad.
+     */
     private fun setup() {
         firebaseAuth = FirebaseAuth.getInstance()
         val currentUser = firebaseAuth.currentUser

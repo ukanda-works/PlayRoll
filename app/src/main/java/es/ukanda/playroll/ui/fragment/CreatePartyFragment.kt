@@ -50,7 +50,9 @@ class CreatePartyFragment : Fragment() {
         initRecycler()
         buttons()
     }
-
+    /**
+    Inicializa la carga de datos.
+    */
     private fun initLoad() {
         CoroutineScope(Dispatchers.IO).launch{
             currentPlayer = gameController.getCurrentPlayer()
@@ -65,14 +67,18 @@ class CreatePartyFragment : Fragment() {
             }
         }
     }
-
+    /**
+    Configura los botones de la interfaz de usuario.
+     */
     private fun buttons() {
         binding.btCrear.setOnClickListener {
             createParty()
             findNavController().navigate(R.id.action_nav_PartyCreator_to_nav_home)
         }
     }
-
+    /**
+    Crea una nueva party.
+     */
     private fun createParty() {
         val firebaseAuth = FirebaseAuth.getInstance()
         val selectedCharacters = characterAdapter.getSelectedCharacters()
@@ -105,7 +111,9 @@ class CreatePartyFragment : Fragment() {
             println(e)
         }
     }
-
+    /**
+    Inicializa el RecyclerView y muestra la lista de personajes disponibles.
+    */
     fun initRecycler(){
         CoroutineScope(Dispatchers.IO).launch {
             val listCharacter = PartyDb.getDatabase(requireContext()).characterDao().getAllCharacters()
@@ -116,9 +124,12 @@ class CreatePartyFragment : Fragment() {
             binding.rvCharactersCreator.adapter = characterAdapter
         }
     }
-
-    private fun getSelectedCharacters(): List<CharacterEntity>{
-        val selectedCharacters = characterAdapter.getSelectedCharacters()
-        return selectedCharacters
-    }
+    /**
+    Obtiene los personajes seleccionados en el RecyclerView.
+    @return Lista de CharacterEntity que representa los personajes seleccionados.
+     */
+        private fun getSelectedCharacters(): List<CharacterEntity>{
+            val selectedCharacters = characterAdapter.getSelectedCharacters()
+            return selectedCharacters
+        }
 }

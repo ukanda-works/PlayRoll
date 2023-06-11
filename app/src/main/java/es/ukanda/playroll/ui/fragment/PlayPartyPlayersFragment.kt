@@ -42,7 +42,9 @@ class PlayPartyPlayersFragment : Fragment() {
         initRecyclerView()
         buttons()
     }
-
+    /**
+    Configurar botones.
+    */
     private fun buttons() {
         binding.btExitParty.setOnClickListener {
             exitParty()
@@ -111,8 +113,9 @@ class PlayPartyPlayersFragment : Fragment() {
                 e.printStackTrace()
             }
         }
-    }
-
+    }/**
+    Inicializar RecyclerView.
+     */
     private fun initRecyclerView() {
         playerAdapter = PlayersPlayPartyAdapter(PlayPartyFragment.playersCompanion,
                         PlayPartyFragment.charactersCompanion,

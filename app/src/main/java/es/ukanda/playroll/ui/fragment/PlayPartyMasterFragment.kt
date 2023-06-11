@@ -64,7 +64,10 @@ class PlayPartyMasterFragment : Fragment(){
         setParty(partyId)
         setBtn()
     }
-
+    /**
+    Establece el comportamiento de los botones.
+    Este método establece el comportamiento de los botones en la interfaz de usuario.
+     */
     private fun setBtn() {
         binding.btStartGame.setOnClickListener {
             val builder = AlertDialog.Builder(requireContext())
@@ -169,13 +172,20 @@ class PlayPartyMasterFragment : Fragment(){
             }
         }
     }
-
+    /**
+    Actualiza la lista de jugadores.
+    Este método actualiza la lista de jugadores en la interfaz de usuario.
+    */
     fun updatePlayerList(){
        listaJugadores.forEach {
            binding.tvPlayerList.append("${it.key.name} - ${it.value}\n")
        }
     }
-
+    /**
+    Inicializa la base de datos.
+    Este método inicializa la base de datos utilizando el ID de fiesta proporcionado.
+    @param partyId El ID de la fiesta.
+     */
      suspend fun initDb(partyId: Int) {
          val db = PartyDb.getDatabase(requireContext())
          party =db.partyDao().getParty(partyId)
@@ -186,7 +196,10 @@ class PlayPartyMasterFragment : Fragment(){
             }
          characterList = characters
     }
-
+    /**
+    Inicia el servidor UDP.
+    Este método inicia un servidor UDP en segundo plano utilizando un hilo de fondo y CoroutineScope.
+    */
     private fun starServerUdp(){
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -208,7 +221,9 @@ class PlayPartyMasterFragment : Fragment(){
         }
 
     }
-
+    /**
+    Cierra el servidor UDP.
+    */
     private fun closeServerUdp(){
         try {
             socketUdp.close()
@@ -216,7 +231,10 @@ class PlayPartyMasterFragment : Fragment(){
             e.printStackTrace()
         }
     }
-
+    /**
+    Inicia el servidor TCP.
+    Este método inicia un servidor TCP en segundo plano utilizando un hilo de fondo y CoroutineScope.
+    */
     private fun starServerTcp() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -236,7 +254,9 @@ class PlayPartyMasterFragment : Fragment(){
             }
         }
     }
-
+    /**
+    Cierra el servidor TCP.
+    */
     private fun closeServerTcp(){
         try {
             serverSocket.close()
@@ -244,7 +264,9 @@ class PlayPartyMasterFragment : Fragment(){
             e.printStackTrace()
         }
     }
-
+    /**
+    Obtener la dirección IP.
+    */
     private suspend fun getIp(): String{
         val wifiManager = context!!.getSystemService(Context.WIFI_SERVICE) as WifiManager
         val ipAddress = wifiManager.connectionInfo.ipAddress
@@ -259,7 +281,11 @@ class PlayPartyMasterFragment : Fragment(){
         }.hostAddress ?: ""
     }
 
-
+    /**
+    Mostrar petición.
+    Este método muestra una petición en forma de diálogo utilizando AlertDialog.
+    @param message título para personalizar el contenido del diálogo.
+    */
     fun showPetition(message: String, title:String) {
             val builder = AlertDialog.Builder(context)
             builder.setTitle(title)
@@ -290,7 +316,12 @@ private class ServerThread(val clientSocket: Socket, val fragment: PlayPartyMast
             e.printStackTrace()
         }
     }
-
+    /**
+    Procesar mensaje.
+    Este método procesa un mensaje recibido y realiza acciones en función del contenido del mensaje.
+    @param message mensaje en formato de cadena
+    @param output objeto BufferedWriter para enviar respuestas.
+    */
     private fun processMessage(message: String, output: BufferedWriter) {
         val decodedMensaje = ComunicationHelpers.getMapFromJson(message)
         val peticion = decodedMensaje["peticion"]
@@ -343,7 +374,13 @@ private class ServerThread(val clientSocket: Socket, val fragment: PlayPartyMast
             }
         }
     }
-
+    /**
+    Agregar personaje del jugador.
+    Este método suspendido agrega un personaje seleccionado por un jugador a la base de datos y lo asigna al jugador correspondiente.
+    @param hash del jugador
+    @param personaje seleccionado
+    @param indicador de si el personaje es propio del jugador.
+    */
     private suspend fun addPlayerCharacter(hash: String, selectedCharacter: CharacterEntity, characterOwn: Boolean) {
         if (characterOwn){
             val characterId = PartyDb.getDatabase(fragment.requireContext()).characterDao().insertCharacter(CharacterEntity.removeIdFromCharacter(selectedCharacter))
@@ -353,7 +390,13 @@ private class ServerThread(val clientSocket: Socket, val fragment: PlayPartyMast
             fragment.listaJugadoresCharacter.put(hash, selectedCharacter)
         }
     }
-
+    /**
+    Agregar jugador.
+    Este método agrega un jugador a la lista de jugadores en el fragmento y actualiza la lista de jugadores en la interfaz de usuario.
+    @param el alias del jugador,
+    @param dirección IP
+    @param hash del jugador.
+     */
     private fun addPlayer(alias: String, ip:String, hash:String) {
         val player = Player(name = alias, identifier = hash)
         fragment.listaJugadores.put(player,ip)

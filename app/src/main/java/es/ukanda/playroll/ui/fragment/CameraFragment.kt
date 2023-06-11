@@ -106,7 +106,10 @@ class CameraFragment : Fragment(), SurfaceHolder.Callback, Camera.PictureCallbac
         cameraViewModel.procesed.removeObserver(procesedObserver)
     }
 
-    //Permisions
+    /**
+    Verifica si se tienen todos los permisos necesarios.
+    @return true si todos los permisos de la cámara están concedidos, false en caso contrario.
+     */
     private fun checkPermissions() = CAMERA_PERMISSIONS.all{
         ContextCompat.checkSelfPermission(requireContext(), it) == PackageManager.PERMISSION_GRANTED
     }
@@ -166,7 +169,11 @@ class CameraFragment : Fragment(), SurfaceHolder.Callback, Camera.PictureCallbac
         camera!!.stopPreview()
         camera!!.release()
     }
-
+    /**
+    Callback que se invoca cuando se ha capturado una imagen de la cámara.
+    @param data Los datos de la imagen capturada en forma de arreglo de bytes.
+    @param camera La instancia de la cámara que capturó la imagen.
+     */
     override fun onPictureTaken(data: ByteArray?, camera: Camera?) {
         try {
             val bipMap = BitmapFactory.decodeByteArray(data, 0, data!!.size)
