@@ -20,11 +20,9 @@ import es.ukanda.playroll.database.db.PartyDb
 import es.ukanda.playroll.databinding.FragmentHomeBinding
 import es.ukanda.playroll.entyties.PartieEntities.CharacterEntity
 import es.ukanda.playroll.entyties.PartieEntities.Party
-import es.ukanda.playroll.pruebas.TestPartyConexion
-import es.ukanda.playroll.pruebas.Test_uno
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.streams.toList
 
 class HomeFragment : Fragment() {
@@ -102,6 +100,7 @@ class HomeFragment : Fragment() {
                 val character = CharacterEntity()
                 characterList += character
             }
+            withContext(Dispatchers.Main) {
             //se crean los adaptadores
             val adapterParty =
                 ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, partyList.map { it.partyName })
@@ -131,6 +130,7 @@ class HomeFragment : Fragment() {
                     // Nothing to do here
                 }
             }
+        }
         }
     }
 

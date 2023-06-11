@@ -20,4 +20,7 @@ interface PlayerDao {
 
     @Query("SELECT * FROM players")
     suspend fun getAllPlayers(): List<Player>
+
+    @Query("SELECT * FROM players WHERE identifier = :identifier")
+    suspend fun getPlayerByIdentifier(identifier: String): Player
 }

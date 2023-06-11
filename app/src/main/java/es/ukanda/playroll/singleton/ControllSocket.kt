@@ -43,6 +43,7 @@ class ControllSocket {
                     val user = FirebaseAuth.getInstance().currentUser
                     val userName = user?.displayName ?: "Anonimo"
                     val sendmensaje = listOf("peticion" to "join","nombre" to userName )
+                    println("mensaje enviado: ${Gson().toJson(sendmensaje)}")
                     writer.write(Gson().toJson(sendmensaje))
                     writer.newLine()
                     writer.flush()
@@ -65,7 +66,9 @@ class ControllSocket {
         }
 
         suspend fun procesarRespuesta(type: String, message: String) {
+            println(message)
             val decodedMensaje = ComunicationHelpers.getMapFromJson(message)
+            println(decodedMensaje)
            when(type){
                "join" -> {
                   if (decodedMensaje["reponse"].equals("ok")){
