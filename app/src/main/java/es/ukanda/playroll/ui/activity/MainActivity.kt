@@ -20,7 +20,6 @@ import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
 import es.ukanda.playroll.R
 import es.ukanda.playroll.databinding.ActivityMainBinding
-import es.ukanda.playroll.pruebas.LoadData
 
 class MainActivity : AppCompatActivity() {
 
@@ -55,8 +54,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadBaseData() {
-        val loadData = LoadData(this)
-        loadData.load()
+        /*val loadData = LoadData(this)
+        loadData.load()*/
     }
 
     private fun checkPermissions() {

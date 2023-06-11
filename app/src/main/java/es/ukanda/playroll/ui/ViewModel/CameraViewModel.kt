@@ -372,7 +372,6 @@ class CameraViewModel: ViewModel() {
     fun findMostSimilarElement(list: List<String>, text: String): String? {
         var mostSimilarElement: String? = null
         var minDistance = Int.MAX_VALUE
-
         for (element in list) {
             val distance = LevenshteinDistance(element, text)
             if (distance < minDistance) {
@@ -380,7 +379,6 @@ class CameraViewModel: ViewModel() {
                 mostSimilarElement = element
             }
         }
-
         return mostSimilarElement
     }
 
