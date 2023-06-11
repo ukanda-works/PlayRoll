@@ -33,19 +33,8 @@ class SignOffFragment : Fragment() {
         setup()
     }
     /**
-    Configurar funcionalidad de cierre de sesión.
-    Este método configura la funcionalidad de cierre de sesión al hacer clic en el botón correspondiente.
-    Realiza las siguientes acciones:
-    Obtiene el objeto SharedPreferences del archivo de preferencias utilizando el contexto de la actividad.
-    Recupera el correo electrónico y el proveedor de autenticación almacenados en las preferencias.
-    Configura un listener de clic para el botón de cierre de sesión.
-    Si el correo electrónico y el proveedor no son nulos, se ejecuta el siguiente conjunto de acciones:
-    Cierra la sesión actual del usuario utilizando FirebaseAuth.getInstance().signOut().
-    Obtiene un editor de SharedPreferences y lo limpia para eliminar los datos de sesión almacenados.
-    Aplica los cambios en las preferencias.
-    Muestra un mensaje de notificación al usuario indicando que se ha cerrado la sesión.
-    Si el correo electrónico o el proveedor es nulo, se muestra un mensaje de notificación indicando que es necesario iniciar sesión.
-    Nota: Este método asume la disponibilidad de los recursos de cadena correspondientes en el contexto para los mensajes de notificación.
+    Configura funcionalidad de cierre de sesión.
+    Esta funcion configura la funcionalidad de cierre de sesión al hacer clic en el botón correspondiente.
      */
     private fun setup() {
         val pref = activity?.getSharedPreferences(getString(R.string.prefs_file), 0)

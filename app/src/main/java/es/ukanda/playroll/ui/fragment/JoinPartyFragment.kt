@@ -86,7 +86,6 @@ class JoinPartyFragment : Fragment() {
     }
     /**
     Obtiene los datos de la base de datos.
-    Realiza una operación asíncrona para obtener la lista de entidades de personajes desde la base de datos.
      */
     fun getDatabaseData(){
         CoroutineScope(Dispatchers.IO).launch {
@@ -95,11 +94,7 @@ class JoinPartyFragment : Fragment() {
     }
     /**
     Inicializa el componente de radio group (rg).
-    Configura el click listener para el botón de buscar localmente (btBuscarLocal).
-    Al hacer clic en el botón, se ejecuta el método buscarPartida() para buscar partidas.
-    Muestra un mensaje de "Buscando juegos" mediante un Toast de duración corta.
-    En caso de producirse alguna excepción, se muestra un mensaje de error mediante un Toast.
-     */
+    */
     private fun rgInit() {
         binding.btBuscarLocal.setOnClickListener {
             try {
@@ -113,9 +108,6 @@ class JoinPartyFragment : Fragment() {
     }
     /**
     Realiza una búsqueda de partida mediante el uso de sockets UDP.
-    Envía un mensaje de difusión (broadcast) a través del socket UDP para descubrir partidas disponibles.
-    Luego, espera y procesa los mensajes recibidos a través del socket UDP.
-    Este método se ejecuta en un contexto de hilos de fondo.
      */
     private fun buscarPartida() {
         CoroutineScope(Dispatchers.IO).launch {
@@ -294,6 +286,7 @@ class JoinPartyFragment : Fragment() {
         val _party = MutableLiveData<Party>()
         val party: LiveData<Party>
             get() = _party
+
         /**
         Muestra un diálogo con un campo de texto y opciones de selección para unirte a una partida.
         @param party La partida a la que se desea unir.
@@ -327,6 +320,7 @@ class JoinPartyFragment : Fragment() {
                 }
             }
         }
+
         /**
         Método que se invoca cuando cambia el mensaje de error.
         @param newValue El nuevo valor del mensaje de error.
@@ -337,6 +331,7 @@ class JoinPartyFragment : Fragment() {
                 Toast.makeText(instance.context, message, Toast.LENGTH_LONG).show()
             }
         }
+
         /**
         Establece la dirección IP de destino.
         @param newValue La nueva dirección IP de destino.
@@ -344,6 +339,7 @@ class JoinPartyFragment : Fragment() {
         fun setTargetIp(newValue: String) {
             _targetIp.postValue(newValue)
         }
+
         /**
         Establece el estado de la conexión.
         @param newValue El nuevo estado de la conexión.
@@ -351,10 +347,12 @@ class JoinPartyFragment : Fragment() {
         fun setConexionEstate(newValue: ControllSocket.Companion.ConnectionState) {
             _conexionEstate.postValue(newValue)
         }
+
         /**
         Establece el mensaje de error.
         @param newValue El nuevo mensaje de error.
          */
+
         fun setErrorMensaje(newValue: String) {
             _errorMensaje.postValue(newValue)
         }

@@ -65,8 +65,6 @@ class CharacterCreatorFragment : Fragment() {
     }
     /**
     Configura los spinners utilizados en la interfaz de usuario.
-    Este método realiza la carga de datos para los spinners de razas, clases, transfondos y alineamientos.
-    Utiliza adaptadores personalizados para mostrar los datos en los spinners correspondientes.
      */
     private fun spinners() {
         val context = this.requireContext()
@@ -95,9 +93,6 @@ class CharacterCreatorFragment : Fragment() {
     }
     /**
     Configura los botones utilizados en la interfaz de usuario.
-    Este método establece los listeners de los botones y define las acciones a realizar cuando se presionan.
-    El botón "btCreateCharacter" realiza la validación del formulario, agrega el personaje y navega a la pantalla de inicio.
-    El botón "btnCamera" navega a la pantalla de la cámara.
      */
     private fun buttons() {
         binding.btCreateCharacter.setOnClickListener {
@@ -117,11 +112,6 @@ class CharacterCreatorFragment : Fragment() {
     }
     /**
     Valida el formulario de creación de personajes.
-    Este método obtiene los valores ingresados en los campos del formulario y realiza diversas validaciones.
-    Verifica que el nivel esté dentro del rango válido (entre 1 y 20).
-    Establece los valores del personaje con los datos ingresados, incluyendo nombre, descripción, raza, clase, alineamiento, nivel y atributos.
-    Lanza una excepción si se producen errores de validación.
-    @throws CustomException Si se detecta un error de validación en los datos ingresados.
      */
     private fun validateform1() {
         try{
@@ -193,9 +183,6 @@ class CharacterCreatorFragment : Fragment() {
     }
     /**
     Agrega un personaje a la base de datos.
-    Este método utiliza una corrutina para insertar el personaje en la base de datos en segundo plano.
-    Muestra un mensaje de éxito al usuario si se ha creado el personaje correctamente.
-    Muestra un mensaje de error si ocurre alguna excepción durante el proceso de creación del personaje.
      */
     private fun addCharacter() {
         try{
@@ -212,8 +199,6 @@ class CharacterCreatorFragment : Fragment() {
 
     /**
     Edita un personaje existente.
-    Este método utiliza una corrutina para obtener el personaje de la base de datos en segundo plano
-    y luego llama al método "rellenarFormulario()" para llenar el formulario con los datos del personaje.
     @param id El ID del personaje a editar.
      */
     private fun editCharacter(id: Int) {
@@ -222,11 +207,9 @@ class CharacterCreatorFragment : Fragment() {
             rellenarFormulario()
         }
     }
+
     /**
     Procesa los datos obtenidos desde la cámara para actualizar el personaje.
-    Muestra un mensaje de advertencia al usuario antes de realizar la actualización.
-    Luego, utiliza los datos obtenidos del argumento "personaje" y los asigna al personaje actual.
-    Finalmente, llama al método "rellenarFormulario()" para actualizar el formulario con los nuevos datos.
      */
     private fun fromCamara() {
         val alertDialogBuilder = AlertDialog.Builder(context)

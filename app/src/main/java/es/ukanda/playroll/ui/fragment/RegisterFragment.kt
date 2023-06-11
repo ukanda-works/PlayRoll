@@ -38,13 +38,7 @@ class RegisterFragment : Fragment() {
     /**
     Registrar usuario.
     Este método configura el botón de registro para manejar la acción de registro de usuario utilizando Firebase Authentication.
-    Realiza las siguientes acciones:
-    Asigna un evento de clic al botón de registro (btRegister) en el enlace de datos (binding).
-    Dentro del evento de clic, verifica si los campos de correo electrónico (etEmailRegister) y contraseña (etPasswordRegister) no están vacíos.
-    Si los campos no están vacíos, utiliza FirebaseAuth para crear un usuario con el correo electrónico y la contraseña proporcionados.
-    Agrega un listener de completado para manejar el resultado del registro. Si el registro es exitoso, muestra un mensaje de éxito y navega al destino de inicio correspondiente. Si ocurre un error, muestra un mensaje de error.
-    Nota: Este método asume la existencia de un objeto binding con referencias a los campos de correo electrónico (etEmailRegister) y contraseña (etPasswordRegister), y también asume el uso de Firebase Authentication.
-    Este método debe ser llamado después de que se haya establecido el enlace de datos y el objeto binding esté disponible.
+     Este método debe ser llamado después de que se haya establecido el enlace de datos y el objeto binding esté disponible.
      */
     private fun register() {
         binding.btRegister.setOnClickListener {

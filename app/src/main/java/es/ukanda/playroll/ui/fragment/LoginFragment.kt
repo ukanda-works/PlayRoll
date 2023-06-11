@@ -59,11 +59,7 @@ class LoginFragment : Fragment() {
     }
     /**
     Configura los botones y las acciones asociadas en la pantalla de inicio de sesión.
-    El botón "Sign In" permite realizar el inicio de sesión con email y contraseña. Al completar la tarea de inicio de sesión, si es exitosa, se guarda la información del proveedor y el email en las preferencias compartidas, se muestra un Toast indicando que la sesión se ha iniciado correctamente y se navega a la pantalla de inicio.
-    El botón "Registrarse" navega a la pantalla de registro.
-    El botón "Google" permite iniciar sesión utilizando la cuenta de Google. Al seleccionar este botón, se configura el cliente de inicio de sesión de Google y se lanza la actividad de inicio de sesión de Google. Al completar la actividad de inicio de sesión de Google, si la cuenta es válida, se obtiene el token de identificación y se realiza el inicio de sesión utilizando las credenciales de Google. Si el inicio de sesión es exitoso, se guarda la información del proveedor y el email en las preferencias compartidas, se muestra un Toast indicando que la sesión se ha iniciado correctamente y se navega a la pantalla de inicio.
-    El método utiliza un ActivityResultLauncher para obtener el resultado de la actividad de inicio de sesión de Google.
-     */
+    */
     private fun buttons() {
         this.activity?.title = getString(R.string.login)
         binding.btSignIn.setOnClickListener {

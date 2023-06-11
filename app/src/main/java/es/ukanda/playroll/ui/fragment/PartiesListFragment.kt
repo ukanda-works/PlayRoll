@@ -39,10 +39,7 @@ class PartiesListFragment : Fragment() {
     }
     /**
     Inicializa el RecyclerView con la lista de partidas.
-    Se realiza una llamada asíncrona a la función getParties() para obtener la lista de partidas.
-    Una vez obtenida la lista, se actualiza el RecyclerView en el hilo principal utilizando el adaptador PartiesListAdapter.
-    Se establece un LinearLayoutManager como administrador de diseño para el RecyclerView.
-     */
+    */
     private fun initRv() {
         CoroutineScope(Dispatchers.IO).launch {
             val partiesList = getParties()
