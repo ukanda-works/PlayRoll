@@ -148,5 +148,8 @@
     <string name="ask_for_roll_dice">asks to roll a</string>
     <string name="want_roll_dice">wants to roll the dice</string>
     <string name="party_loaded">Party loaded</string>
-
+    <string name="clean_database">Clean database</string>
+    <string name="clean_db">Clean database</string>
+    <string name="clean_db_message">Are you sure you want to remove all data from the database? All your information will be deleted!</string>
+    <string name="database_cleaned">Database cleaned up successfully</string>
 </resources>
