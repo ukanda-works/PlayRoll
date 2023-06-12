@@ -148,4 +148,8 @@
     <string name="ask_for_roll_dice">pide lanzar un dado de</string>
     <string name="want_roll_dice">quiere lanzar los dados</string>
     <string name="party_loaded">Partida cargada</string>
+    <string name="clean_database">Vaciar base de datos</string>
+    <string name="clean_db">Vaciar base de datos</string>
+    <string name="clean_db_message">Estas seguro de que quieres eliminar todos los datos de la base de datos? Toda tu informacion se eliminara!!!</string>
+    <string name="database_cleaned">Base de datos limpiada correctamente</string>
 </resources>

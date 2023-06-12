@@ -10,11 +10,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.core.app.ActivityCompat.recreate
 import androidx.navigation.fragment.findNavController
 import es.ukanda.playroll.R
+import es.ukanda.playroll.database.db.PartyDb
 import es.ukanda.playroll.databinding.FragmentPartiesListBinding
 import es.ukanda.playroll.databinding.FragmentSetingsBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 
 class SetingsFragment : Fragment() {
@@ -33,6 +39,30 @@ class SetingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         showDevelopmentAlert(requireContext())
         spInit()
+        buttons()
+    }
+
+    private fun buttons() {
+        binding.btCleanDb.setOnClickListener {
+            AlertDialog.Builder(requireContext())
+                .setTitle(getString(R.string.clean_db))
+                .setMessage(getString(R.string.clean_db_message))
+                .setPositiveButton(getText(R.string.yes)) { _, _ ->
+                    cleanDb()
+                }
+                .setNegativeButton(getText(R.string.no), null)
+                .show()
+        }
+    }
+
+    private fun cleanDb() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val db = PartyDb.getDatabase(requireContext())
+            db.cleanDb()
+            withContext(Dispatchers.Main) {
+                Toast.makeText(requireContext(), getText(R.string.database_cleaned), Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     /**
@@ -67,7 +97,7 @@ class SetingsFragment : Fragment() {
         val locale = when (language) {
             "Español" -> Locale("es")
             "English" -> Locale("en")
-            else -> Locale.getDefault() // Idioma predeterminado si no coincide ninguno
+            else -> return
         }
         println("locale: $locale")
         if (currentLocale.toString().contains(locale.toString())) return

@@ -9,6 +9,9 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import es.ukanda.playroll.database.dao.PartyDao.*
 import es.ukanda.playroll.entyties.PartieEntities.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 @Database(
@@ -43,4 +46,9 @@ companion object {
             }
         }
 }
+    fun cleanDb() {
+        CoroutineScope(Dispatchers.IO).launch {
+            clearAllTables()
+        }
+    }
 }

@@ -57,4 +57,9 @@ class RegisterFragment : Fragment() {
             }
         }
     }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        (activity as AppCompatActivity).supportActionBar?.show()
+    }
+
 }
