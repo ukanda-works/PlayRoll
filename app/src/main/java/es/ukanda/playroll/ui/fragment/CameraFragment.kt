@@ -199,4 +199,8 @@ class CameraFragment : Fragment(), SurfaceHolder.Callback, Camera.PictureCallbac
             e.printStackTrace()
         }
     }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        (activity as AppCompatActivity).supportActionBar?.show()
+    }
 }

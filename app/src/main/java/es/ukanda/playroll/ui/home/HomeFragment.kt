@@ -9,6 +9,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -41,31 +42,19 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        animatedBackground()
-        spiners()
-        buttons()
+        if (!isFirebaseUserLoggedIn()) {
+            Toast.makeText(context, getString(R.string.do_you_need_sing_in), Toast.LENGTH_SHORT).show()
+            findNavController().navigate(R.id.action_nav_home_to_nav_login)
+        }else {
+            animatedBackground()
+            spiners()
+            buttons()
+        }
     }
     /**
     Animación de fondo animado.
     Este método configura una animación de fondo animado utilizando propiedades de animación de desplazamiento
-    para dos vistas de nube en la pantalla. Realiza las siguientes acciones:
-    Obtiene las dimensiones de la pantalla en píxeles utilizando los DisplayMetrics.
-    Calcula el ancho de la pantalla como un valor de coma flotante.
-    Crea un animador de desplazamiento en el eje Y para la segunda nube, desplazándola hacia arriba y hacia abajo.
-    La duración de la animación es de 40 segundos.
-    El número de repeticiones es infinito.
-    El modo de repetición es de reversa, lo que hace que la nube se mueva hacia arriba y hacia abajo de manera continua.
-    Crea un animador de desplazamiento en el eje X para la segunda nube, desplazándola desde la izquierda de la pantalla hasta más allá del ancho de la pantalla.
-    La duración de la animación es de 40 segundos.
-    El número de repeticiones es infinito.
-    El modo de repetición es de reversa, lo que hace que la nube se mueva hacia la derecha y hacia la izquierda de manera continua.
-    Inicia ambos animadores.
-    Crea un animador de desplazamiento en el eje X para la primera nube, desplazándola desde la derecha de la pantalla hasta más allá del ancho de la pantalla hacia la izquierda.
-    La duración de la animación es de 25 segundos.
-    El número de repeticiones es infinito.
-    El modo de repetición es de reversa, lo que hace que la nube se mueva hacia la izquierda y hacia la derecha de manera continua.
-    Inicia el animador para la primera nube.
-    Nota: Este método asume la disponibilidad de las vistas de nube enlazadas en el archivo de diseño correspondiente.
+    para dos vistas de nube en la pantalla.
      */
     private fun animatedBackground() {
         val displayMetrics = resources.displayMetrics
@@ -88,12 +77,7 @@ class HomeFragment : Fragment() {
     }
     /**
     Configuración de botones.
-    Este método configura los botones de la vista principal del hogar. Realiza las siguientes acciones:
-    Configura un listener de clic para el botón "Crear Partida" que navega hacia la pantalla de creación de partida.
-    Configura un listener de clic para el botón "Agregar Personaje" que navega hacia la pantalla de creación de personajes.
-    Configura un listener de clic para el botón "Unirse a una Partida" que navega hacia la pantalla de unión a partida.
-    Nota: Este método asume la disponibilidad de los botones correspondientes en el archivo de diseño vinculado.
-     */
+    */
     private fun buttons() {
         binding.btCrearPartida.setOnClickListener {
             findNavController().navigate(R.id.action_nav_home_to_nav_PartyCreator)
@@ -108,14 +92,7 @@ class HomeFragment : Fragment() {
     /**
     Cargar Bundle.
     Este método carga un objeto Bundle con los datos necesarios para inicializar una pantalla.
-    Realiza las siguientes acciones:
-    Asigna un ID de partido (partyId) con el valor 7.
-    Asigna un indicador de maestro (isMaster) con el valor false.
-    Asigna una dirección IP del servidor (ipServer) con el valor "127.0.0.1".
-    Devuelve el objeto Bundle con los datos cargados.
-    Nota: Este método asume que se utilizará en el contexto adecuado y los valores están establecidos estáticamente.
-    Se puede ajustar según sea necesario para cargar los datos dinámicamente.
-     */
+    */
     private fun loadBundle(): Bundle {
         val partyId = 7
         val bundle = Bundle()
@@ -124,15 +101,10 @@ class HomeFragment : Fragment() {
         bundle.putString("ipServer", "127.0.0.1")
         return bundle
     }
+
     /**
     Configurar Spinners.
-    Este método configura los spinners en la pantalla. Realiza las siguientes acciones:
-    Obtiene los datos necesarios de la base de datos.
-    Crea adaptadores de ArrayAdapter con los datos obtenidos.
-    Asigna los adaptadores a los spinners correspondientes.
-    Configura el evento de selección para el spinner de partidos, que navega a la pantalla de administración del partido seleccionado.
-    Nota: Este método asume que se utilizará en el contexto adecuado y que se tiene acceso a la base de datos.
-    Se puede ajustar según sea necesario para obtener los datos de manera dinámica.
+    Este método configura los spinners en la pantalla
      */
     private fun spiners() {
         lifecycleScope.launch(Dispatchers.IO) {
@@ -183,10 +155,6 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        if (!isFirebaseUserLoggedIn()) {
-            Toast.makeText(context, getString(R.string.do_you_need_sing_in), Toast.LENGTH_SHORT).show()
-            findNavController().navigate(R.id.action_nav_home_to_nav_login)
-        }
     }
 
     override fun onDestroyView() {
@@ -195,7 +163,7 @@ class HomeFragment : Fragment() {
     }
     /**
     Verificar si el usuario está conectado a Firebase.
-    Este método verifica si el usuario está conectado a Firebase. Retorna un valor booleano que indica si el usuario está o no conectado.
+    Este método verifica si el usuario está conectado a Firebase.
     @return Booleano que indica si el usuario está conectado a Firebase.
      */
     fun isFirebaseUserLoggedIn(): Boolean {
