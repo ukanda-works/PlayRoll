@@ -20,6 +20,7 @@ import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
 import es.ukanda.playroll.R
 import es.ukanda.playroll.databinding.ActivityMainBinding
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -35,6 +36,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setDefaultLanguage()
         super.onCreate(savedInstanceState)
         // inflar el layout de la actividad
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -42,8 +44,8 @@ class MainActivity : AppCompatActivity() {
         val progressDialog = ProgressDialog(this)
         progressDialog.setMessage(getString(R.string.loading))
         progressDialog.setCancelable(false)
-        progressDialog.show()
 
+        progressDialog.show()
         Handler().postDelayed({
             checkPermissions()
 
@@ -52,6 +54,18 @@ class MainActivity : AppCompatActivity() {
         slidebar()
         loadBaseData()
     }
+
+    private fun setDefaultLanguage() {
+        val locale = Locale("es")
+        Locale.setDefault(locale)
+
+        val resources = resources
+        val configuration = resources.configuration
+        configuration.setLocale(locale)
+        resources.updateConfiguration(configuration, resources.displayMetrics)
+        createConfigurationContext(configuration)
+    }
+
 
     private fun loadBaseData() {
         /*val loadData = LoadData(this)
