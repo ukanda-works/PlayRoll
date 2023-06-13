@@ -65,7 +65,6 @@ class JoinPartyFragment : Fragment() {
         getDatabaseData()
         recicleViewInit()
         rgInit()
-        getIp()
         conexionEstate.observe(viewLifecycleOwner) { newValue ->
             onConexionEstateChanged(newValue)
         }
@@ -257,7 +256,7 @@ class JoinPartyFragment : Fragment() {
                 } else if (alias == "") {
                     Toast.makeText(context, getString(R.string.enter_a_nickname), Toast.LENGTH_SHORT).show()
                 } else {
-                    ControllSocket.startParty(targetIp.value!!, 5000, alias, pass, character)
+                    ControllSocket.startParty(targetIp.value!!,  alias, pass, character)
                     alertDialog.dismiss()
                 }
             }
@@ -266,6 +265,7 @@ class JoinPartyFragment : Fragment() {
     }
 
     companion object {
+        var joinIdParty = 0
         var _targetIp = MutableLiveData<String>()
         val targetIp: LiveData<String>
             get() = _targetIp
@@ -313,7 +313,8 @@ class JoinPartyFragment : Fragment() {
                 instance.activity?.runOnUiThread {
                     Toast.makeText(instance.context, instance.getString(R.string.the_game_has_started), Toast.LENGTH_SHORT).show()
                     val bundle = Bundle()
-                    bundle.putInt("party", party.value!!.partyID)
+                    bundle.putInt("party", joinIdParty)
+                    println("idParty: $joinIdParty----------------------")
                     bundle.putString("ipServer", targetIp.value!!)
                     bundle.putBoolean("isMaster", false)
                     instance.findNavController().navigate(R.id.action_nav_JoinParty_to_nav_playParty,bundle)

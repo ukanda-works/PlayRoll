@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 
 @Database(
     entities = [CharacterEntity ::class, Party::class, Player::class, Inventario::class, PlayerCharacters::class],
-    version = 15,
+    version = 16,
 )
 @TypeConverters(Converters::class,HashMapConverter::class,IntHashMapConverter::class)
 abstract class PartyDb: RoomDatabase() {

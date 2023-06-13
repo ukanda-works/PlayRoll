@@ -17,8 +17,9 @@ interface CharacterDao {
     @Query("SELECT * FROM characters")
     fun getAllCharacters(): List<CharacterEntity>
 
+    @Query("SELECT * FROM characters WHERE identifier = :identifier")
+    fun getCharacterByIdentifier(identifier: String): CharacterEntity
 
-
-
-
+    @Query("SELECT EXISTS(SELECT * FROM characters WHERE identifier = :identifier)")
+    fun checkCharacterByIdentifier(identifier: String): Boolean
 }

@@ -13,6 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import es.ukanda.playroll.R
 import es.ukanda.playroll.databinding.FragmentPlayPartyPlayersBinding
+import es.ukanda.playroll.entyties.PartieEntities.CharacterEntity
+import es.ukanda.playroll.entyties.PartieEntities.Player
+import es.ukanda.playroll.entyties.PartieEntities.PlayerCharacters
 import es.ukanda.playroll.ui.adapter.PlayersPlayPartyAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -50,11 +53,14 @@ class PlayPartyPlayersFragment : Fragment() {
             exitParty()
         }
         binding.btPedirTirada.setOnClickListener {
-            pedirTirada()
+            pedirTirada(PlayPartyFragment.ipServerCompanion)
+        }
+        if (PlayPartyFragment.isMasterCompanion) {
+            binding.btPedirTirada.visibility = View.GONE
         }
     }
 
-    private fun pedirTirada() {
+    fun pedirTirada(ip: String) {
         val builder = AlertDialog.Builder(context!!)
         builder.setTitle(getString(R.string.ask_roll_dice))
         val view = layoutInflater.inflate(R.layout.dialog_send_roll_dice, null)
@@ -62,7 +68,7 @@ class PlayPartyPlayersFragment : Fragment() {
 
         builder.setPositiveButton(getString(R.string.accept), DialogInterface.OnClickListener { dialog, which ->
             val number = view.findViewById<EditText>(R.id.etNumeroCaras).text.toString().toInt()
-            sendAskRollDice(number)
+            sendAskRollDice(number, ip)
             dialog.dismiss()
         })
 
@@ -73,10 +79,10 @@ class PlayPartyPlayersFragment : Fragment() {
         dialog.show()
     }
 
-    private fun sendAskRollDice(number: Int) {
+    private fun sendAskRollDice(number: Int, ip: String) {
         val mensaje = Gson().toJson(listOf("peticion" to "roll_dice_player", "dice_num" to number))
         CoroutineScope(Dispatchers.IO).launch {
-            val socket = Socket(PlayPartyFragment.ipServerCompanion, instance.writePort)
+            val socket = Socket(ip, instance.writePort)
             val output = BufferedWriter(OutputStreamWriter(socket.getOutputStream()))
             output.write(mensaje)
             output.newLine()
@@ -109,6 +115,7 @@ class PlayPartyPlayersFragment : Fragment() {
                 output.newLine()
                 output.flush()
                 socket.close()
+                instance.endParty()
             }catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -122,5 +129,15 @@ class PlayPartyPlayersFragment : Fragment() {
                         PlayPartyFragment.playerCharactersCompanion)
         binding.rvPlayersPlayParty.layoutManager = LinearLayoutManager(requireContext())
         binding.rvPlayersPlayParty.adapter = playerAdapter
+    }
+
+    companion object{
+        private var instance: PlayPartyPlayersFragment? = null
+        fun getInstance(): PlayPartyPlayersFragment {
+            if (instance == null) {
+                instance = PlayPartyPlayersFragment()
+            }
+            return instance as PlayPartyPlayersFragment
+        }
     }
 }

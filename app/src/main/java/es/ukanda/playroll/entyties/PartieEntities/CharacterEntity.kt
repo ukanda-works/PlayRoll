@@ -13,7 +13,7 @@ import es.ukanda.playroll.database.db.IntHashMapConverter
 @Entity(tableName = "characters"
 )
 data class CharacterEntity(
-    @PrimaryKey(autoGenerate = true) val characterID: Int=0,
+    @PrimaryKey(autoGenerate = true) var characterID: Int=0,
     var name: String,
     var description: String,
     var clase: String,

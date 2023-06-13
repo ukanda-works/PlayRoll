@@ -19,4 +19,10 @@ interface PartyDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertParty(party: Party) : Long
+
+    @Query("SELECT * FROM parties WHERE identifier = :identifier")
+    fun getPartyByIdentifier(identifier: String): Party
+
+    @Query("SELECT EXISTS(SELECT * FROM parties WHERE identifier = :identifier)")
+    fun checkPartyByIdentifier(identifier: String): Boolean
 }
