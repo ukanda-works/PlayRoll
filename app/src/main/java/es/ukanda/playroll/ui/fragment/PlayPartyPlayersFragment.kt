@@ -13,9 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import es.ukanda.playroll.R
 import es.ukanda.playroll.databinding.FragmentPlayPartyPlayersBinding
-import es.ukanda.playroll.entyties.PartieEntities.CharacterEntity
-import es.ukanda.playroll.entyties.PartieEntities.Player
-import es.ukanda.playroll.entyties.PartieEntities.PlayerCharacters
 import es.ukanda.playroll.ui.adapter.PlayersPlayPartyAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -53,14 +50,14 @@ class PlayPartyPlayersFragment : Fragment() {
             exitParty()
         }
         binding.btPedirTirada.setOnClickListener {
-            pedirTirada(PlayPartyFragment.ipServerCompanion)
+            pedirTirada(PlayPartyFragment.ipServerCompanion, instance.writePort)
         }
         if (PlayPartyFragment.isMasterCompanion) {
             binding.btPedirTirada.visibility = View.GONE
         }
     }
 
-    fun pedirTirada(ip: String) {
+    fun pedirTirada(ip: String, puerto: Int) {
         val builder = AlertDialog.Builder(context!!)
         builder.setTitle(getString(R.string.ask_roll_dice))
         val view = layoutInflater.inflate(R.layout.dialog_send_roll_dice, null)
@@ -68,7 +65,7 @@ class PlayPartyPlayersFragment : Fragment() {
 
         builder.setPositiveButton(getString(R.string.accept), DialogInterface.OnClickListener { dialog, which ->
             val number = view.findViewById<EditText>(R.id.etNumeroCaras).text.toString().toInt()
-            sendAskRollDice(number, ip)
+            sendAskRollDice(number, ip, puerto)
             dialog.dismiss()
         })
 
@@ -79,10 +76,10 @@ class PlayPartyPlayersFragment : Fragment() {
         dialog.show()
     }
 
-    private fun sendAskRollDice(number: Int, ip: String) {
+    private fun sendAskRollDice(number: Int, ip: String, puerto: Int) {
         val mensaje = Gson().toJson(listOf("peticion" to "roll_dice_player", "dice_num" to number))
         CoroutineScope(Dispatchers.IO).launch {
-            val socket = Socket(ip, instance.writePort)
+            val socket = Socket(ip, puerto)
             val output = BufferedWriter(OutputStreamWriter(socket.getOutputStream()))
             output.write(mensaje)
             output.newLine()
@@ -126,7 +123,8 @@ class PlayPartyPlayersFragment : Fragment() {
     private fun initRecyclerView() {
         playerAdapter = PlayersPlayPartyAdapter(PlayPartyFragment.playersCompanion,
                         PlayPartyFragment.charactersCompanion,
-                        PlayPartyFragment.playerCharactersCompanion)
+                        PlayPartyFragment.playerCharactersCompanion,
+                        this@PlayPartyPlayersFragment)
         binding.rvPlayersPlayParty.layoutManager = LinearLayoutManager(requireContext())
         binding.rvPlayersPlayParty.adapter = playerAdapter
     }

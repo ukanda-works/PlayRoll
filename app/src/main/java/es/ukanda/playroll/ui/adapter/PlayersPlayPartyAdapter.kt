@@ -10,9 +10,12 @@ import es.ukanda.playroll.entyties.PartieEntities.PlayerCharacters
 import es.ukanda.playroll.ui.fragment.PlayPartyFragment
 import es.ukanda.playroll.ui.fragment.PlayPartyPlayersFragment
 
-class PlayersPlayPartyAdapter(val players: List<Player>,
-                       val characters: List<CharacterEntity>,
-                       val playerCharacters: List<PlayerCharacters>): RecyclerView.Adapter<PlayersPlayPartyAdapter.PlayersPlayPartyViewHolder>() {
+class PlayersPlayPartyAdapter(
+    val players: List<Player>,
+    val characters: List<CharacterEntity>,
+    val playerCharacters: List<PlayerCharacters>,
+    val playPartyPlayersFragment: PlayPartyPlayersFragment
+): RecyclerView.Adapter<PlayersPlayPartyAdapter.PlayersPlayPartyViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -41,9 +44,10 @@ class PlayersPlayPartyAdapter(val players: List<Player>,
             binding.tvNamePlayerItemPlayers.text = player.name
             binding.btPlayerInteract.setOnClickListener {
                 if(PlayPartyFragment.isMasterCompanion){
-                    //PlayPartyPlayersFragment.getInstance().pedirTirada(PlayPartyFragment.playersIpCompanion.get(characterEntity.name)!!)
+                    playPartyPlayersFragment.pedirTirada(PlayPartyFragment.playersIpCompanion.get(characterEntity.name)!!,PlayPartyFragment.getInstance().listenPort)
                 }
             }
         }
+
     }
 }
