@@ -17,6 +17,7 @@ import es.ukanda.playroll.R
 import es.ukanda.playroll.database.db.PartyDb
 import es.ukanda.playroll.databinding.FragmentPartiesListBinding
 import es.ukanda.playroll.databinding.FragmentSetingsBinding
+import es.ukanda.playroll.ui.activity.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -104,7 +105,9 @@ class SetingsFragment : Fragment() {
 
         configuration.setLocale(locale)
         resources.updateConfiguration(configuration, resources.displayMetrics)
+        MainActivity.locale = locale
         findNavController().navigate(R.id.nav_home)
+        recreate(requireActivity())
     }
 
 

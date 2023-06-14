@@ -11,7 +11,7 @@ import es.ukanda.playroll.database.db.IntHashMapConverter
 
 @Entity(tableName = "parties")
 data class Party(
-    @PrimaryKey(autoGenerate = true) val partyID: Int=0,
+    @PrimaryKey(autoGenerate = true) var partyID: Int=0,
     val partyName: String,
     val partyCreator: String,
     val partyDescription: String? = null,

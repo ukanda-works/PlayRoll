@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity() {
             android.Manifest.permission.INTERNET,
             android.Manifest.permission.CAMERA
         )
+        var locale =  Locale("es")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,9 +57,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setDefaultLanguage() {
-        val locale = Locale("es")
-        Locale.setDefault(locale)
-
         val resources = resources
         val configuration = resources.configuration
         configuration.setLocale(locale)

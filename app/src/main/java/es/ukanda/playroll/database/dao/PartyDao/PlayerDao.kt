@@ -12,8 +12,6 @@ interface PlayerDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPlayer(player: Player): Long
 
-    @Update
-    suspend fun updatePlayer(player: Player)
 
     @Delete
     suspend fun deletePlayer(player: Player)
@@ -23,4 +21,8 @@ interface PlayerDao {
 
     @Query("SELECT * FROM players WHERE identifier = :identifier")
     suspend fun getPlayerByIdentifier(identifier: String): Player
+
+    @Query("SELECT EXISTS(SELECT * FROM players WHERE identifier = :identifier)")
+    suspend fun checkPlayerByIdentifier(identifier: String): Boolean
+
 }

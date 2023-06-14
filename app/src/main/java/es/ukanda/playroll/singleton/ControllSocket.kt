@@ -27,6 +27,7 @@ class ControllSocket {
             NONE,
             STARTING,
             STARTED,
+            ENDED
         }
 
         private var job: Job? = null
@@ -98,21 +99,40 @@ class ControllSocket {
                "started" -> {
                    if (decodedMensaje["response"].equals("ok")){
                        var partyRecived = Party.fromJson(decodedMensaje["party"].toString())
+                       partyRecived.own = false
                        partyRecived = Party.removeIdFromParty(partyRecived)
 
                        var recivedCharacters = ComunicationHelpers.convertStringToCharacterList(decodedMensaje["characters"].toString())
+                       recivedCharacters.stream().map {it.own = false}
                        var recivedPlayers = ComunicationHelpers.convertStringToPlayerList(decodedMensaje["players"].toString())
                        var recivedPlayerCharacters = ComunicationHelpers.convertStringToPlayerCharacterList(decodedMensaje["player_character"].toString())
 
                        CoroutineScope(Dispatchers.IO).launch {
+                           var partyId: Long
                            val db = PartyDb.getDatabase(JoinPartyFragment.instance.requireContext())
-                           val partyId = db.partyDao().insertParty(partyRecived)
+                           if(db.partyDao().checkPartyByIdentifier(partyRecived.identifier)){
+                               val party  = db.partyDao().getPartyByIdentifier(partyRecived.identifier)
+                               partyId = party.partyID.toLong()
+                               partyRecived.partyID = partyId.toInt()
+                               db.partyDao().insertParty(partyRecived)
+                           }
+                           else{ partyId = db.partyDao().insertParty(partyRecived)}
+                           println("partyId: $partyId")
+                           JoinPartyFragment.joinIdParty = partyId.toInt()
                            JoinPartyFragment.setParty(db.partyDao().getParty(partyId.toInt()))
                            val savedCharacters = mutableListOf<CharacterEntity>()
                            val savedPlayers = mutableListOf<Player>()
                            recivedCharacters.forEach {
                                  val oldId  = it.characterID
-                                 val id =db.characterDao().insertCharacter(CharacterEntity.removeIdFromCharacter(it))
+                                 var id : Long
+                                 if(db.characterDao().checkCharacterByIdentifier(it.identifier)){
+                                     val character = db.characterDao().getCharacterByIdentifier(it.identifier)
+                                     id = character.characterID.toLong()
+                                     it.characterID = id.toInt()
+                                     db.characterDao().insertCharacter(it)
+                                 }else{
+                                     id =db.characterDao().insertCharacter(CharacterEntity.removeIdFromCharacter(it))
+                                 }
                                  savedCharacters.add(db.characterDao().getCharacterById(id.toInt()))
                                     recivedPlayerCharacters.forEach { playerCharacter ->
                                         playerCharacter.partyID = partyId.toInt()
@@ -134,8 +154,8 @@ class ControllSocket {
                             recivedPlayerCharacters.forEach {
                                  db.playerCharacterDao().insertPartyPlayerCharacter(it)
                             }
+                           JoinPartyFragment.setConexionEstate(ConnectionState.STARTED)
                        }
-                       JoinPartyFragment.setConexionEstate(ConnectionState.STARTED)
                    }else{
                        println("rechazada")
                        JoinPartyFragment.setConexionEstate(ConnectionState.ERROR)
@@ -144,7 +164,7 @@ class ControllSocket {
            }
         }
 
-        fun startParty(ip:String, timeout: Int = 5000, alias: String,pass:String, personaje: CharacterEntity){
+        fun startParty(ip:String, alias: String,pass:String, personaje: CharacterEntity){
             job = CoroutineScope(Dispatchers.IO).launch {
                 try {
                     var clientSocket = Socket(ip, 5690)

@@ -152,4 +152,8 @@
     <string name="clean_db">Clean database</string>
     <string name="clean_db_message">Are you sure you want to remove all data from the database? All your information will be deleted!</string>
     <string name="database_cleaned">Database cleaned up successfully</string>
+    <string name="help_text_1">A role-playing game (also known as a role-playing game or RPG) is a type of game in which participants assume fictional roles and create cooperative narratives. For more information on RPGs, you can visit:</string>
+    <string name="help_text_2">For more information on the use of this application, consult the user manual:</string>
+    <string name="about_text_1">This application is Manuel Amorós TFC project for the development cycle of multiplatform applications. This app works like an RPG game manager.</string>
+    <string name="about_text_2">This applications main objective is to support the game that is being played, providing a place from which both players and Master can more easily manage the game data. It seeks to facilitate the management of aspects such as character sheets, information on the imaginary world, combat and player actions. Its purpose is to enhance the gaming experience, allowing players to focus on the fun and narrative of the adventure.</string>
 </resources>

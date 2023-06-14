@@ -30,6 +30,7 @@ import es.ukanda.playroll.entyties.PartieEntities.CharacterEntity
 import es.ukanda.playroll.entyties.PartieEntities.Party
 import es.ukanda.playroll.entyties.PartieEntities.Player
 import es.ukanda.playroll.entyties.PartieEntities.PlayerCharacters
+import es.ukanda.playroll.singleton.ControllSocket
 import kotlinx.coroutines.*
 import java.io.BufferedReader
 import java.io.BufferedWriter
@@ -89,14 +90,15 @@ class PlayPartyFragment : Fragment() {
         val bundle = arguments
         if (bundle != null) {
             val master = bundle.getBoolean("isMaster")
-            if (master) {
-                isMaster = true
-                playersIp = bundle.getSerializable("players") as Map<String, String>
-                CoroutineScope(Dispatchers.IO).launch{
-                    playersIp.forEach(){
-                        var alias = PartyDb.getDatabase(requireContext()).playerDao().getPlayerByIdentifier(it.key)!!.name
-                        playersIpCompanion.put(alias, it.value)
-                    }
+                if (master) {
+                    isMaster = true
+                    isMasterCompanion = true
+                    playersIp = bundle.getSerializable("players") as Map<String, String>
+                    CoroutineScope(Dispatchers.IO).launch{
+                        playersIp.forEach(){
+                            var alias = PartyDb.getDatabase(requireContext()).playerDao().getPlayerByIdentifier(it.key)!!.name
+                            playersIpCompanion.put(alias, it.value)
+                        }
                 }
 
             }else{
@@ -112,6 +114,11 @@ class PlayPartyFragment : Fragment() {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        (activity as AppCompatActivity).supportActionBar?.show()
+    }
+
 
 
     private suspend fun initDb(partyId: Int) {
@@ -119,6 +126,7 @@ class PlayPartyFragment : Fragment() {
             Toast.makeText(context, getString(R.string.party_loaded), Toast.LENGTH_SHORT).show()
         }
         val db = PartyDb.getDatabase(requireContext())
+        println("partyId: $partyId---------------------------------------")
         party = db.partyDao().getParty(partyId)
         playerCharacters.addAll(db.playerCharacterDao().getPlayersAndCharactersByPartyId(partyId))
         playerCharactersCompanion.addAll(db.playerCharacterDao().getPlayersAndCharactersByPartyId(partyId))
@@ -127,7 +135,14 @@ class PlayPartyFragment : Fragment() {
         playersId.forEach {
             val player = db.playerDao().getPlayerById(it!!)
             players.add(player)
-            playersCompanion.add(player)
+            if (isMaster) {
+                if (playersIpCompanion.containsKey(player.name)){
+                        playersCompanion.add(player)
+                }
+            }else{
+                playersCompanion.add(player)
+
+            }
         }
         val charactersId = playerCharacters.map { it.characterID }
         charactersId.forEach {
@@ -330,6 +345,7 @@ class PlayPartyFragment : Fragment() {
 
     fun endParty() {
         try {
+            JoinPartyFragment.setConexionEstate(ControllSocket.Companion.ConnectionState.ENDED)
             serverSocket.close()
         }catch (e: Exception){
             e.printStackTrace()
@@ -344,7 +360,7 @@ class PlayPartyFragment : Fragment() {
         val playersCompanion = mutableListOf<Player>()
         val charactersCompanion = mutableListOf<CharacterEntity>()
         val playerCharactersCompanion = mutableListOf<PlayerCharacters>()
-
+        var isMasterCompanion = false
         lateinit var ipServerCompanion: String
 
         fun getInstance(): PlayPartyFragment {

@@ -39,6 +39,7 @@ class PlayPartyMasterFragment : Fragment(){
     var listaJugadores = mutableMapOf<Player, String>()
     var listaJugadoresCharacter = mutableMapOf<String, CharacterEntity>()
     lateinit var characterList : List<CharacterEntity>
+    var listaJudoresSeleccion = mutableMapOf<String, String>()
 
     lateinit var serverSocket: ServerSocket
     lateinit var socketUdp: DatagramSocket
@@ -106,7 +107,13 @@ class PlayPartyMasterFragment : Fragment(){
             val savedPlayers = mutableListOf<Player>()
             val jsonPlayerList = mutableListOf<String>()
             listaJugadores.forEach {
-                val playerId = db.playerDao().insertPlayer(it.key)
+                var playerId : Long
+                if (db.playerDao().checkPlayerByIdentifier(it.key.identifier)) {
+                    val player = db.playerDao().getPlayerByIdentifier(it.key.identifier)
+                    playerId = player.playerID.toLong()
+                }else{
+                    playerId = db.playerDao().insertPlayer(it.key)
+                }
                 val saved = db.playerDao().getPlayerById(playerId.toInt())
                 savedPlayers.add(saved)
                 jsonPlayerList.add(saved.toJson())
@@ -178,7 +185,7 @@ class PlayPartyMasterFragment : Fragment(){
     */
     fun updatePlayerList(){
        listaJugadores.forEach {
-           binding.tvPlayerList.append("${it.key.name} - ${it.value}\n")
+           binding.tvPlayerList.append("${it.key.name} - ${listaJudoresSeleccion.get(it.key.name)}\n")
        }
     }
     /**
@@ -360,7 +367,7 @@ private class ServerThread(val clientSocket: Socket, val fragment: PlayPartyMast
                 CoroutineScope(Dispatchers.IO).launch {
                     addPlayerCharacter(hash!!, selectedCharacter!!, characterOwn)
                 }
-                addPlayer(alias!!, clientSocket.inetAddress.hostAddress, hash!!)
+                addPlayer(alias!!, clientSocket.inetAddress.hostAddress, hash!!, selectedCharacter!!.name)
                 val sendResponse = listOf("reponse" to "ok")
                 output.write(Gson().toJson(sendResponse))
                 output.newLine()
@@ -397,9 +404,10 @@ private class ServerThread(val clientSocket: Socket, val fragment: PlayPartyMast
     @param dirección IP
     @param hash del jugador.
      */
-    private fun addPlayer(alias: String, ip:String, hash:String) {
+    private fun addPlayer(alias: String, ip:String, hash:String, selectedCharacter: String) {
         val player = Player(name = alias, identifier = hash)
         fragment.listaJugadores.put(player,ip)
+        fragment.listaJudoresSeleccion.put(player.name, selectedCharacter)
         fragment.activity?.runOnUiThread {
             fragment.updatePlayerList()
         }

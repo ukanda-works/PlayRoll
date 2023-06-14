@@ -7,10 +7,15 @@ import es.ukanda.playroll.databinding.ItemPlayersPartyBinding
 import es.ukanda.playroll.entyties.PartieEntities.CharacterEntity
 import es.ukanda.playroll.entyties.PartieEntities.Player
 import es.ukanda.playroll.entyties.PartieEntities.PlayerCharacters
+import es.ukanda.playroll.ui.fragment.PlayPartyFragment
+import es.ukanda.playroll.ui.fragment.PlayPartyPlayersFragment
 
-class PlayersPlayPartyAdapter(val players: List<Player>,
-                       val characters: List<CharacterEntity>,
-                       val playerCharacters: List<PlayerCharacters>): RecyclerView.Adapter<PlayersPlayPartyAdapter.PlayersPlayPartyViewHolder>() {
+class PlayersPlayPartyAdapter(
+    val players: List<Player>,
+    val characters: List<CharacterEntity>,
+    val playerCharacters: List<PlayerCharacters>,
+    val playPartyPlayersFragment: PlayPartyPlayersFragment
+): RecyclerView.Adapter<PlayersPlayPartyAdapter.PlayersPlayPartyViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -20,13 +25,13 @@ class PlayersPlayPartyAdapter(val players: List<Player>,
     }
 
     override fun getItemCount(): Int {
-        return playerCharacters.count()
+        return players.count()
     }
 
     override fun onBindViewHolder(holder: PlayersPlayPartyViewHolder, position: Int) {
-        val playerCharacter = playerCharacters[position]
-        val player = players.find { it.playerID == playerCharacter.playerID }
-        val character = characters.find { it.characterID == playerCharacter.characterID }
+        val player = players[position]
+        val playerCharacter = playerCharacters.find { it.playerID == player.playerID }
+        val character = characters.find { it.characterID == playerCharacter?.characterID }
         holder.bind(player!!, character!!)
     }
 
@@ -37,6 +42,12 @@ class PlayersPlayPartyAdapter(val players: List<Player>,
             binding.tvClaseItemCharacter.text = characterEntity.clase
             binding.tvLevel.text = characterEntity.level.toString()
             binding.tvNamePlayerItemPlayers.text = player.name
+            binding.btPlayerInteract.setOnClickListener {
+                if(PlayPartyFragment.isMasterCompanion){
+                    playPartyPlayersFragment.pedirTirada(PlayPartyFragment.playersIpCompanion.get(characterEntity.name)!!,PlayPartyFragment.getInstance().listenPort)
+                }
+            }
         }
+
     }
 }

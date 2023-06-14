@@ -153,4 +153,8 @@
     <string name="clean_db">Vaciar base de datos</string>
     <string name="clean_db_message">Estas seguro de que quieres eliminar todos los datos de la base de datos? Toda tu informacion se eliminara!!!</string>
     <string name="database_cleaned">Base de datos limpiada correctamente</string>
+    <string name="help_text_1">Un juego de rol (también conocido como juego de rol o RPG) es un tipo de juego en el que los participantes asumen roles ficticios y crean narrativas cooperativas. Para obtener más información sobre los juegos de rol, puedes visitar:</string>
+    <string name="help_text_2">Para obtener más información sobre el uso de esta aplicación, consulta el manual de uso:</string>
+    <string name="about_text_1">Esta aplicación es el proyecto TFC de Manuel Amorós para el ciclo de desarrollo de aplicaciones multiplataforma. Esta aplicación funciona como un administrador de partidas de juegos de rol.</string>
+    <string name="about_text_2">Esta aplicación tiene como objetivo principal apoyar la partida que se esté jugando, brindando un lugar desde el cual tanto jugadores como Master puedan manejar de forma más sencilla los datos de la partida. Busca facilitar la gestión de aspectos como las fichas de personaje, la información del mundo imaginario, los combates y las acciones de los jugadores. Su propósito es mejorar la experiencia de juego, permitiendo a los jugadores enfocarse en la diversión y la narrativa de la aventura.</string>
 </resources>

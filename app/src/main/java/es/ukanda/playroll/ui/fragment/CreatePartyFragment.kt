@@ -24,6 +24,7 @@ import es.ukanda.playroll.ui.adapter.CharacterAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.streams.toList
 
 
 class CreatePartyFragment : Fragment() {
@@ -116,7 +117,7 @@ class CreatePartyFragment : Fragment() {
     */
     fun initRecycler(){
         CoroutineScope(Dispatchers.IO).launch {
-            val listCharacter = PartyDb.getDatabase(requireContext()).characterDao().getAllCharacters()
+            val listCharacter = PartyDb.getDatabase(requireContext()).characterDao().getAllCharacters().stream().filter{ it.own == true }.toList()
             characterList = listCharacter.toMutableList()
             characterAdapter = CharacterAdapter(characterList, characterList.count()) { character, isSelected ->
             }
